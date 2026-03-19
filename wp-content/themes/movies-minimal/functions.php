@@ -79,6 +79,34 @@ add_action('init', function (): void {
         ],
         'show_in_rest' => true,
     ]);
+
+    register_post_type('home_intro', [
+        'labels' => [
+            'name' => 'Home Intros',
+            'singular_name' => 'Home Intro',
+            'add_new' => 'Add Home Intro',
+            'add_new_item' => 'Add New Home Intro',
+            'edit_item' => 'Edit Home Intro',
+            'new_item' => 'New Home Intro',
+            'view_item' => 'View Home Intro',
+            'view_items' => 'View Home Intros',
+            'search_items' => 'Search Home Intros',
+            'not_found' => 'No home intros found',
+            'not_found_in_trash' => 'No home intros found in Trash',
+            'all_items' => 'All Home Intros',
+            'menu_name' => 'Home Intro',
+        ],
+        'public' => false,
+        'show_ui' => true,
+        'show_in_menu' => true,
+        'menu_icon' => 'dashicons-edit-page',
+        'supports' => [
+            'title',
+            'editor',
+            'revisions',
+        ],
+        'show_in_rest' => true,
+    ]);
 });
 
 add_action('wp_enqueue_scripts', function (): void {
@@ -131,6 +159,7 @@ add_action('wp_enqueue_scripts', function (): void {
 
 add_filter('query_vars', function (array $vars): array {
     $vars[] = 'movie_category';
+    $vars[] = 'view';
 
     return $vars;
 });
@@ -143,6 +172,19 @@ add_action('pre_get_posts', function (WP_Query $query): void {
     if ($query->is_home()) {
         $query->set('post_type', 'collection');
         $query->set('posts_per_page', -1);
+
+        if ((string) $query->get('view') === 'past-months') {
+            $latest_collection = get_posts([
+                'post_type' => 'collection',
+                'posts_per_page' => 1,
+                'fields' => 'ids',
+                'no_found_rows' => true,
+            ]);
+
+            if ($latest_collection !== []) {
+                $query->set('post__not_in', [(int) $latest_collection[0]]);
+            }
+        }
     }
 
     if ($query->is_author()) {
@@ -293,6 +335,33 @@ add_action('acf/init', function (): void {
         'style' => 'default',
         'active' => true,
     ]);
+
+    acf_add_local_field_group([
+        'key' => 'group_movies_minimal_home_intro_meta',
+        'title' => 'Home Intro Meta',
+        'fields' => [
+            [
+                'key' => 'field_movies_minimal_home_intro_link',
+                'label' => 'Quotation Link',
+                'name' => 'quotation_link',
+                'type' => 'url',
+                'instructions' => 'Optional link used for the quotation name shown under the intro.',
+                'required' => 0,
+            ],
+        ],
+        'location' => [
+            [
+                [
+                    'param' => 'post_type',
+                    'operator' => '==',
+                    'value' => 'home_intro',
+                ],
+            ],
+        ],
+        'position' => 'side',
+        'style' => 'default',
+        'active' => true,
+    ]);
 });
 
 add_action('acf/input/admin_head', function (): void {
@@ -393,6 +462,31 @@ function movies_minimal_get_list_summary(int $post_id): string
     }
 
     return movies_minimal_get_post_intro($post_id);
+}
+
+function movies_minimal_get_home_intro(): ?WP_Post
+{
+    $posts = get_posts([
+        'post_type' => 'home_intro',
+        'posts_per_page' => 1,
+        'post_status' => 'publish',
+        'no_found_rows' => true,
+    ]);
+
+    if ($posts === []) {
+        return null;
+    }
+
+    return $posts[0];
+}
+
+function movies_minimal_get_home_intro_link(int $post_id): string
+{
+    if (!function_exists('get_field')) {
+        return '';
+    }
+
+    return trim((string) get_field('quotation_link', $post_id));
 }
 
 function movies_minimal_get_author_movie_categories(int $author_id, int $limit = 4): array
