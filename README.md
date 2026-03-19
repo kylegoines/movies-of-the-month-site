@@ -12,6 +12,16 @@ Then open `http://localhost:8081` and complete the normal WordPress installer.
 
 After install, the `movies-minimal` theme will be activated automatically by a small must-use plugin.
 
+## Required plugins
+
+To run this theme properly, install:
+
+- `Advanced Custom Fields (ACF)`: required for the `Intro` and `Movie Rating` fields used by the theme
+
+Optional:
+
+- `Classic Editor`: only if you want the old WordPress editor experience
+
 ## Frontend workflow
 
 The theme uses Vite and Tailwind CSS v4.
