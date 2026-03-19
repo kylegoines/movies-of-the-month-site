@@ -32,7 +32,7 @@ get_header();
   <?php endif; ?>
 
   <?php if (have_posts()) : ?>
-    <ul class="mt-[96px] flex flex-col gap-12 sm:gap-14 md:gap-16">
+    <ul class="mt-[96px] flex flex-col">
       <?php while (have_posts()) : the_post(); ?>
         <?php $summary = movies_minimal_get_list_summary(get_the_ID()); ?>
         <li>

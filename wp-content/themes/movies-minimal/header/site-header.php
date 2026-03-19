@@ -18,6 +18,7 @@ $past_months_url = add_query_arg('view', 'past-months', home_url('/'));
     <a class="inline-block no-underline relative" href="<?php echo esc_url(
         home_url('/'),
     ); ?>">
+    <div class="mt-auto h-[3px] w-[47px] bg-black absolute bottom-[-7px]"></div>
     <!-- <div class="h-[15px] w-[15px] bg-black rounded-4xl absolute top-[60px] left-[23px]"></div> -->
       <img
         class="h-auto w-full max-w-[280px] md:max-w-[360px] relative top-[7px]"
