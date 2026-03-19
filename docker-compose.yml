@@ -1,0 +1,34 @@
+services:
+  db:
+    image: mariadb:11.4
+    container_name: movies-wordpress-db
+    restart: unless-stopped
+    environment:
+      MARIADB_DATABASE: wordpress
+      MARIADB_USER: wordpress
+      MARIADB_PASSWORD: wordpress
+      MARIADB_ROOT_PASSWORD: rootpassword
+    volumes:
+      - db_data:/var/lib/mysql
+
+  wordpress:
+    image: wordpress:6.8.2-php8.3-apache
+    container_name: movies-wordpress
+    depends_on:
+      - db
+    restart: unless-stopped
+    ports:
+      - "8081:80"
+    environment:
+      WORDPRESS_DB_HOST: db:3306
+      WORDPRESS_DB_USER: wordpress
+      WORDPRESS_DB_PASSWORD: wordpress
+      WORDPRESS_DB_NAME: wordpress
+    volumes:
+      - wordpress_data:/var/www/html
+      - ./wp-content/themes/movies-minimal:/var/www/html/wp-content/themes/movies-minimal
+      - ./wp-content/mu-plugins:/var/www/html/wp-content/mu-plugins
+
+volumes:
+  db_data:
+  wordpress_data:
