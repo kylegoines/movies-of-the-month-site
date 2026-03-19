@@ -6,9 +6,45 @@
   --breakpoint-sm: 48.75rem;
   --breakpoint-md: 57.8125rem;
   --color-background: #ffffff;
-  --color-foreground: #262626;
-  --color-strong: #000000;
-  --color-muted: #737373;
+  --color-foreground: #353535;
+  --color-strong: #1f1f1f;
+  --color-muted: #7a7a7a;
+}
+
+:root {
+  --color-background: #ffffff;
+  --color-foreground: #353535;
+  --color-strong: #1f1f1f;
+  --color-muted: #7a7a7a;
+  --primary-accent: #1f1f1f;
+  --secondary-accent: #ececec;
+}
+
+:root.theme-default {
+  --color-background: #ffffff;
+  --color-foreground: #353535;
+  --color-strong: #1f1f1f;
+  --color-muted: #7a7a7a;
+  --primary-accent: #1f1f1f;
+  --secondary-accent: #ececec;
+}
+
+:root.theme-inverse {
+  --color-background: #171717;
+  --color-foreground: #f0f0f0;
+  --color-strong: #ffffff;
+  --color-muted: #b5b5b5;
+  --primary-accent: #ffffff;
+  --secondary-accent: #3a3a3a;
+}
+
+:root.theme-deep-pop {
+  --color-background: #0045cc;
+  --color-foreground: #eef3ff;
+  --color-strong: #ffa7b3;
+  --color-muted: #cdd9ff;
+  --primary-accent: #ffa7b3;
+  --secondary-accent: #5f90f5;
 }
 
 @layer base {
@@ -17,11 +53,18 @@
   }
 
   body {
-    @apply m-0 bg-white font-sans text-neutral-800 antialiased;
+    background-color: var(--color-background);
+    color: var(--color-foreground);
+    @apply m-0 font-sans antialiased;
   }
 
   a {
     @apply text-inherit;
+  }
+
+  ::selection {
+    background: var(--secondary-accent);
+    color: var(--color-strong);
   }
 
   h1,
@@ -30,18 +73,89 @@
   h4,
   h5,
   h6 {
-    @apply font-bold text-black;
+    color: var(--color-strong);
+    @apply font-bold;
   }
 
   strong,
   b {
-    @apply font-bold text-black;
+    color: var(--color-strong);
+    @apply font-bold;
   }
 }
 
 @layer components {
+  .theme-debugger {
+    background: color-mix(in srgb, white 92%, var(--secondary-accent) 8%);
+    border-color: color-mix(in srgb, var(--primary-accent) 40%, black 60%);
+  }
+
+  .theme-debugger select {
+    border-color: color-mix(in srgb, var(--primary-accent) 40%, black 60%);
+    background: white;
+  }
+
+  .accent-rule {
+    background-color: var(--primary-accent);
+  }
+
+  .theme-logo {
+    color: var(--color-strong);
+  }
+
+  .theme-logo path,
+  .theme-logo rect,
+  .theme-logo circle,
+  .theme-logo polygon,
+  .theme-logo ellipse {
+    fill: currentColor;
+  }
+
+  .theme-strong {
+    color: var(--color-strong);
+  }
+
+  .theme-body {
+    color: var(--color-foreground);
+  }
+
+  .theme-muted {
+    color: var(--color-muted);
+  }
+
+  .theme-border {
+    border-color: color-mix(in srgb, var(--color-strong) 30%, transparent);
+  }
+
+  .theme-surface {
+    background-color: color-mix(in srgb, var(--secondary-accent) 65%, white 35%);
+  }
+
+  .poster-frame {
+    position: relative;
+    margin-top: 20px;
+    margin-left: 20px;
+    z-index: 0;
+  }
+
+  .poster-frame img {
+    position: relative;
+    z-index: 2;
+  }
+
+  .poster-frame::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    transform: translate(-20px, -20px);
+    border: 2px solid var(--color-strong);
+    z-index: 1;
+    pointer-events: none;
+  }
+
   .post-content {
-    @apply mt-10 text-[17px] leading-8 text-neutral-800;
+    color: var(--color-foreground);
+    @apply mt-10 text-[17px] leading-8;
   }
 
   .post-content > * + * {
@@ -54,7 +168,8 @@
   .post-content h4,
   .post-content h5,
   .post-content h6 {
-    @apply mt-12 text-balance font-bold tracking-[-0.04em] text-black;
+    color: var(--color-strong);
+    @apply mt-12 text-balance font-bold tracking-[-0.04em];
   }
 
   .post-content h2 {
@@ -68,7 +183,8 @@
   .post-content p,
   .post-content li,
   .post-content blockquote {
-    @apply font-normal text-neutral-800;
+    color: var(--color-foreground);
+    @apply font-normal;
   }
 
   .post-content ul,
@@ -85,10 +201,12 @@
   }
 
   .post-content a {
-    @apply font-bold text-black underline underline-offset-4;
+    color: var(--color-strong);
+    @apply font-bold underline underline-offset-4;
   }
 
   .post-content blockquote {
-    @apply border-l-2 border-black pl-5;
+    border-color: color-mix(in srgb, var(--color-strong) 30%, transparent);
+    @apply border-l-2 pl-5;
   }
 }

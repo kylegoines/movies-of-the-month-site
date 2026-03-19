@@ -22,8 +22,8 @@ get_header();
       </div>
 
       <?php if ($home_intro_name !== '') : ?>
-        <p class="mt-4 text-sm tracking-[0.04em] text-neutral-500">
-          <a class="font-bold text-black transition-opacity hover:opacity-70" href="<?php echo esc_url($home_intro_link); ?>">
+        <p class="theme-muted mt-4 text-sm tracking-[0.04em]">
+          <a class="theme-strong font-bold transition-opacity hover:opacity-70" href="<?php echo esc_url($home_intro_link); ?>">
             &mdash;<?php echo esc_html($home_intro_name); ?>
           </a>
         </p>
@@ -39,9 +39,9 @@ get_header();
           <a class="block no-underline" href="<?php the_permalink(); ?>">
             <div class="flex flex-col gap-2 md:flex-row md:items-start md:justify-between md:gap-8">
               <div class="max-w-2xl">
-                <span class="block text-xl font-bold text-black md:text-2xl"><?php the_title(); ?></span>
+                <span class="theme-strong block text-xl font-bold md:text-2xl"><?php the_title(); ?></span>
                 <?php if ($summary !== '') : ?>
-                  <div class="mt-2 text-lg font-bold text-black [&_p]:m-0">
+                  <div class="theme-strong mt-2 text-lg font-bold [&_p]:m-0">
                     <?php echo esc_html($summary); ?>
                   </div>
                 <?php endif; ?>
@@ -52,7 +52,7 @@ get_header();
       <?php endwhile; ?>
     </ul>
   <?php else : ?>
-    <p class="py-6 text-sm uppercase tracking-[0.18em] text-neutral-500">No collections yet.</p>
+    <p class="theme-muted py-6 text-sm uppercase tracking-[0.18em]">No collections yet.</p>
   <?php endif; ?>
 </main>
 

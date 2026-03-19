@@ -11,6 +11,10 @@ $latest_collection_url = $latest_collection !== []
     : home_url('/');
 
 $past_months_url = add_query_arg('view', 'past-months', home_url('/'));
+$logo_markup = movies_minimal_get_inline_svg(
+    'images/logo1.svg',
+    'h-auto w-full max-w-[280px] md:max-w-[360px] relative top-[7px]'
+);
 ?>
 
 <header class="flex pb-8">
@@ -18,20 +22,16 @@ $past_months_url = add_query_arg('view', 'past-months', home_url('/'));
     <a class="inline-block no-underline relative" href="<?php echo esc_url(
         home_url('/'),
     ); ?>">
-    <div class="mt-auto h-[3px] w-[47px] bg-black absolute bottom-[-7px]"></div>
+    <div class="accent-rule mt-auto h-[3px] w-[47px] absolute bottom-[-7px]"></div>
     <!-- <div class="h-[15px] w-[15px] bg-black rounded-4xl absolute top-[60px] left-[23px]"></div> -->
-      <img
-        class="h-auto w-full max-w-[280px] md:max-w-[360px] relative top-[7px]"
-        src="<?php echo esc_url(
-            get_template_directory_uri() . '/images/logo1.svg',
-        ); ?>"
-        alt="<?php echo esc_attr(get_bloginfo('name')); ?>"
-      >
+      <?php if ($logo_markup !== '') : ?>
+        <?php echo $logo_markup; ?>
+      <?php endif; ?>
       <span class="sr-only"><?php bloginfo('name'); ?></span>
     </a>
   </h1>
   <div class="ml-6 mt-auto w-full">
-    <ul class="hidden list-none justify-between pl-17 pr-2 text-xl font-bold text-black sm:flex">
+    <ul class="theme-strong hidden list-none justify-between pl-17 pr-2 text-xl font-bold sm:flex">
       <li>
         <a class="transition-opacity hover:opacity-70" href="<?php echo esc_url($latest_collection_url); ?>">
           This Month
@@ -49,6 +49,6 @@ $past_months_url = add_query_arg('view', 'past-months', home_url('/'));
         <span class="cursor-default">Sign Up</span>
       </li>
     </ul>
-    <div class="mt-auto h-[3px] w-full bg-black"></div>
+    <div class="accent-rule mt-auto h-[3px] w-full"></div>
   </div>
 </header>

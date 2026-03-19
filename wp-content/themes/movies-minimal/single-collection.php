@@ -6,11 +6,11 @@ get_header();
   <?php get_template_part('header/site', 'header'); ?>
 
   <?php if (have_posts()) : ?>
-    <?php while (have_posts()) : the_post(); ?>
+      <?php while (have_posts()) : the_post(); ?>
       <?php $movie_ids = movies_minimal_get_collection_movies(get_the_ID()); ?>
       <article>
         <header class="mt-[48px] max-w-[720px]">
-          <h1 class="text-4xl tracking-[-0.06em] text-black md:text-6xl">
+          <h1 class="theme-strong text-4xl tracking-[-0.06em] md:text-6xl">
             <?php the_title(); ?>
           </h1>
         
@@ -36,21 +36,21 @@ get_header();
                   'loading' => 'lazy',
               ]);
               ?>
-              <article class="grid gap-6 border-t border-black pt-6 md:grid-cols-[220px_minmax(0,1fr)] md:gap-10">
+              <article class="theme-border grid gap-6 border-t pt-6 md:grid-cols-[220px_minmax(0,1fr)] md:gap-10">
                 <div>
                   <?php if ($poster !== '') : ?>
-                    <div class="overflow-hidden bg-neutral-100">
+                    <div class="poster-frame theme-surface">
                       <?php echo $poster; ?>
                     </div>
                   <?php endif; ?>
                 </div>
 
                 <div class="max-w-[720px]">
-                  <div class="text-sm text-neutral-800 md:text-base">
+                  <div class="theme-body text-sm md:text-base">
                     <p>
-                      <span class="font-bold">Staff member:</span>
+                      <span class="theme-strong font-bold">Staff member:</span>
                       <a
-                        class="text-black transition-opacity hover:opacity-70"
+                        class="theme-strong transition-opacity hover:opacity-70"
                         href="<?php echo esc_url(get_author_posts_url($movie_author_id)); ?>"
                       >
                         <?php echo esc_html(get_the_author_meta('display_name', $movie_author_id)); ?>
@@ -58,41 +58,41 @@ get_header();
                     </p>
 
                     <p>
-                      <span class="font-bold text-black">Film:</span>
+                      <span class="theme-strong font-bold">Film:</span>
                       <?php echo esc_html(get_the_title($movie_id)); ?>
                     </p>
 
                     <?php if ($subtitle !== '') : ?>
                       <p>
-                        <span class="font-bold text-black">Subtitle:</span>
+                        <span class="theme-strong font-bold">Subtitle:</span>
                         <?php echo esc_html($subtitle); ?>
                       </p>
                     <?php endif; ?>
 
                     <?php if ($year !== '') : ?>
                       <p>
-                        <span class="font-bold text-black">Year:</span>
+                        <span class="theme-strong font-bold">Year:</span>
                         <?php echo esc_html($year); ?>
                       </p>
                     <?php endif; ?>
 
                     <?php if ($runtime !== '') : ?>
                       <p>
-                        <span class="font-bold text-black">Runtime:</span>
+                        <span class="theme-strong font-bold">Runtime:</span>
                         <?php echo esc_html($runtime); ?>
                       </p>
                     <?php endif; ?>
 
                     <?php if ($genre !== '') : ?>
                       <p>
-                        <span class="font-bold text-black">Genre:</span>
+                        <span class="theme-strong font-bold">Genre:</span>
                         <?php echo esc_html($genre); ?>
                       </p>
                     <?php endif; ?>
 
                     <?php if ($brief_synopsis !== '') : ?>
                       <p class="leading-7">
-                        <span class="font-bold text-black">Brief Synopsis:</span>
+                        <span class="theme-strong font-bold">Brief Synopsis:</span>
                         <?php echo esc_html($brief_synopsis); ?>
                       </p>
                     <?php endif; ?>

@@ -10,11 +10,11 @@ get_header();
       <?php $subtitle = movies_minimal_get_subtitle(get_the_ID()); ?>
       <article>
         <header class="mt-[48px]">
-          <h1 class="text-4xl tracking-[-0.06em] text-black md:text-6xl">
+          <h1 class="theme-strong text-4xl tracking-[-0.06em] md:text-6xl">
             <?php the_title(); ?>
           </h1>
           <?php if ($subtitle !== '') : ?>
-            <p class="mt-3 text-lg font-bold text-neutral-800 md:text-xl">
+            <p class="theme-body mt-3 text-lg font-bold md:text-xl">
               <?php echo esc_html($subtitle); ?>
             </p>
           <?php endif; ?>

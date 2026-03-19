@@ -157,6 +157,30 @@ add_action('wp_enqueue_scripts', function (): void {
     }
 });
 
+function movies_minimal_get_inline_svg(string $relative_path, string $class_name = ''): string
+{
+    $svg_path = get_template_directory() . '/' . ltrim($relative_path, '/');
+
+    if (!file_exists($svg_path)) {
+        return '';
+    }
+
+    $svg = file_get_contents($svg_path);
+
+    if (!is_string($svg) || $svg === '') {
+        return '';
+    }
+
+    $class_attribute = trim('theme-logo ' . $class_name);
+
+    return preg_replace(
+        '/<svg\b([^>]*)>/',
+        '<svg$1 class="' . esc_attr($class_attribute) . '" aria-hidden="true" focusable="false">',
+        $svg,
+        1
+    ) ?? '';
+}
+
 add_filter('query_vars', function (array $vars): array {
     $vars[] = 'movie_category';
     $vars[] = 'view';
