@@ -1,19 +1,13 @@
 export class SignupJumpButton {
-  constructor(trigger, section) {
-    this.trigger = trigger instanceof HTMLButtonElement ? trigger : null;
-    this.section = section instanceof HTMLElement ? section : null;
+  constructor(triggers, section) {
+    this.triggers = Array.from(triggers);
+    this.section = section;
   }
 
   getFirstInput() {
-    if (!this.section) {
-      return null;
-    }
-
-    const input = this.section.querySelector(
+    return this.section.querySelector(
       '.aettaec-form input[type="text"], .aettaec-form input[type="email"]'
     );
-
-    return input instanceof HTMLInputElement ? input : null;
   }
 
   handleClick() {
@@ -36,10 +30,12 @@ export class SignupJumpButton {
   }
 
   init() {
-    if (!this.trigger || !this.section) {
+    if (this.triggers.length === 0 || !this.section) {
       return;
     }
 
-    this.trigger.addEventListener('click', () => this.handleClick());
+    this.triggers.forEach((trigger) => {
+      trigger.addEventListener('click', () => this.handleClick());
+    });
   }
 }

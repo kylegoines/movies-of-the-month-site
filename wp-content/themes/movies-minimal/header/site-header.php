@@ -46,7 +46,9 @@ $logo_markup = movies_theme_get_inline_svg(
         <span class="cursor-default">About</span>
       </li>
       <li>
-        <span class="cursor-default">Sign Up</span>
+        <button class="cursor-pointer transition-opacity hover:opacity-70" type="button" data-signup-jump>
+          Sign Up
+        </button>
       </li>
     </ul>
     <div class="accent-rule mt-auto h-[3px] w-full"></div>

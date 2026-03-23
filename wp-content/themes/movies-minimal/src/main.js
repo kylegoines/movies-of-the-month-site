@@ -9,7 +9,7 @@ class App {
       document.getElementById('theme-debug-select')
     );
     this.signupJumpButton = new SignupJumpButton(
-      document.querySelector('[data-signup-jump]'),
+      document.querySelectorAll('[data-signup-jump]'),
       document.getElementById('home-signup')
     );
     this.collectionHeartManager = new CollectionHeartManager(
