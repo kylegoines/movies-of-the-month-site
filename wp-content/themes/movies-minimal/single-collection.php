@@ -7,12 +7,31 @@ get_header();
 
   <?php if (have_posts()) : ?>
       <?php while (have_posts()) : the_post(); ?>
-      <?php $movie_ids = movies_minimal_get_collection_movies(get_the_ID()); ?>
+      <?php
+      $collection_id = get_the_ID();
+      $movie_ids = movies_theme_get_collection_movies($collection_id);
+      $heart_count = movies_theme_get_collection_heart_count($collection_id);
+      $is_liked = movies_theme_collection_is_liked_by_current_visitor($collection_id);
+      ?>
       <article>
         <header class="mt-[48px] max-w-[720px]">
           <h1 class="theme-strong text-4xl tracking-[-0.06em] md:text-6xl">
             <?php the_title(); ?>
           </h1>
+
+          <div class="collection-heart mt-6">
+            <button
+              class="collection-heart__button"
+              type="button"
+              data-heart-button
+              data-post-id="<?php echo esc_attr((string) $collection_id); ?>"
+              aria-pressed="<?php echo $is_liked ? 'true' : 'false'; ?>"
+            >
+              <span class="collection-heart__icon" aria-hidden="true"><?php echo $is_liked ? '♥' : '♡'; ?></span>
+              <span class="collection-heart__label">Heart</span>
+              <span class="collection-heart__count" data-heart-count><?php echo esc_html((string) $heart_count); ?></span>
+            </button>
+          </div>
         
           <?php if (get_the_content() !== '') : ?>
             <div class="post-content">
@@ -25,11 +44,11 @@ get_header();
           <section class="mt-12 flex flex-col gap-12 sm:gap-14 md:gap-16">
             <?php foreach ($movie_ids as $movie_id) : ?>
               <?php
-              $subtitle = movies_minimal_get_subtitle($movie_id);
-              $year = movies_minimal_get_year($movie_id);
-              $runtime = movies_minimal_get_runtime($movie_id);
-              $genre = movies_minimal_get_movie_category_list($movie_id);
-              $brief_synopsis = movies_minimal_get_brief_synopsis($movie_id);
+              $subtitle = movies_theme_get_subtitle($movie_id);
+              $year = movies_theme_get_year($movie_id);
+              $runtime = movies_theme_get_runtime($movie_id);
+              $genre = movies_theme_get_movie_category_list($movie_id);
+              $brief_synopsis = movies_theme_get_brief_synopsis($movie_id);
               $movie_author_id = (int) get_post_field('post_author', $movie_id);
               $poster = get_the_post_thumbnail($movie_id, 'large', [
                   'class' => 'h-auto w-full object-cover',

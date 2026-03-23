@@ -11,7 +11,7 @@ $latest_collection_url = $latest_collection !== []
     : home_url('/');
 
 $past_months_url = add_query_arg('view', 'past-months', home_url('/'));
-$logo_markup = movies_minimal_get_inline_svg(
+$logo_markup = movies_theme_get_inline_svg(
     'images/logo1.svg',
     'h-auto w-full max-w-[280px] md:max-w-[360px] relative top-[7px]'
 );

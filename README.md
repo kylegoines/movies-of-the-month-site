@@ -1,4 +1,4 @@
-# Minimal WordPress Docker Project
+# WordPress Docker Project
 
 This project runs WordPress in Docker with a custom theme mounted from the local workspace.
 
@@ -55,7 +55,7 @@ npm run build
 
 ## Current homepage
 
-The homepage is intentionally minimal and renders:
+The homepage currently renders:
 
 - site title
 - a plain list of recent posts

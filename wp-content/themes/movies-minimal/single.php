@@ -7,7 +7,7 @@ get_header();
 
   <?php if (have_posts()) : ?>
     <?php while (have_posts()) : the_post(); ?>
-      <?php $subtitle = movies_minimal_get_subtitle(get_the_ID()); ?>
+      <?php $subtitle = movies_theme_get_subtitle(get_the_ID()); ?>
       <article>
         <header class="mt-[48px]">
           <h1 class="theme-strong text-4xl tracking-[-0.06em] md:text-6xl">

@@ -209,4 +209,141 @@
     border-color: color-mix(in srgb, var(--color-strong) 30%, transparent);
     @apply border-l-2 pl-5;
   }
+
+  .collection-heart__button {
+    color: var(--color-strong);
+    @apply inline-flex items-center gap-3 border-0 bg-transparent p-0 text-left text-sm font-bold uppercase tracking-[0.14em] transition-opacity hover:opacity-70;
+  }
+
+  .collection-heart__icon {
+    @apply text-2xl leading-none;
+  }
+
+  .collection-heart__count {
+    color: var(--color-foreground);
+    @apply text-sm font-normal tracking-[0];
+  }
+
+}
+
+.wp-theme-movies-minimal {
+    .home-signup {
+        --signup-background: var(--color-strong);
+        --signup-foreground: var(--color-background);
+        --signup-muted: color-mix(in srgb, var(--color-background) 72%, transparent);
+        --signup-border: color-mix(in srgb, var(--color-background) 32%, transparent);
+        background: var(--signup-background);
+        color: var(--signup-foreground);
+        position: relative;
+        padding: 0;
+        width: 100%;
+        @apply  border-t;
+    }
+
+    .home-signup__inner {
+        margin: 0 auto;
+        padding: 48px 32px;
+        padding-left: 45px;
+
+        /* @apply max-w-[1000px]; */
+    }
+
+    .home-signup__label {
+        background: var(--signup-background);
+        color: var(--signup-foreground);
+        border: 1px solid var(--signup-foreground);
+        display: inline-block;
+        position: absolute;
+        top: 0;
+        left: 1.5rem;
+        transform: translateY(-100%);
+        @apply cursor-pointer border-b-0 px-5 py-3 text-left md:left-8;
+    }
+
+    .home-signup__label-text {
+        transition: color 180ms ease;
+    }
+
+    .home-signup__label:hover .home-signup__label-text,
+    .home-signup__label:focus-visible .home-signup__label-text {
+        color: var(--secondary-accent);
+    }
+
+    .home-signup .aettaec-msg {
+        background: transparent;
+        box-shadow: none;
+        border-color: var(--signup-border);
+        color: var(--signup-foreground);
+        @apply mb-6 border-x-0 border-t-0 px-0 py-3 text-sm;
+    }
+
+    .home-signup .aettaec-success,
+    .home-signup .aettaec-error {
+        background: transparent;
+        color: var(--signup-foreground);
+    }
+
+    .home-signup .aettaec-form {
+        background: transparent;
+        box-shadow: none;
+        border: 0;
+        margin: 0;
+        padding: 0;
+        @apply grid gap-5;
+    }
+
+    .home-signup .aettaec-form label {
+        color: var(--signup-muted);
+        @apply text-xs font-bold uppercase tracking-[0.18em];
+    }
+
+    .home-signup .aettaec-form input[type="text"],
+    .home-signup .aettaec-form input[type="email"] {
+        color: var(--signup-foreground);
+        border-bottom: 1px solid var(--signup-border);
+        border-left: 0;
+        border-right: 0;
+        border-top: 0;
+        background: transparent;
+        box-shadow: none;
+        @apply w-full rounded-none border-x-0 border-t-0 px-0 py-3 text-lg outline-none;
+    }
+
+    .home-signup .aettaec-form input[type="text"]::placeholder,
+    .home-signup .aettaec-form input[type="email"]::placeholder {
+        color: var(--signup-muted);
+        opacity: 1;
+    }
+
+    .home-signup .aettaec-form input[type="text"]:focus,
+    .home-signup .aettaec-form input[type="email"]:focus {
+        border-bottom-color: var(--signup-foreground);
+    }
+
+    .home-signup .aettaec-consent {
+        @apply flex items-start gap-3 pt-2;
+    }
+
+    .home-signup .aettaec-consent input {
+        accent-color: var(--signup-foreground);
+        @apply mt-1 h-4 w-4 shrink-0;
+    }
+
+    .home-signup .aettaec-consent label {
+        color: var(--signup-foreground);
+        @apply text-sm normal-case tracking-[0];
+    }
+
+    .home-signup .aettaec-form button {
+        background: transparent;
+        color: var(--signup-foreground);
+        border: 0;
+        box-shadow: none;
+        @apply mt-3 w-fit px-0 py-0 text-lg font-bold transition-opacity hover:opacity-70;
+    }
+}
+
+main {
+    min-height: 100vh;
+    padding-bottom: 236px!important;
 }

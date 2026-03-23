@@ -1,36 +1,29 @@
 import './styles.css';
+import { CollectionHeartManager } from './js/collection-heart';
+import { SignupJumpButton } from './js/signup-jump-button';
+import { ThemeSwitcher } from './js/theme-switcher';
 
-const themeClasses = [
-  'theme-default',
-  'theme-inverse',
-  'theme-deep-pop',
-];
+class App {
+  constructor() {
+    this.themeSwitcher = new ThemeSwitcher(
+      document.getElementById('theme-debug-select')
+    );
+    this.signupJumpButton = new SignupJumpButton(
+      document.querySelector('[data-signup-jump]'),
+      document.getElementById('home-signup')
+    );
+    this.collectionHeartManager = new CollectionHeartManager(
+      document.querySelectorAll('[data-heart-button]')
+    );
+  }
 
-const storageKey = 'movies-minimal-theme';
-const defaultTheme = 'theme-default';
-
-function applyTheme(themeName) {
-  const root = document.documentElement;
-  const safeTheme = themeClasses.includes(themeName) ? themeName : defaultTheme;
-
-  root.classList.remove(...themeClasses);
-  root.classList.add(safeTheme);
-
-  return safeTheme;
+  init() {
+    this.themeSwitcher.init();
+    this.signupJumpButton.init();
+    this.collectionHeartManager.init();
+  }
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-  const select = document.getElementById('theme-debug-select');
-  const savedTheme = window.localStorage.getItem(storageKey) || defaultTheme;
-  const activeTheme = applyTheme(savedTheme);
-
-  if (!(select instanceof HTMLSelectElement)) {
-    return;
-  }
-
-  select.value = activeTheme;
-  select.addEventListener('change', (event) => {
-    const nextTheme = applyTheme(event.target.value);
-    window.localStorage.setItem(storageKey, nextTheme);
-  });
+  new App().init();
 });

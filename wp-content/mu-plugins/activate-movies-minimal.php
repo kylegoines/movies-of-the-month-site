@@ -1,6 +1,6 @@
 <?php
 /**
- * Plugin Name: Activate Movies Minimal Theme
+ * Plugin Name: Activate Movies Minimal
  * Description: Switches the local site to the bundled custom theme after installation.
  */
 

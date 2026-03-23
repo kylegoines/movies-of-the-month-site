@@ -3,8 +3,8 @@ get_header();
 
 $author_id = (int) get_queried_object_id();
 $author_bio = trim((string) get_the_author_meta('description', $author_id));
-$author_categories = movies_minimal_get_author_movie_categories($author_id);
-$author_category_stats = movies_minimal_get_author_movie_category_stats($author_id);
+$author_categories = movies_theme_get_author_movie_categories($author_id);
+$author_category_stats = movies_theme_get_author_movie_category_stats($author_id);
 $active_category = sanitize_title((string) get_query_var('movie_category'));
 ?>
 
@@ -70,7 +70,7 @@ $active_category = sanitize_title((string) get_query_var('movie_category'));
     <section class="mt-10 grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
       <?php while (have_posts()) : the_post(); ?>
         <?php
-        $subtitle = movies_minimal_get_subtitle(get_the_ID());
+        $subtitle = movies_theme_get_subtitle(get_the_ID());
         $poster = get_the_post_thumbnail(get_the_ID(), 'large', [
             'class' => 'h-auto w-full object-cover',
             'loading' => 'lazy',

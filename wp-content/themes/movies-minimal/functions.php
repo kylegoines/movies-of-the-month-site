@@ -118,7 +118,7 @@ add_action('wp_enqueue_scripts', function (): void {
 
     if (!file_exists($manifest_path)) {
         wp_enqueue_style(
-            'movies-minimal-theme-style',
+            'movies-theme-style',
             get_stylesheet_uri(),
             [],
             $theme_version
@@ -137,7 +137,7 @@ add_action('wp_enqueue_scripts', function (): void {
     if (!empty($entry['css'])) {
         foreach ($entry['css'] as $index => $css_file) {
             wp_enqueue_style(
-                'movies-minimal-app-' . $index,
+                'movie-app-' . $index,
                 $theme_uri . '/dist/' . $css_file,
                 [],
                 $theme_version
@@ -147,17 +147,35 @@ add_action('wp_enqueue_scripts', function (): void {
 
     if (!empty($entry['file'])) {
         wp_enqueue_script(
-            'movies-minimal-app',
+            'movie-app',
             $theme_uri . '/dist/' . $entry['file'],
             [],
             $theme_version,
             true
         );
-        wp_script_add_data('movies-minimal-app', 'type', 'module');
+        wp_script_add_data('movie-app', 'type', 'module');
+        wp_localize_script('movie-app', 'movieApp', [
+            'ajaxUrl' => admin_url('admin-ajax.php'),
+            'heartNonce' => wp_create_nonce('movies_theme_toggle_heart'),
+        ]);
     }
 });
 
-function movies_minimal_get_inline_svg(string $relative_path, string $class_name = ''): string
+add_filter('option_aettaec_options', function ($options) {
+    if (is_admin()) {
+        return $options;
+    }
+
+    if (!is_array($options)) {
+        $options = [];
+    }
+
+    $options['use_css'] = 0;
+
+    return $options;
+});
+
+function movies_theme_get_inline_svg(string $relative_path, string $class_name = ''): string
 {
     $svg_path = get_template_directory() . '/' . ltrim($relative_path, '/');
 
@@ -180,6 +198,140 @@ function movies_minimal_get_inline_svg(string $relative_path, string $class_name
         1
     ) ?? '';
 }
+
+add_action('init', function (): void {
+    if (is_admin() || wp_doing_ajax()) {
+        return;
+    }
+
+    if (isset($_COOKIE['movies_theme_visitor'])) {
+        return;
+    }
+
+    $visitor_id = wp_generate_uuid4();
+    $expires = time() + YEAR_IN_SECONDS;
+
+    $_COOKIE['movies_theme_visitor'] = $visitor_id;
+
+    setcookie('movies_theme_visitor', $visitor_id, [
+        'expires' => $expires,
+        'path' => COOKIEPATH ?: '/',
+        'domain' => COOKIE_DOMAIN ?: '',
+        'secure' => is_ssl(),
+        'httponly' => true,
+        'samesite' => 'Lax',
+    ]);
+});
+
+function movies_theme_get_visitor_id(): string
+{
+    return isset($_COOKIE['movies_theme_visitor'])
+        ? sanitize_text_field(wp_unslash($_COOKIE['movies_theme_visitor']))
+        : '';
+}
+
+function movies_theme_get_visitor_hash(): string
+{
+    $visitor_id = movies_theme_get_visitor_id();
+
+    if ($visitor_id === '') {
+        return '';
+    }
+
+    return hash_hmac('sha256', $visitor_id, wp_salt('auth'));
+}
+
+function movies_theme_get_collection_heart_hashes(int $post_id): array
+{
+    $hashes = get_post_meta($post_id, '_movies_theme_heart_hashes', true);
+
+    if (!is_array($hashes)) {
+        return [];
+    }
+
+    return array_values(array_filter(array_map('strval', $hashes)));
+}
+
+function movies_theme_get_collection_starting_hearts(int $post_id): int
+{
+    $starting_hearts = function_exists('get_field')
+        ? get_field('starting_hearts', $post_id)
+        : get_post_meta($post_id, 'starting_hearts', true);
+
+    return max(0, (int) $starting_hearts);
+}
+
+function movies_theme_get_collection_heart_count(int $post_id): int
+{
+    return movies_theme_get_collection_starting_hearts($post_id)
+        + count(movies_theme_get_collection_heart_hashes($post_id));
+}
+
+function movies_theme_collection_is_liked_by_current_visitor(int $post_id): bool
+{
+    $visitor_hash = movies_theme_get_visitor_hash();
+
+    if ($visitor_hash === '') {
+        return false;
+    }
+
+    return in_array($visitor_hash, movies_theme_get_collection_heart_hashes($post_id), true);
+}
+
+function movies_theme_update_collection_heart_state(int $post_id, bool $should_like): array
+{
+    $hashes = movies_theme_get_collection_heart_hashes($post_id);
+    $visitor_hash = movies_theme_get_visitor_hash();
+
+    if ($visitor_hash === '') {
+        return [
+            'liked' => false,
+            'count' => movies_theme_get_collection_heart_count($post_id),
+        ];
+    }
+
+    $already_liked = in_array($visitor_hash, $hashes, true);
+
+    if ($should_like && !$already_liked) {
+        $hashes[] = $visitor_hash;
+    }
+
+    if (!$should_like && $already_liked) {
+        $hashes = array_values(array_filter(
+            $hashes,
+            static fn(string $hash): bool => $hash !== $visitor_hash
+        ));
+    }
+
+    update_post_meta($post_id, '_movies_theme_heart_hashes', $hashes);
+    update_post_meta($post_id, '_movies_theme_heart_count', count($hashes));
+
+    return [
+        'liked' => in_array($visitor_hash, $hashes, true),
+        'count' => movies_theme_get_collection_heart_count($post_id),
+    ];
+}
+
+function movies_theme_handle_collection_heart_ajax(): void
+{
+    check_ajax_referer('movies_theme_toggle_heart', 'nonce');
+
+    $post_id = isset($_POST['postId']) ? absint($_POST['postId']) : 0;
+    $liked = isset($_POST['liked']) && wp_unslash($_POST['liked']) === '1';
+
+    if ($post_id < 1 || get_post_type($post_id) !== 'collection') {
+        wp_send_json_error([
+            'message' => __('Invalid collection.', 'movies-theme'),
+        ], 400);
+    }
+
+    $result = movies_theme_update_collection_heart_state($post_id, $liked);
+
+    wp_send_json_success($result);
+}
+
+add_action('wp_ajax_movies_theme_toggle_heart', 'movies_theme_handle_collection_heart_ajax');
+add_action('wp_ajax_nopriv_movies_theme_toggle_heart', 'movies_theme_handle_collection_heart_ajax');
 
 add_filter('query_vars', function (array $vars): array {
     $vars[] = 'movie_category';
@@ -235,11 +387,11 @@ add_action('acf/init', function (): void {
     }
 
     acf_add_local_field_group([
-        'key' => 'group_movies_minimal_post_intro',
+        'key' => 'group_movies_theme_post_intro',
         'title' => 'Post Intro',
         'fields' => [
             [
-                'key' => 'field_movies_minimal_post_intro',
+                'key' => 'field_movies_theme_post_intro',
                 'label' => 'Intro',
                 'name' => 'intro',
                 'type' => 'wysiwyg',
@@ -266,11 +418,11 @@ add_action('acf/init', function (): void {
     ]);
 
     acf_add_local_field_group([
-        'key' => 'group_movies_minimal_movie_details',
+        'key' => 'group_movies_theme_movie_details',
         'title' => 'Movie Details',
         'fields' => [
             [
-                'key' => 'field_movies_minimal_movie_subtitle',
+                'key' => 'field_movies_theme_movie_subtitle',
                 'label' => 'Subtitle',
                 'name' => 'subtitle',
                 'type' => 'text',
@@ -278,7 +430,7 @@ add_action('acf/init', function (): void {
                 'required' => 0,
             ],
             [
-                'key' => 'field_movies_minimal_movie_year',
+                'key' => 'field_movies_theme_movie_year',
                 'label' => 'Year',
                 'name' => 'year',
                 'type' => 'number',
@@ -289,7 +441,7 @@ add_action('acf/init', function (): void {
                 'step' => 1,
             ],
             [
-                'key' => 'field_movies_minimal_movie_runtime',
+                'key' => 'field_movies_theme_movie_runtime',
                 'label' => 'Runtime',
                 'name' => 'runtime',
                 'type' => 'text',
@@ -297,7 +449,7 @@ add_action('acf/init', function (): void {
                 'required' => 0,
             ],
             [
-                'key' => 'field_movies_minimal_movie_brief_synopsis',
+                'key' => 'field_movies_theme_movie_brief_synopsis',
                 'label' => 'Brief Synopsis',
                 'name' => 'brief_synopsis',
                 'type' => 'textarea',
@@ -322,11 +474,22 @@ add_action('acf/init', function (): void {
     ]);
 
     acf_add_local_field_group([
-        'key' => 'group_movies_minimal_collection_movies',
+        'key' => 'group_movies_theme_collection_movies',
         'title' => 'Collection Movies',
         'fields' => [
             [
-                'key' => 'field_movies_minimal_collection_movies',
+                'key' => 'field_movies_theme_collection_starting_hearts',
+                'label' => 'Starting Hearts',
+                'name' => 'starting_hearts',
+                'type' => 'number',
+                'instructions' => 'Optional starting heart count shown before new visitor hearts are added.',
+                'required' => 0,
+                'default_value' => 0,
+                'min' => 0,
+                'step' => 1,
+            ],
+            [
+                'key' => 'field_movies_theme_collection_movies',
                 'label' => 'Movies',
                 'name' => 'movies',
                 'type' => 'relationship',
@@ -361,11 +524,11 @@ add_action('acf/init', function (): void {
     ]);
 
     acf_add_local_field_group([
-        'key' => 'group_movies_minimal_home_intro_meta',
+        'key' => 'group_movies_theme_home_intro_meta',
         'title' => 'Home Intro Meta',
         'fields' => [
             [
-                'key' => 'field_movies_minimal_home_intro_link',
+                'key' => 'field_movies_theme_home_intro_link',
                 'label' => 'Quotation Link',
                 'name' => 'quotation_link',
                 'type' => 'url',
@@ -402,7 +565,7 @@ add_action('acf/input/admin_head', function (): void {
     <?php
 });
 
-function movies_minimal_get_post_intro(int $post_id): string
+function movies_theme_get_post_intro(int $post_id): string
 {
     if (!function_exists('get_field')) {
         return '';
@@ -411,7 +574,7 @@ function movies_minimal_get_post_intro(int $post_id): string
     return trim((string) get_field('intro', $post_id));
 }
 
-function movies_minimal_get_subtitle(int $post_id): string
+function movies_theme_get_subtitle(int $post_id): string
 {
     if (!function_exists('get_field')) {
         return '';
@@ -420,7 +583,7 @@ function movies_minimal_get_subtitle(int $post_id): string
     return trim((string) get_field('subtitle', $post_id));
 }
 
-function movies_minimal_get_year(int $post_id): string
+function movies_theme_get_year(int $post_id): string
 {
     if (!function_exists('get_field')) {
         return '';
@@ -429,7 +592,7 @@ function movies_minimal_get_year(int $post_id): string
     return trim((string) get_field('year', $post_id));
 }
 
-function movies_minimal_get_runtime(int $post_id): string
+function movies_theme_get_runtime(int $post_id): string
 {
     if (!function_exists('get_field')) {
         return '';
@@ -438,7 +601,7 @@ function movies_minimal_get_runtime(int $post_id): string
     return trim((string) get_field('runtime', $post_id));
 }
 
-function movies_minimal_get_brief_synopsis(int $post_id): string
+function movies_theme_get_brief_synopsis(int $post_id): string
 {
     if (!function_exists('get_field')) {
         return '';
@@ -447,7 +610,7 @@ function movies_minimal_get_brief_synopsis(int $post_id): string
     return trim((string) get_field('brief_synopsis', $post_id));
 }
 
-function movies_minimal_get_collection_movies(int $post_id): array
+function movies_theme_get_collection_movies(int $post_id): array
 {
     if (!function_exists('get_field')) {
         return [];
@@ -462,7 +625,7 @@ function movies_minimal_get_collection_movies(int $post_id): array
     return array_values(array_filter(array_map('intval', $movies)));
 }
 
-function movies_minimal_get_movie_category_list(int $post_id): string
+function movies_theme_get_movie_category_list(int $post_id): string
 {
     $terms = get_the_terms($post_id, 'category');
 
@@ -477,7 +640,7 @@ function movies_minimal_get_movie_category_list(int $post_id): string
     return implode(', ', $names);
 }
 
-function movies_minimal_get_list_summary(int $post_id): string
+function movies_theme_get_list_summary(int $post_id): string
 {
     $excerpt = trim(get_the_excerpt($post_id));
 
@@ -485,10 +648,10 @@ function movies_minimal_get_list_summary(int $post_id): string
         return $excerpt;
     }
 
-    return movies_minimal_get_post_intro($post_id);
+    return movies_theme_get_post_intro($post_id);
 }
 
-function movies_minimal_get_home_intro(): ?WP_Post
+function movies_theme_get_home_intro(): ?WP_Post
 {
     $posts = get_posts([
         'post_type' => 'home_intro',
@@ -504,7 +667,7 @@ function movies_minimal_get_home_intro(): ?WP_Post
     return $posts[0];
 }
 
-function movies_minimal_get_home_intro_link(int $post_id): string
+function movies_theme_get_home_intro_link(int $post_id): string
 {
     if (!function_exists('get_field')) {
         return '';
@@ -513,7 +676,7 @@ function movies_minimal_get_home_intro_link(int $post_id): string
     return trim((string) get_field('quotation_link', $post_id));
 }
 
-function movies_minimal_get_author_movie_categories(int $author_id, int $limit = 4): array
+function movies_theme_get_author_movie_categories(int $author_id, int $limit = 4): array
 {
     $movie_ids = get_posts([
         'post_type' => 'movies',
@@ -545,7 +708,7 @@ function movies_minimal_get_author_movie_categories(int $author_id, int $limit =
     return array_slice(array_values($unique_terms), 0, $limit);
 }
 
-function movies_minimal_get_author_movie_category_stats(int $author_id, int $limit = 4): array
+function movies_theme_get_author_movie_category_stats(int $author_id, int $limit = 4): array
 {
     $movie_ids = get_posts([
         'post_type' => 'movies',
