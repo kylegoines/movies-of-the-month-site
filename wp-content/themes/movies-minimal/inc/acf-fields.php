@@ -5,6 +5,8 @@ add_action('acf/init', function (): void {
         return;
     }
 
+    $scale_label_config = movies_theme_get_scale_label_config();
+
     acf_add_local_field_group([
         'key' => 'group_movies_theme_post_intro',
         'title' => 'Post Intro',
@@ -97,6 +99,58 @@ add_action('acf/init', function (): void {
                 'required' => 0,
                 'rows' => 4,
                 'new_lines' => 'br',
+            ],
+            [
+                'key' => 'field_movies_theme_movie_funny',
+                'label' => 'Funny',
+                'name' => 'funny',
+                'type' => 'select',
+                'instructions' => 'How funny the movie is.',
+                'required' => 0,
+                'choices' => $scale_label_config['funny'],
+                'default_value' => '0',
+                'return_format' => 'value',
+                'allow_null' => 0,
+                'ui' => 0,
+            ],
+            [
+                'key' => 'field_movies_theme_movie_scary',
+                'label' => 'Scary',
+                'name' => 'scary',
+                'type' => 'select',
+                'instructions' => 'How scary the movie is.',
+                'required' => 0,
+                'choices' => $scale_label_config['scary'],
+                'default_value' => '0',
+                'return_format' => 'value',
+                'allow_null' => 0,
+                'ui' => 0,
+            ],
+            [
+                'key' => 'field_movies_theme_movie_sadness',
+                'label' => 'Sadness',
+                'name' => 'sadness',
+                'type' => 'select',
+                'instructions' => 'How sad the movie is.',
+                'required' => 0,
+                'choices' => $scale_label_config['sadness'],
+                'default_value' => '0',
+                'return_format' => 'value',
+                'allow_null' => 0,
+                'ui' => 0,
+            ],
+            [
+                'key' => 'field_movies_theme_movie_pacing',
+                'label' => 'Pacing',
+                'name' => 'pacing',
+                'type' => 'select',
+                'instructions' => 'How quickly the movie moves.',
+                'required' => 0,
+                'choices' => $scale_label_config['pacing'],
+                'default_value' => '0',
+                'return_format' => 'value',
+                'allow_null' => 0,
+                'ui' => 0,
             ],
             [
                 'key' => 'field_movies_theme_movie_featured_content',
