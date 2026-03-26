@@ -101,6 +101,14 @@ add_action('acf/init', function (): void {
                 'new_lines' => 'br',
             ],
             [
+                'key' => 'field_movies_theme_movie_genre',
+                'label' => 'Genre',
+                'name' => 'genre',
+                'type' => 'text',
+                'instructions' => 'Short genre label used on the filter page.',
+                'required' => 0,
+            ],
+            [
                 'key' => 'field_movies_theme_movie_funny',
                 'label' => 'Funny',
                 'name' => 'funny',
