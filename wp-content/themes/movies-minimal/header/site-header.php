@@ -43,7 +43,9 @@ $logo_markup = movies_theme_get_inline_svg(
         </a>
       </li>
       <li>
-        <span class="cursor-default">About</span>
+        <a class="transition-opacity hover:opacity-70" href="<?php echo esc_url(home_url('/filter/')); ?>">
+          Filters
+        </a>
       </li>
       <li>
         <button class="cursor-pointer transition-opacity hover:opacity-70" type="button" data-signup-jump>

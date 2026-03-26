@@ -87,6 +87,15 @@ function movies_theme_get_featured_image_id(int $post_id): int
     return (int) get_field('featured_image', $post_id);
 }
 
+function movies_theme_is_hidden_gem(int $post_id): bool
+{
+    if (!function_exists('get_field')) {
+        return false;
+    }
+
+    return (bool) get_field('hidden_gem', $post_id);
+}
+
 function movies_theme_get_collection_movies(int $post_id): array
 {
     if (!function_exists('get_field')) {

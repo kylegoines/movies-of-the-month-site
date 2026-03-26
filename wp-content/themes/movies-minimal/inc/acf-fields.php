@@ -53,6 +53,16 @@ add_action('acf/init', function (): void {
                 'default_value' => 0,
             ],
             [
+                'key' => 'field_movies_theme_movie_hidden_gem',
+                'label' => 'Hidden Gem',
+                'name' => 'hidden_gem',
+                'type' => 'true_false',
+                'instructions' => 'Add the hidden gem treatment to this movie.',
+                'required' => 0,
+                'ui' => 1,
+                'default_value' => 0,
+            ],
+            [
                 'key' => 'field_movies_theme_movie_featured_image',
                 'label' => 'Featured Image',
                 'name' => 'featured_image',

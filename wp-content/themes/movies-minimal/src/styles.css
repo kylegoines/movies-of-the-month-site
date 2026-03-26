@@ -18,6 +18,7 @@
   --color-muted: #7a7a7a;
   --primary-accent: #1f1f1f;
   --secondary-accent: #ececec;
+  --hidden-gem-accent: #d946ef;
 }
 
 :root.theme-default {
@@ -143,14 +144,83 @@
     z-index: 2;
   }
 
+  .poster-frame__badge {
+    position: absolute;
+    right: -24px;
+    bottom: -24px;
+    z-index: 4;
+    color: var(--hidden-gem-accent);
+    pointer-events: none;
+  }
+
+  .poster-frame__badge svg {
+    display: block;
+    width: 44px;
+    height: 44px;
+    color: var(--hidden-gem-accent);
+  }
+
+  .poster-frame__badge--featured {
+    right: 0;
+    bottom: 0;
+  }
+
+  .movie-title__gem {
+    display: inline-flex;
+    color: inherit;
+    line-height: 1;
+  }
+
+  .movie-title--hidden-gem {
+    color: var(--hidden-gem-accent);
+  }
+
+  .movie-title__gem svg {
+    display: block;
+    width: 18px;
+    height: 18px;
+    color: currentColor;
+  }
+
+  .movie-title__gem path,
+  .movie-title__gem rect,
+  .movie-title__gem circle,
+  .movie-title__gem polygon,
+  .movie-title__gem ellipse {
+    fill: currentColor !important;
+    stroke: currentColor !important;
+  }
+
+  .poster-frame__badge path,
+  .poster-frame__badge rect,
+  .poster-frame__badge circle,
+  .poster-frame__badge polygon,
+  .poster-frame__badge ellipse {
+    fill: currentColor !important;
+    stroke: currentColor !important;
+  }
+
   .poster-frame::before {
     content: "";
     position: absolute;
     inset: 0;
     transform: translate(-20px, -20px);
     border: 2px solid var(--color-strong);
+    background-color: transparent;
     z-index: 1;
     pointer-events: none;
+  }
+
+  .poster-frame--hidden-gem::before {
+    border-color: var(--hidden-gem-accent);
+  }
+
+  .movie-card:hover .poster-frame::before {
+    background-color: var(--color-strong);
+  }
+
+  .movie-card:hover .poster-frame--hidden-gem::before {
+    background-color: var(--hidden-gem-accent);
   }
 
   .post-content {
@@ -227,6 +297,10 @@
   .filter-heading__term {
     color: var(--color-strong);
     @apply cursor-pointer border-0 bg-transparent p-0 font-bold transition-opacity hover:opacity-60 focus:outline-none;
+  }
+
+  .hidden-gem-label {
+    color: var(--hidden-gem-accent);
   }
 
 }

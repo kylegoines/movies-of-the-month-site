@@ -71,6 +71,10 @@ $active_category = sanitize_title((string) get_query_var('movie_category'));
       <?php while (have_posts()) : the_post(); ?>
         <?php
         $subtitle = movies_theme_get_subtitle(get_the_ID());
+        $is_hidden_gem = movies_theme_is_hidden_gem(get_the_ID());
+        $gem_badge = $is_hidden_gem
+            ? movies_theme_get_inline_svg('images/gem.svg', 'theme-gem-badge')
+            : '';
         $poster = get_the_post_thumbnail(get_the_ID(), 'large', [
             'class' => 'h-auto w-full object-cover',
             'loading' => 'lazy',
@@ -79,7 +83,10 @@ $active_category = sanitize_title((string) get_query_var('movie_category'));
         <article>
           <a class="block no-underline transition-opacity hover:opacity-70" href="<?php the_permalink(); ?>">
             <?php if ($poster !== '') : ?>
-              <div class="poster-frame theme-surface">
+              <div class="poster-frame theme-surface <?php echo $is_hidden_gem ? 'poster-frame--hidden-gem' : ''; ?>">
+                <?php if ($gem_badge !== '') : ?>
+                  <span class="poster-frame__badge"><?php echo $gem_badge; ?></span>
+                <?php endif; ?>
                 <?php echo $poster; ?>
               </div>
             <?php endif; ?>

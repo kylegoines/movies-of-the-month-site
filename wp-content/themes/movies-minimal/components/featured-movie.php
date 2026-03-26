@@ -10,6 +10,10 @@ $featured_subtitle = movies_theme_get_subtitle($featured_movie_id);
 $featured_year = movies_theme_get_year($featured_movie_id);
 $featured_content = movies_theme_get_featured_content($featured_movie_id);
 $featured_image_id = movies_theme_get_featured_image_id($featured_movie_id);
+$featured_is_hidden_gem = movies_theme_is_hidden_gem($featured_movie_id);
+$featured_gem_badge = $featured_is_hidden_gem
+    ? movies_theme_get_inline_svg('images/gem.svg', 'theme-gem-badge')
+    : '';
 $featured_poster = $featured_image_id > 0
     ? wp_get_attachment_image($featured_image_id, 'large', false, [
         'class' => 'h-auto w-full object-cover',
@@ -35,7 +39,10 @@ $featured_poster = $featured_image_id > 0
     </a>
       <?php if ($featured_poster !== '') : ?>
         <a class="block no-underline mt-6" href="<?php echo esc_url(get_permalink($featured_movie_id)); ?>">
-          <div class="">
+          <div class="relative <?php echo $featured_is_hidden_gem ? 'theme-surface' : ''; ?>">
+            <?php if ($featured_gem_badge !== '') : ?>
+              <span class="poster-frame__badge poster-frame__badge--featured"><?php echo $featured_gem_badge; ?></span>
+            <?php endif; ?>
             <?php echo $featured_poster; ?>
           </div>
         </a>

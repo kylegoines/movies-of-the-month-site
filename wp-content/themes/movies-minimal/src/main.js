@@ -1,6 +1,7 @@
 import './styles.css';
 import { CollectionHeartManager } from './js/collection-heart';
 import { FilterPageHeading } from './js/filter-page-heading';
+import { FilterPagePanel } from './js/filter-page-panel';
 import { SignupJumpButton } from './js/signup-jump-button';
 import { ThemeSwitcher } from './js/theme-switcher';
 
@@ -15,7 +16,13 @@ class App {
     );
     this.filterPageHeading = new FilterPageHeading(
       document.querySelector('[data-filter-form]'),
-      document.querySelector('[data-filter-heading]')
+      document.querySelector('[data-filter-heading]'),
+      document.querySelector('[data-filter-results]')
+    );
+    this.filterPagePanel = new FilterPagePanel(
+      document.querySelector('[data-filter-toggle]'),
+      document.querySelector('[data-filter-panel]'),
+      document.querySelector('[data-filter-state]')
     );
     this.collectionHeartManager = new CollectionHeartManager(
       document.querySelectorAll('[data-heart-button]')
@@ -25,6 +32,7 @@ class App {
   init() {
     this.themeSwitcher.init();
     this.signupJumpButton.init();
+    this.filterPagePanel.init();
     this.filterPageHeading.init();
     this.collectionHeartManager.init();
   }

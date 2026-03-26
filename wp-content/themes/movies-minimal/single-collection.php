@@ -15,7 +15,7 @@ get_header();
       ?>
       <article>
         <header class="mt-[48px] max-w-[720px]">
-          <h1 class="theme-strong text-4xl tracking-[-0.06em] md:text-6xl">
+          <h1 class="theme-strong m-0 text-4xl tracking-[-0.06em] md:text-6xl">
             <?php the_title(); ?>
           </h1>
 
@@ -49,6 +49,10 @@ get_header();
               $runtime = movies_theme_get_runtime($movie_id);
               $genre = movies_theme_get_movie_category_list($movie_id);
               $brief_synopsis = movies_theme_get_brief_synopsis($movie_id);
+              $is_hidden_gem = movies_theme_is_hidden_gem($movie_id);
+              $gem_badge = $is_hidden_gem
+                  ? movies_theme_get_inline_svg('images/gem.svg', 'theme-gem-badge')
+                  : '';
               $movie_author_id = (int) get_post_field('post_author', $movie_id);
               $poster = get_the_post_thumbnail($movie_id, 'large', [
                   'class' => 'h-auto w-full object-cover',
@@ -58,14 +62,25 @@ get_header();
               <article class="theme-border grid gap-6 border-t pt-6 md:grid-cols-[220px_minmax(0,1fr)] md:gap-10">
                 <div>
                   <?php if ($poster !== '') : ?>
-                    <div class="poster-frame theme-surface">
-                      <?php echo $poster; ?>
-                    </div>
+                    <a class="movie-card block no-underline" href="<?php echo esc_url(get_permalink($movie_id)); ?>">
+                      <div class="poster-frame theme-surface <?php echo $is_hidden_gem ? 'poster-frame--hidden-gem' : ''; ?>">
+                        <?php if ($gem_badge !== '') : ?>
+                          <span class="poster-frame__badge"><?php echo $gem_badge; ?></span>
+                        <?php endif; ?>
+                        <?php echo $poster; ?>
+                      </div>
+                    </a>
                   <?php endif; ?>
                 </div>
 
                 <div class="max-w-[720px]">
                   <div class="theme-body text-sm md:text-base">
+                    <?php if ($is_hidden_gem) : ?>
+                      <p class="hidden-gem-label text-sm font-bold tracking-[0.04em]">
+                        Hidden Gem
+                      </p>
+                    <?php endif; ?>
+
                     <p>
                       <span class="theme-strong font-bold">Staff member:</span>
                       <a

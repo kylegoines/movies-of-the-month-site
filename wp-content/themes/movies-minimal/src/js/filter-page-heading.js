@@ -1,10 +1,13 @@
 export class FilterPageHeading {
-  constructor(form, heading) {
+  constructor(form, heading, results) {
     this.form = form;
     this.heading = heading;
+    this.results = results;
     this.textNode = this.heading?.querySelector('span') ?? this.heading;
     this.baseText = this.heading?.dataset.baseText || 'Movies that are...';
     this.selects = Array.from(this.form?.querySelectorAll('[data-filter-select]') || []);
+    this.isPending = false;
+    this.stateField = this.form?.querySelector('[data-filter-state]') || null;
   }
 
   getSelectedFilters() {
@@ -18,7 +21,7 @@ export class FilterPageHeading {
       )
       .map(({ name, label }) => ({
         name,
-        label: label.toLowerCase(),
+        label: name === 'category' ? label : label.toLowerCase(),
       }));
   }
 
@@ -36,7 +39,8 @@ export class FilterPageHeading {
       }
 
       select.value = '';
-      this.form.requestSubmit();
+      this.updateHeading();
+      void this.fetchResults();
     });
 
     return button;
@@ -46,14 +50,75 @@ export class FilterPageHeading {
     this.textNode.append(document.createTextNode(text));
   }
 
+  buildRequestUrl() {
+    const requestUrl = new URL(this.form.action, window.location.origin);
+    const formData = new FormData(this.form);
+
+    requestUrl.search = '';
+
+    formData.forEach((value, key) => {
+      if (typeof value !== 'string' || value === '') {
+        return;
+      }
+
+      requestUrl.searchParams.set(key, value);
+    });
+
+    return requestUrl;
+  }
+
+  async fetchResults() {
+    if (!this.results || this.isPending) {
+      return;
+    }
+
+    const requestUrl = this.buildRequestUrl();
+
+    this.isPending = true;
+    this.results.style.opacity = '0.5';
+
+    try {
+      const response = await fetch(requestUrl.toString(), {
+        headers: {
+          'X-Requested-With': 'XMLHttpRequest',
+        },
+      });
+      const markup = await response.text();
+      const nextDocument = new DOMParser().parseFromString(markup, 'text/html');
+      const nextResults = nextDocument.querySelector('[data-filter-results]');
+      const nextStateField = nextDocument.querySelector('[data-filter-state]');
+
+      if (!nextResults) {
+        return;
+      }
+
+      this.results.innerHTML = nextResults.innerHTML;
+
+      if (this.stateField && nextStateField instanceof HTMLInputElement) {
+        this.stateField.value = nextStateField.value;
+      }
+
+      window.history.replaceState({}, '', requestUrl);
+    } finally {
+      this.results.style.opacity = '';
+      this.isPending = false;
+    }
+  }
+
   updateHeading() {
     if (!this.textNode) {
       return;
     }
 
     const selectedFilters = this.getSelectedFilters();
+    const categoryFilter = selectedFilters.find(({ name }) => name === 'category');
     const pacingFilter = selectedFilters.find(({ name }) => name === 'pacing');
-    const nonPacingFilters = selectedFilters.filter(({ name }) => name !== 'pacing');
+    const nonPacingFilters = selectedFilters.filter(
+      ({ name }) => name !== 'pacing' && name !== 'category'
+    );
+    const movieLead = categoryFilter
+      ? `${categoryFilter.label} movies`
+      : 'Movies';
 
     this.textNode.textContent = '';
 
@@ -62,8 +127,13 @@ export class FilterPageHeading {
       return;
     }
 
+    if (categoryFilter && !pacingFilter && nonPacingFilters.length === 0) {
+      this.textNode.textContent = movieLead;
+      return;
+    }
+
     if (pacingFilter && nonPacingFilters.length === 0) {
-      this.appendText('Movies that have ');
+      this.appendText(`${movieLead} that have `);
       this.textNode.append(this.createTermButton({
         name: pacingFilter.name,
         label: pacingFilter.label,
@@ -73,7 +143,7 @@ export class FilterPageHeading {
     }
 
     if (pacingFilter) {
-      this.appendText('Movies that are ');
+      this.appendText(`${movieLead} that are `);
       nonPacingFilters.forEach((filter, index) => {
         if (index > 0) {
           this.appendText(', ');
@@ -90,7 +160,7 @@ export class FilterPageHeading {
       return;
     }
 
-    this.appendText('Movies that are ');
+    this.appendText(`${movieLead} that are `);
     nonPacingFilters.forEach((filter, index) => {
       if (index > 0) {
         this.appendText(', ');
@@ -101,16 +171,22 @@ export class FilterPageHeading {
   }
 
   init() {
-    if (!this.form || !this.heading) {
+    if (!this.form || !this.heading || !this.results) {
       return;
     }
 
     this.updateHeading();
 
+    this.form.addEventListener('submit', (event) => {
+      event.preventDefault();
+      this.updateHeading();
+      void this.fetchResults();
+    });
+
     this.selects.forEach((select) => {
       select.addEventListener('change', () => {
         this.updateHeading();
-        this.form.requestSubmit();
+        void this.fetchResults();
       });
     });
   }
