@@ -97,12 +97,12 @@ $movies_query = new WP_Query($movies_query_args);
         <?php endif; ?>
 
         <section class="mt-12">
-          <form action="<?php echo esc_url(get_permalink()); ?>" class="grid gap-5 md:grid-cols-2 xl:grid-cols-[repeat(4,minmax(0,1fr))_auto] xl:items-end" method="get" data-filter-form>
+          <form action="<?php echo esc_url(get_permalink()); ?>" class="grid gap-5 md:grid-cols-2 xl:grid-cols-5 xl:items-end" method="get" data-filter-form>
             <?php if (is_page() && !get_option('permalink_structure')) : ?>
               <input type="hidden" name="page_id" value="<?php echo esc_attr((string) get_the_ID()); ?>">
             <?php endif; ?>
-
-            <label class="block md:col-span-2 xl:col-span-5">
+            <!-- genera later -->
+            <!-- <label class="block md:col-span-2 xl:col-span-5">
               <span class="theme-muted mb-2 block text-xs font-bold uppercase tracking-[0.18em]">
                 Genre
               </span>
@@ -121,7 +121,7 @@ $movies_query = new WP_Query($movies_query_args);
                 </select>
                 <span class="theme-strong pointer-events-none absolute right-1 top-1/2 h-2.5 w-2.5 -translate-y-1/2 rotate-45 border-b-2 border-r-2" aria-hidden="true"></span>
               </span>
-            </label>
+            </label> -->
 
             <?php foreach ($movie_filter_keys as $movie_filter_key) : ?>
               <label class="block">
@@ -149,11 +149,6 @@ $movies_query = new WP_Query($movies_query_args);
               </label>
             <?php endforeach; ?>
 
-            <div class="flex gap-3 xl:justify-end">
-              <button class="theme-strong theme-border cursor-pointer border px-5 py-3 font-bold transition-opacity hover:opacity-70" type="submit">
-                Filter
-              </button>
-            </div>
           </form>
         </section>
 

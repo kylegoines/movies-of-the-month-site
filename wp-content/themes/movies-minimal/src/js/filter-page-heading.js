@@ -22,6 +22,30 @@ export class FilterPageHeading {
       }));
   }
 
+  createTermButton({ name, label, suffix = '' }) {
+    const button = document.createElement('button');
+    button.className = 'filter-heading__term';
+    button.type = 'button';
+    button.dataset.filterRemove = name;
+    button.textContent = `${label}${suffix}`;
+    button.addEventListener('click', () => {
+      const select = this.selects.find((entry) => entry.name === name);
+
+      if (!select) {
+        return;
+      }
+
+      select.value = '';
+      this.form.requestSubmit();
+    });
+
+    return button;
+  }
+
+  appendText(text) {
+    this.textNode.append(document.createTextNode(text));
+  }
+
   updateHeading() {
     if (!this.textNode) {
       return;
@@ -29,26 +53,51 @@ export class FilterPageHeading {
 
     const selectedFilters = this.getSelectedFilters();
     const pacingFilter = selectedFilters.find(({ name }) => name === 'pacing');
-    const nonPacingLabels = selectedFilters
-      .filter(({ name }) => name !== 'pacing')
-      .map(({ label }) => label);
+    const nonPacingFilters = selectedFilters.filter(({ name }) => name !== 'pacing');
+
+    this.textNode.textContent = '';
 
     if (selectedFilters.length === 0) {
       this.textNode.textContent = this.baseText;
       return;
     }
 
-    if (pacingFilter && nonPacingLabels.length === 0) {
-      this.textNode.textContent = `Movies that have ${pacingFilter.label} pacing`;
+    if (pacingFilter && nonPacingFilters.length === 0) {
+      this.appendText('Movies that have ');
+      this.textNode.append(this.createTermButton({
+        name: pacingFilter.name,
+        label: pacingFilter.label,
+        suffix: ' pacing',
+      }));
       return;
     }
 
     if (pacingFilter) {
-      this.textNode.textContent = `Movies that are ${nonPacingLabels.join(', ')} with ${pacingFilter.label} pacing`;
+      this.appendText('Movies that are ');
+      nonPacingFilters.forEach((filter, index) => {
+        if (index > 0) {
+          this.appendText(', ');
+        }
+
+        this.textNode.append(this.createTermButton(filter));
+      });
+      this.appendText(' with ');
+      this.textNode.append(this.createTermButton({
+        name: pacingFilter.name,
+        label: pacingFilter.label,
+        suffix: ' pacing',
+      }));
       return;
     }
 
-    this.textNode.textContent = `Movies that are ${nonPacingLabels.join(', ')}`;
+    this.appendText('Movies that are ');
+    nonPacingFilters.forEach((filter, index) => {
+      if (index > 0) {
+        this.appendText(', ');
+      }
+
+      this.textNode.append(this.createTermButton(filter));
+    });
   }
 
   init() {
@@ -59,7 +108,10 @@ export class FilterPageHeading {
     this.updateHeading();
 
     this.selects.forEach((select) => {
-      select.addEventListener('change', () => this.updateHeading());
+      select.addEventListener('change', () => {
+        this.updateHeading();
+        this.form.requestSubmit();
+      });
     });
   }
 }

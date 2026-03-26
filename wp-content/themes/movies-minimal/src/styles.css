@@ -224,6 +224,11 @@
     @apply text-sm font-normal tracking-[0];
   }
 
+  .filter-heading__term {
+    color: var(--color-strong);
+    @apply cursor-pointer border-0 bg-transparent p-0 font-bold transition-opacity hover:opacity-60 focus:outline-none;
+  }
+
 }
 
 .wp-theme-movies-minimal {
