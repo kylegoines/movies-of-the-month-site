@@ -10,28 +10,12 @@ get_header();
       <?php
       $collection_id = get_the_ID();
       $movie_ids = movies_theme_get_collection_movies($collection_id);
-      $heart_count = movies_theme_get_collection_heart_count($collection_id);
-      $is_liked = movies_theme_collection_is_liked_by_current_visitor($collection_id);
       ?>
       <article>
         <header class="mt-[48px] max-w-[720px]">
           <h1 class="theme-strong m-0 text-4xl tracking-[-0.06em] md:text-6xl">
             <?php the_title(); ?>
           </h1>
-
-          <div class="collection-heart mt-6">
-            <button
-              class="collection-heart__button"
-              type="button"
-              data-heart-button
-              data-post-id="<?php echo esc_attr((string) $collection_id); ?>"
-              aria-pressed="<?php echo $is_liked ? 'true' : 'false'; ?>"
-            >
-              <span class="collection-heart__icon" aria-hidden="true"><?php echo $is_liked ? '♥' : '♡'; ?></span>
-              <span class="collection-heart__label">Heart</span>
-              <span class="collection-heart__count" data-heart-count><?php echo esc_html((string) $heart_count); ?></span>
-            </button>
-          </div>
         
           <?php if (get_the_content() !== '') : ?>
             <div class="post-content">
@@ -50,6 +34,8 @@ get_header();
               $genre = movies_theme_get_movie_category_list($movie_id);
               $brief_synopsis = movies_theme_get_brief_synopsis($movie_id);
               $is_hidden_gem = movies_theme_is_hidden_gem($movie_id);
+              $heart_count = movies_theme_get_movie_heart_count($movie_id);
+              $is_liked = movies_theme_movie_is_liked_by_current_visitor($movie_id);
               $gem_badge = $is_hidden_gem
                   ? movies_theme_get_inline_svg('images/gem.svg', 'theme-gem-badge')
                   : '';
@@ -130,6 +116,20 @@ get_header();
                         <?php echo esc_html($brief_synopsis); ?>
                       </p>
                     <?php endif; ?>
+
+                    <div class="collection-heart mt-5">
+                      <button
+                        class="collection-heart__button"
+                        type="button"
+                        data-heart-button
+                        data-post-id="<?php echo esc_attr((string) $movie_id); ?>"
+                        aria-pressed="<?php echo $is_liked ? 'true' : 'false'; ?>"
+                      >
+                        <span class="collection-heart__icon" aria-hidden="true"><?php echo $is_liked ? '♥' : '♡'; ?></span>
+                        <span class="collection-heart__label">Recommend</span>
+                        <span class="collection-heart__count" data-heart-count><?php echo esc_html((string) $heart_count); ?></span>
+                      </button>
+                    </div>
                   </div>
                 </div>
               </article>

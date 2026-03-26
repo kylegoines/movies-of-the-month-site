@@ -1,11 +1,11 @@
-// Added in wp-content/themes/movies-theme/functions.php via wp_localize_script().
+// Added in wp-content/themes/movies-minimal/inc/setup.php via wp_localize_script().
 // {
 //   ajaxUrl: WordPress AJAX endpoint URL,
 //   heartNonce: nonce checked by check_ajax_referer() for heart requests,
 // }
 const heartAPIConfig = movieApp;
 
-class CollectionHeartButton {
+class MovieHeartButton {
   constructor(button) {
     this.button = button;
     this.countNode = this.button.querySelector('[data-heart-count]');
@@ -97,9 +97,9 @@ class CollectionHeartButton {
   }
 }
 
-export class CollectionHeartManager {
+export class MovieHeartManager {
   constructor(buttons) {
-    this.buttons = Array.from(buttons, (button) => new CollectionHeartButton(button));
+    this.buttons = Array.from(buttons, (button) => new MovieHeartButton(button));
   }
 
   init() {

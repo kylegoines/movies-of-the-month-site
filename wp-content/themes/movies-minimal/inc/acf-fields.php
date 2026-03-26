@@ -182,6 +182,17 @@ add_action('acf/init', function (): void {
                 'media_upload' => 0,
                 'delay' => 0,
             ],
+            [
+                'key' => 'field_movies_theme_movie_starting_hearts',
+                'label' => 'Starting Hearts',
+                'name' => 'starting_hearts',
+                'type' => 'number',
+                'instructions' => 'Optional starting heart count shown before new visitor hearts are added.',
+                'required' => 0,
+                'default_value' => 0,
+                'min' => 0,
+                'step' => 1,
+            ],
         ],
         'location' => [
             [
@@ -201,17 +212,6 @@ add_action('acf/init', function (): void {
         'key' => 'group_movies_theme_collection_movies',
         'title' => 'Collection Movies',
         'fields' => [
-            [
-                'key' => 'field_movies_theme_collection_starting_hearts',
-                'label' => 'Starting Hearts',
-                'name' => 'starting_hearts',
-                'type' => 'number',
-                'instructions' => 'Optional starting heart count shown before new visitor hearts are added.',
-                'required' => 0,
-                'default_value' => 0,
-                'min' => 0,
-                'step' => 1,
-            ],
             [
                 'key' => 'field_movies_theme_collection_movies',
                 'label' => 'Movies',
