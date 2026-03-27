@@ -73,7 +73,7 @@ get_header();
                         class="theme-strong transition-opacity hover:opacity-70"
                         href="<?php echo esc_url(get_author_posts_url($movie_author_id)); ?>"
                       >
-                        <?php echo esc_html(get_the_author_meta('display_name', $movie_author_id)); ?>
+                        <?php echo esc_html(movies_theme_get_author_name($movie_author_id)); ?>
                       </a>
                     </p>
 

@@ -7,6 +7,11 @@ add_action('after_setup_theme', function (): void {
     add_post_type_support('collection', 'excerpt');
 });
 
+add_action('init', function (): void {
+    global $wp_rewrite;
+    $wp_rewrite->author_base = 'contributors';
+});
+
 add_action('wp_enqueue_scripts', function (): void {
     $theme = wp_get_theme();
     $theme_version = $theme->get('Version');

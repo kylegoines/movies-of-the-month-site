@@ -186,6 +186,25 @@ function movies_theme_get_home_intro_link(int $post_id): string
     return trim((string) get_field('quotation_link', $post_id));
 }
 
+function movies_theme_get_author_name(int $author_id): string
+{
+    $first_name = trim((string) get_the_author_meta('first_name', $author_id));
+    $last_name = trim((string) get_the_author_meta('last_name', $author_id));
+    $full_name = trim($first_name . ' ' . $last_name);
+
+    if ($full_name !== '') {
+        return $full_name;
+    }
+
+    $display_name = trim((string) get_the_author_meta('display_name', $author_id));
+
+    if ($display_name !== '') {
+        return $display_name;
+    }
+
+    return trim((string) get_the_author_meta('user_nicename', $author_id));
+}
+
 function movies_theme_get_author_movie_categories(int $author_id, int $limit = 4): array
 {
     $movie_ids = get_posts([

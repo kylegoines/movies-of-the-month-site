@@ -100,6 +100,40 @@
     background-color: var(--primary-accent);
   }
 
+  .spotlight-marquee {
+    overflow: hidden;
+    white-space: nowrap;
+  }
+
+  .spotlight-marquee__track {
+    color: var(--color-strong);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    min-width: max-content;
+    animation: spotlight-marquee 10s linear infinite;
+    @apply text-[38px] font-bold uppercase tracking-[-0.03em];
+  }
+
+  .spotlight-marquee__dot {
+    background: var(--color-strong);
+    border-radius: 9999px;
+    display: inline-block;
+    height: 0.35rem;
+    width: 0.35rem;
+    flex: 0 0 auto;
+  }
+
+  @keyframes spotlight-marquee {
+    from {
+      transform: translateX(0);
+    }
+
+    to {
+      transform: translateX(-25%);
+    }
+  }
+
   .theme-logo {
     color: var(--color-strong);
   }
@@ -306,6 +340,33 @@
   .filter-panel {
     overflow: hidden;
     transition: height 0.28s ease, opacity 0.28s ease;
+  }
+
+  .spotlight-gallery__frame {
+    position: relative;
+    overflow: hidden;
+    height: 100%;
+  }
+
+  .spotlight-gallery__slide {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+  }
+
+  .spotlight-gallery__slide--active {
+    opacity: 1;
+  }
+
+  .spotlight-gallery__slide img {
+    display: block;
+    height: 100%;
+    width: 100%;
+    object-fit: contain;
+    object-position: center;
   }
 
 }

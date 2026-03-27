@@ -9,34 +9,118 @@ get_header();
   $show_home_intro = $current_view !== 'past-months';
   $home_intro_post = $show_home_intro ? movies_theme_get_home_intro() : null;
   $featured_movie = $show_home_intro ? movies_theme_get_featured_movie() : null;
+  $show_home_top_section = $show_home_intro && (
+      $home_intro_post instanceof WP_Post
+      || $featured_movie instanceof WP_Post
+  );
   ?>
 
-  <?php if ($home_intro_post instanceof WP_Post) : ?>
-    <?php
-    $home_intro_author_id = (int) $home_intro_post->post_author;
-    $home_intro_link = get_author_posts_url($home_intro_author_id);
-    $home_intro_name = get_the_author_meta('display_name', (int) $home_intro_post->post_author);
-    ?>
-    <section class="mt-[56px] max-w-[720px]">
-      <div class="post-content">
-        <?php echo apply_filters('the_content', $home_intro_post->post_content); ?>
+  <?php if ($show_home_top_section) : ?>
+    <section class="mt-[56px] grid gap-10 lg:grid-cols-[minmax(0,1fr)_280px] lg:items-start">
+      <div class="max-w-[720px]">
+        <?php if ($home_intro_post instanceof WP_Post) : ?>
+          <div class="post-content">
+            <?php echo apply_filters('the_content', $home_intro_post->post_content); ?>
+          </div>
+        <?php endif; ?>
+
+        <?php get_template_part('components/collection', 'list'); ?>
       </div>
 
-      <?php if ($home_intro_name !== '') : ?>
-        <p class="theme-muted mt-4 text-sm tracking-[0.04em]">
-          <a class="theme-strong font-bold transition-opacity hover:opacity-70" href="<?php echo esc_url($home_intro_link); ?>">
-            &mdash;<?php echo esc_html($home_intro_name); ?>
-          </a>
-        </p>
+      <?php if ($featured_movie instanceof WP_Post) : ?>
+        <aside class="theme-accent border border-3 pt-4 px-0 pb-5 lg:sticky lg:top-8 lg:min-h-[120px]">
+          <div class="spotlight-marquee px-0">
+            <div class="spotlight-marquee__track">
+              <span>Spotlight</span>
+              <span class="spotlight-marquee__dot" aria-hidden="true"></span>
+              <span>Spotlight</span>
+              <span class="spotlight-marquee__dot" aria-hidden="true"></span>
+              <span>Spotlight</span>
+              <span class="spotlight-marquee__dot" aria-hidden="true"></span>
+              <span>Spotlight</span>
+              <span class="spotlight-marquee__dot" aria-hidden="true"></span>
+            </div>
+          </div>
+          <?php
+          $featured_movie_id = $featured_movie->ID;
+          $featured_sidebar_year = movies_theme_get_year($featured_movie_id);
+          $featured_sidebar_runtime = movies_theme_get_runtime($featured_movie_id);
+          $featured_sidebar_genre = movies_theme_get_movie_category_list($featured_movie_id);
+          $featured_sidebar_gallery_ids = function_exists('get_field')
+              ? get_field('spotlight_gallery', $featured_movie_id)
+              : [];
+          $featured_sidebar_gallery_ids = is_array($featured_sidebar_gallery_ids)
+              ? array_values(array_filter(array_map(static function ($gallery_item): int {
+                  if (is_array($gallery_item) && isset($gallery_item['ID'])) {
+                      return (int) $gallery_item['ID'];
+                  }
+
+                  if (is_object($gallery_item) && isset($gallery_item->ID)) {
+                      return (int) $gallery_item->ID;
+                  }
+
+                  return (int) $gallery_item;
+              }, $featured_sidebar_gallery_ids)))
+              : [];
+          $featured_sidebar_poster = get_the_post_thumbnail($featured_movie_id, 'large', [
+              'class' => 'h-auto w-full object-cover',
+              'loading' => 'lazy',
+          ]);
+          ?>
+          <?php if ($featured_sidebar_poster !== '') : ?>
+            <div class="px-5 md:px-7">
+              <a class="mt-6 block no-underline" href="<?php echo esc_url(get_permalink($featured_movie_id)); ?>">
+                <div
+                  class="spotlight-gallery relative aspect-[2/3] overflow-hidden"
+                  <?php echo $featured_sidebar_gallery_ids !== [] ? 'data-spotlight-gallery' : ''; ?>
+                >
+                  <div class="spotlight-gallery__frame">
+                    <div class="spotlight-gallery__slide spotlight-gallery__slide--active">
+                      <?php echo $featured_sidebar_poster; ?>
+                    </div>
+
+                    <?php foreach ($featured_sidebar_gallery_ids as $gallery_image_id) : ?>
+                      <?php
+                      $gallery_image = wp_get_attachment_image($gallery_image_id, 'large', false, [
+                          'class' => 'h-full w-full object-cover object-center',
+                          'loading' => 'lazy',
+                      ]);
+                      ?>
+                      <?php if ($gallery_image !== '') : ?>
+                        <div class="spotlight-gallery__slide" data-spotlight-gallery-slide>
+                          <?php echo $gallery_image; ?>
+                        </div>
+                      <?php endif; ?>
+                    <?php endforeach; ?>
+                  </div>
+                </div>
+              </a>
+
+              <div class="theme-body mt-5 space-y-2 text-sm">
+                <p><span class="theme-strong font-bold">Film:</span> <?php echo esc_html(get_the_title($featured_movie_id)); ?></p>
+
+                <?php if ($featured_sidebar_year !== '') : ?>
+                  <p><span class="theme-strong font-bold">Year:</span> <?php echo esc_html($featured_sidebar_year); ?></p>
+                <?php endif; ?>
+
+                <?php if ($featured_sidebar_runtime !== '') : ?>
+                  <p><span class="theme-strong font-bold">Runtime:</span> <?php echo esc_html($featured_sidebar_runtime); ?></p>
+                <?php endif; ?>
+
+                <?php if ($featured_sidebar_genre !== '') : ?>
+                  <p><span class="theme-strong font-bold">Genre:</span> <?php echo esc_html($featured_sidebar_genre); ?></p>
+                <?php endif; ?>
+              </div>
+            </div>
+          <?php endif; ?>
+        </aside>
       <?php endif; ?>
     </section>
+  <?php else : ?>
+    <?php get_template_part('components/collection', 'list'); ?>
   <?php endif; ?>
 
-  <?php get_template_part('components/featured', 'movie', [
-      'featured_movie' => $featured_movie,
-  ]); ?>
-
-  <?php get_template_part('components/collection', 'list'); ?>
+  
 </main>
 
 <?php get_template_part('components/signup', null, [

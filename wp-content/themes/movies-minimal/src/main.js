@@ -3,6 +3,7 @@ import { MovieHeartManager } from './js/collection-heart';
 import { FilterPageHeading } from './js/filter-page-heading';
 import { FilterPagePanel } from './js/filter-page-panel';
 import { SignupJumpButton } from './js/signup-jump-button';
+import { SpotlightGallery } from './js/spotlight-gallery';
 import { ThemeSwitcher } from './js/theme-switcher';
 
 class App {
@@ -27,6 +28,9 @@ class App {
     this.movieHeartManager = new MovieHeartManager(
       document.querySelectorAll('[data-heart-button]')
     );
+    this.spotlightGallery = new SpotlightGallery(
+      document.querySelectorAll('[data-spotlight-gallery]')
+    );
   }
 
   init() {
@@ -35,6 +39,7 @@ class App {
     this.filterPagePanel.init();
     this.filterPageHeading.init();
     this.movieHeartManager.init();
+    this.spotlightGallery.init();
   }
 }
 

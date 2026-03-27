@@ -2,8 +2,13 @@
 get_header();
 
 $author_id = (int) get_queried_object_id();
-$author_name = (string) get_the_author_meta('display_name', $author_id);
-$author_bio = trim((string) get_the_author_meta('description', $author_id));
+$author_name = movies_theme_get_author_name($author_id);
+$author_custom_bio = function_exists('get_field')
+    ? trim((string) get_field('bio', 'user_' . $author_id))
+    : '';
+$author_bio = $author_custom_bio !== ''
+    ? $author_custom_bio
+    : trim((string) get_the_author_meta('description', $author_id));
 $author_categories = movies_theme_get_author_movie_categories($author_id);
 $author_category_stats = movies_theme_get_author_movie_category_stats($author_id);
 $active_category = sanitize_title((string) get_query_var('movie_category'));
