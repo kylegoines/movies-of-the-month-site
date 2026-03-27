@@ -1,5 +1,7 @@
 <?php
 
+// The prepared movie query is passed in from page-filter.php.
+// This component is responsible only for rendering the current result set.
 $movies_query = $args['movies_query'] ?? null;
 ?>
 
@@ -8,6 +10,7 @@ $movies_query = $args['movies_query'] ?? null;
     <section class="mt-12 grid grid-cols-2 gap-x-6 gap-y-10 md:grid-cols-3 xl:grid-cols-5">
       <?php while ($movies_query->have_posts()) : ?>
       <?php
+      // Per-movie values used by each card in the Filter page result grid.
       $movies_query->the_post();
       $subtitle = movies_theme_get_subtitle(get_the_ID());
       $is_hidden_gem = movies_theme_is_hidden_gem(get_the_ID());

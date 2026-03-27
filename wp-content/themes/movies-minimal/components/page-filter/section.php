@@ -1,5 +1,7 @@
 <?php
 
+// These values are passed in from page-filter.php and are only used by the
+// Filter page heading and filter controls.
 $eyebrow_text = $args['eyebrow_text'] ?? 'I’m looking for';
 $filters_state = $args['filters_state'] ?? 'open';
 $movie_categories = $args['movie_categories'] ?? [];
@@ -42,10 +44,23 @@ $scale_label_config = $args['scale_label_config'] ?? [];
       data-filter-panel
       data-filter-panel-state="<?php echo esc_attr($filters_state); ?>"
     >
+      <?php
+      // Preserves the current page context when the site is using plain
+      // permalinks, so filter submissions stay on the Filter page.
+      ?>
       <?php if (is_page() && !get_option('permalink_structure')) : ?>
         <input type="hidden" name="page_id" value="<?php echo esc_attr((string) get_the_ID()); ?>">
       <?php endif; ?>
+
+      <?php
+      // Used by the Filter page panel JS to keep the open/closed state
+      // in sync with the URL.
+      ?>
       <input type="hidden" name="filters" value="<?php echo esc_attr($filters_state); ?>" data-filter-state>
+
+      <?php
+      // Public-facing Genre filter. This is backed by the movie category taxonomy.
+      ?>
       <label class="block md:col-span-2 xl:col-span-5">
         <span class="theme-muted mb-2 block text-xs font-bold tracking-[0.04em]">
           Genre
@@ -68,6 +83,10 @@ $scale_label_config = $args['scale_label_config'] ?? [];
       </label>
 
       <?php foreach ($movie_filter_keys as $movie_filter_key) : ?>
+        <?php
+        // Public-facing mood filters. These map to the ACF movie fields and
+        // preserve the active selection when the page re-renders.
+        ?>
         <label class="block">
           <span class="theme-muted mb-2 block text-xs font-bold tracking-[0.04em]">
             <?php echo esc_html(ucfirst($movie_filter_key)); ?>
