@@ -40,7 +40,7 @@ $author_heading = $active_category_term instanceof WP_Term
       <aside class="theme-border grid gap-8 border-t pt-4 md:pt-0">
         <?php if ($author_category_stats['categories'] !== []) : ?>
           <div>
-            <p class="theme-muted text-xs font-bold uppercase tracking-[0.18em]">Genra Breakdown</p>
+            <p class="theme-muted text-xs font-bold uppercase tracking-[0.18em]">Genre Breakdown</p>
             <ul class="mt-3 space-y-3">
               <?php foreach ($author_category_stats['categories'] as $category_stat) : ?>
                 <li class="theme-body flex items-baseline justify-between gap-4 text-sm">

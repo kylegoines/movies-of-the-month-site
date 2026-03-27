@@ -303,6 +303,11 @@
     color: var(--hidden-gem-accent);
   }
 
+  .filter-panel {
+    overflow: hidden;
+    transition: height 0.28s ease, opacity 0.28s ease;
+  }
+
 }
 
 .wp-theme-movies-minimal {
