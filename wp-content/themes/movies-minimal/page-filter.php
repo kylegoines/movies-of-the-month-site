@@ -1,5 +1,6 @@
 <?php
 get_header();
+get_template_part('header/site', 'header');
 
 // Shared label config for the mood scale dropdowns rendered in the filter controls.
 $scale_label_config = movies_theme_get_scale_label_config();
@@ -105,9 +106,7 @@ if ($movie_tax_query !== []) {
 $movies_query = new WP_Query($movies_query_args);
 ?>
 
-<main class="mx-auto max-w-[1000px] px-6 py-16 md:px-8 md:py-24">
-  <?php get_template_part('header/site', 'header'); ?>
-
+<main class="mx-auto max-w-[1000px] px-6 pt-2 pb-16 md:px-8 md:pt-2 md:pb-24">
   <?php if (have_posts()) : ?>
     <?php while (have_posts()) : the_post(); ?>
       <article class="mt-[56px]">

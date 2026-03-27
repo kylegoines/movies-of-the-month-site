@@ -1,5 +1,6 @@
 <?php
 get_header();
+get_template_part('header/site', 'header');
 
 $contributors = get_users([
     'fields' => 'all',
@@ -56,9 +57,7 @@ usort($contributors, static function (WP_User $left, WP_User $right): int {
 });
 ?>
 
-<main class="mx-auto max-w-[1000px] px-6 py-16 md:px-8 md:py-24">
-  <?php get_template_part('header/site', 'header'); ?>
-
+<main class="mx-auto max-w-[1000px] px-6 pt-2 pb-16 md:px-8 md:pt-2 md:pb-24">
   <section class="mt-[56px]">
     <div class="flex">
       <h1 class="theme-strong shrink-0 text-4xl tracking-[-0.06em] md:text-6xl">Contributors</h1>

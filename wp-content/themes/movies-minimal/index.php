@@ -1,9 +1,9 @@
 <?php
 get_header();
 ?>
-
-<main class="mx-auto max-w-[1000px] px-6 py-16 md:px-8 md:py-24">
-  <?php get_template_part('header/site', 'header'); ?>
+<?php get_template_part('header/site', 'header'); ?>
+<main class="pt-2 pb-16 md:pt-2 md:pb-24">
+  
   <?php
   $current_view = isset($_GET['view']) ? sanitize_key(wp_unslash($_GET['view'])) : '';
   $show_home_intro = $current_view !== 'past-months';
@@ -16,7 +16,7 @@ get_header();
   ?>
 
   <?php if ($show_home_top_section) : ?>
-    <section class="mt-[56px] grid gap-10 lg:grid-cols-[minmax(0,1fr)_280px] lg:items-start">
+    <section class="mt-[56px] grid gap-10 lg:grid-cols-[minmax(0,1fr)_280px] lg:items-start mx-auto max-w-[1000px] px-8">
       <div class="max-w-[720px]">
         <?php if ($home_intro_post instanceof WP_Post) : ?>
           <div class="post-content">

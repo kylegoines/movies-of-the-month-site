@@ -1,10 +1,9 @@
 <?php
 get_header();
+get_template_part('header/site', 'header');
 ?>
 
-<main class="mx-auto max-w-[1000px] px-6 py-16 md:px-8 md:py-24">
-  <?php get_template_part('header/site', 'header'); ?>
-
+<main class="mx-auto max-w-[1000px] px-6 pt-2 pb-16 md:px-8 md:pt-2 md:pb-24">
   <?php if (have_posts()) : ?>
     <?php while (have_posts()) : the_post(); ?>
       <?php
@@ -47,7 +46,7 @@ get_header();
       ]);
       ?>
       <article>
-        <div class="mt-[48px] <?php echo $has_spotlight_layout ? 'space-y-10' : 'grid gap-10 lg:grid-cols-[minmax(180px,20vw)_minmax(0,1fr)] lg:items-start'; ?>">
+        <div class="mt-[56px] <?php echo $has_spotlight_layout ? 'space-y-10' : 'grid gap-10 lg:grid-cols-[minmax(180px,20vw)_minmax(0,1fr)] lg:items-start'; ?>">
           <div>
             <?php if ($has_spotlight_layout && $spotlight_image !== '') : ?>
               <?php echo $spotlight_image; ?>

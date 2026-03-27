@@ -1,5 +1,6 @@
 <?php
 get_header();
+get_template_part('header/site', 'header');
 
 $author_id = (int) get_queried_object_id();
 $author_name = movies_theme_get_author_name($author_id);
@@ -31,10 +32,8 @@ $author_heading = $active_category_term instanceof WP_Term
     : sprintf('%s picks', $author_possessive_name);
 ?>
 
-<main class="mx-auto max-w-[1000px] px-6 py-16 md:px-8 md:py-24">
-  <?php get_template_part('header/site', 'header'); ?>
-
-  <header class="mt-[48px] grid gap-10 md:grid-cols-[minmax(0,1fr)_280px] md:items-start">
+<main class="mx-auto max-w-[1000px] px-6 pt-2 pb-16 md:px-8 md:pt-2 md:pb-24">
+  <header class="mt-[56px] grid gap-10 md:grid-cols-[minmax(0,1fr)_280px] md:items-start">
     <div>
       <h1 class="theme-strong text-4xl tracking-[-0.06em] md:text-6xl">
         <?php echo esc_html($author_heading); ?>
