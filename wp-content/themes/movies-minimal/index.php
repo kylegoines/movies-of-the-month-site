@@ -1,9 +1,9 @@
 <?php
 get_header();
 ?>
-
-<main class="mx-auto max-w-[1000px] p-[30px]">
-  <?php get_template_part('header/site', 'header'); ?>
+<?php get_template_part('header/site', 'header'); ?>
+<main class="mx-auto max-w-[1000px] px-[32px] py-[15px] md:p-[15px]">
+  
   <?php
   $current_view = isset($_GET['view']) ? sanitize_key(wp_unslash($_GET['view'])) : '';
   $show_home_intro = $current_view !== 'past-months';
@@ -16,7 +16,7 @@ get_header();
   ?>
 
   <?php if ($show_home_top_section) : ?>
-    <section class="mt-[56px] grid gap-10 lg:grid-cols-[minmax(0,1fr)_280px] lg:items-start">
+    <section class="grid gap-10 lg:grid-cols-[minmax(0,1fr)_280px] lg:items-start">
       <div class="max-w-[720px]">
         <?php if ($home_intro_post instanceof WP_Post) : ?>
           <div class="post-content">
@@ -28,7 +28,7 @@ get_header();
       </div>
 
       <?php if ($featured_movie instanceof WP_Post) : ?>
-        <aside class="theme-accent border border-3 pt-4 px-0 pb-5 lg:sticky lg:top-8 lg:min-h-[120px]">
+        <aside class="theme-accent hidden border border-3 pt-4 px-0 pb-5 lg:block lg:sticky lg:top-8 lg:min-h-[120px]">
           <div class="spotlight-marquee px-0">
             <div class="spotlight-marquee__track">
               <span>Spotlight</span>

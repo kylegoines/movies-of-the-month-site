@@ -31,9 +31,9 @@ $author_heading = $active_category_term instanceof WP_Term
     : sprintf('%s picks', $author_possessive_name);
 ?>
 
-<main class="mx-auto max-w-[1000px] p-[30px]">
-  <?php get_template_part('header/site', 'header'); ?>
+<?php get_template_part('header/site', 'header'); ?>
 
+<main class="mx-auto max-w-[1000px] px-[32px] py-[15px] md:p-[15px]">
   <header class="mt-[48px] grid gap-10 md:grid-cols-[minmax(0,1fr)_280px] md:items-start">
     <div>
       <h1 class="theme-strong text-4xl tracking-[-0.06em] md:text-6xl">

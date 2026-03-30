@@ -2,9 +2,9 @@
 get_header();
 ?>
 
-<main class="mx-auto max-w-[1000px] p-[30px]">
-  <?php get_template_part('header/site', 'header'); ?>
+<?php get_template_part('header/site', 'header'); ?>
 
+<main class="mx-auto max-w-[1000px] px-[32px] py-[15px] md:p-[15px]">
   <?php if (have_posts()) : ?>
     <?php while (have_posts()) : the_post(); ?>
       <?php

@@ -2,9 +2,9 @@
 get_header();
 ?>
 
-<main class="mx-auto max-w-[1000px] p-[30px]">
-  <?php get_template_part('header/site', 'header'); ?>
+<?php get_template_part('header/site', 'header'); ?>
 
+<main class="mx-auto max-w-[1000px] px-[32px] py-[15px] md:p-[15px]">
   <?php if (have_posts()) : ?>
       <?php while (have_posts()) : the_post(); ?>
       <?php
@@ -12,7 +12,7 @@ get_header();
       $movie_ids = movies_theme_get_collection_movies($collection_id);
       ?>
       <article>
-        <header class="mt-[48px] max-w-[720px]">
+        <header class="max-w-[720px]">
           <h1 class="theme-strong m-0 text-4xl tracking-[-0.06em] md:text-6xl">
             <?php the_title(); ?>
           </h1>
@@ -45,7 +45,7 @@ get_header();
                   'loading' => 'lazy',
               ]);
               ?>
-              <article class="theme-border grid gap-6 border-t pt-6 md:grid-cols-[220px_minmax(0,1fr)] md:gap-10">
+              <article class="theme-border grid grid-cols-[auto_minmax(0,1fr)] items-start gap-4 border-t pt-6 md:grid-cols-[220px_minmax(0,1fr)] md:gap-10">
                 <div>
                   <?php if ($poster !== '') : ?>
                     <a class="movie-card block no-underline" href="<?php echo esc_url(get_permalink($movie_id)); ?>">

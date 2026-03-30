@@ -9,7 +9,7 @@
                 <h2 class="theme-strong text-3xl tracking-[-0.05em] md:text-5xl shrink-0">
                     <?php the_title(); ?>
                 </h2>
-                <div class="accent-rule mt-auto h-[3px] w-[47px] w-full ml-7"></div>
+                <!-- <div class="accent-rule mt-auto h-[3px] w-[47px] w-full ml-7"></div> -->
             </div>
             <div class="max-w-2xl mt-6">
               <?php if ($summary !== '') : ?>

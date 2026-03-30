@@ -56,13 +56,13 @@ usort($contributors, static function (WP_User $left, WP_User $right): int {
 });
 ?>
 
-<main class="mx-auto max-w-[1000px] p-[30px]">
-  <?php get_template_part('header/site', 'header'); ?>
+<?php get_template_part('header/site', 'header'); ?>
 
-  <section class="mt-[56px]">
+<main class="mx-auto max-w-[1000px] px-[32px] py-[15px] md:p-[15px]">
+  <section>
     <div class="flex">
       <h1 class="theme-strong shrink-0 text-4xl tracking-[-0.06em] md:text-6xl">Contributors</h1>
-      <div class="accent-rule mt-auto ml-7 h-[3px] w-full"></div>
+      <!-- <div class="accent-rule mt-auto ml-7 h-[3px] w-full"></div> -->
     </div>
 
     <?php if ($contributors !== []) : ?>

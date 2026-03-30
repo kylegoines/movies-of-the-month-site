@@ -143,12 +143,12 @@ if ($selected_movie_author > 0) {
 $movies_query = new WP_Query($movies_query_args);
 ?>
 
-<main class="mx-auto max-w-[1000px] p-[30px]">
-  <?php get_template_part('header/site', 'header'); ?>
+<?php get_template_part('header/site', 'header'); ?>
 
+<main class="mx-auto max-w-[1000px] px-[32px] py-[15px] md:p-[15px]">
   <?php if (have_posts()) : ?>
     <?php while (have_posts()) : the_post(); ?>
-      <article class="mt-[56px]">
+      <article>
         <?php
         // Filter page heading and controls.
         get_template_part('components/page-filter/section', null, [
