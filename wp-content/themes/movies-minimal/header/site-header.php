@@ -22,7 +22,7 @@ $is_browse = is_page('filter');
 $is_contributors = is_page('contributors');
 ?>
 
-<header class="flex pb-8">
+<header class="flex flex-wrap items-end gap-y-6 pt-[30px] pb-8">
   <h1 class="shrink-0">
     <a class="inline-block no-underline relative" href="<?php echo esc_url(
         home_url('/'),
@@ -35,11 +35,11 @@ $is_contributors = is_page('contributors');
       <span class="sr-only"><?php bloginfo('name'); ?></span>
     </a>
   </h1>
-  <div class="ml-6 mt-auto w-full">
-    <ul class="theme-strong hidden list-none justify-between pl-17 pr-2 text-xl font-bold sm:flex">
+  <div class="ml-0 w-full sm:ml-6 sm:flex-1">
+    <ul class="theme-strong hidden list-none flex-wrap items-center gap-x-8 gap-y-3 pl-0 pr-2 text-xl font-bold sm:flex md:pl-17">
       <li>
         <a
-          class="transition-opacity hover:opacity-70 <?php echo $is_this_month ? 'text-[var(--hidden-gem-accent)]' : ''; ?>"
+          class="inline-block transition-opacity hover:opacity-70 <?php echo $is_this_month ? 'text-[var(--hidden-gem-accent)]' : ''; ?>"
           href="<?php echo esc_url($latest_collection_url); ?>"
         >
           This Month
@@ -47,7 +47,7 @@ $is_contributors = is_page('contributors');
       </li>
       <li>
         <a
-          class="transition-opacity hover:opacity-70 <?php echo $is_past_months ? 'text-[var(--hidden-gem-accent)]' : ''; ?>"
+          class="inline-block transition-opacity hover:opacity-70 <?php echo $is_past_months ? 'text-[var(--hidden-gem-accent)]' : ''; ?>"
           href="<?php echo esc_url($past_months_url); ?>"
         >
           Past Months
@@ -55,7 +55,7 @@ $is_contributors = is_page('contributors');
       </li>
       <li>
         <a
-          class="transition-opacity hover:opacity-70 <?php echo $is_browse ? 'text-[var(--hidden-gem-accent)]' : ''; ?>"
+          class="inline-block transition-opacity hover:opacity-70 <?php echo $is_browse ? 'text-[var(--hidden-gem-accent)]' : ''; ?>"
           href="<?php echo esc_url(home_url('/filter/')); ?>"
         >
           Browse
@@ -63,7 +63,7 @@ $is_contributors = is_page('contributors');
       </li>
       <li>
         <a
-          class="transition-opacity hover:opacity-70 <?php echo $is_contributors ? 'text-[var(--hidden-gem-accent)]' : ''; ?>"
+          class="inline-block transition-opacity hover:opacity-70 <?php echo $is_contributors ? 'text-[var(--hidden-gem-accent)]' : ''; ?>"
           href="<?php echo esc_url(home_url('/contributors/')); ?>"
         >
           Contributors

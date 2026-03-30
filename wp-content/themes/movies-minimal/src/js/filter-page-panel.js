@@ -1,74 +1,19 @@
 export class FilterPagePanel {
-  constructor(button, panel, stateField) {
+  constructor(button, panel, stateField, overlay, closeButton) {
     this.button = button;
     this.panel = panel;
     this.stateField = stateField;
-    this.onTransitionEnd = this.handleTransitionEnd.bind(this);
+    this.overlay = overlay;
+    this.closeButton = closeButton;
+    this.body = document.body;
   }
 
   get state() {
     return this.stateField?.value === 'closed' ? 'closed' : 'open';
   }
 
-  handleTransitionEnd(event) {
-    if (event.target !== this.panel || event.propertyName !== 'height') {
-      return;
-    }
-
-    if (this.state === 'open') {
-      this.panel.style.height = 'auto';
-    }
-  }
-
-  collapse(immediate = false) {
-    const currentHeight = this.panel.scrollHeight;
-
-    this.panel.dataset.state = 'closed';
-    this.panel.style.opacity = '0';
-    this.panel.style.pointerEvents = 'none';
-
-    if (immediate) {
-      this.panel.style.height = '0px';
-      return;
-    }
-
-    this.panel.style.height = `${currentHeight}px`;
-
-    window.requestAnimationFrame(() => {
-      this.panel.style.height = '0px';
-    });
-  }
-
-  expand(immediate = false) {
-    this.panel.dataset.state = 'open';
-    this.panel.style.opacity = '1';
-    this.panel.style.pointerEvents = 'auto';
-
-    if (immediate) {
-      this.panel.style.height = 'auto';
-      return;
-    }
-
-    this.panel.style.height = '0px';
-
-    window.requestAnimationFrame(() => {
-      this.panel.style.height = `${this.panel.scrollHeight}px`;
-    });
-  }
-
-  setState(nextState, immediate = false) {
-    const isClosed = nextState === 'closed';
+  syncUrl(isClosed) {
     const url = new URL(window.location.href);
-
-    this.stateField.value = isClosed ? 'closed' : 'open';
-    this.button.setAttribute('aria-expanded', String(!isClosed));
-    this.button.textContent = isClosed ? 'Show Filters' : 'Hide Filters';
-
-    if (isClosed) {
-      this.collapse(immediate);
-    } else {
-      this.expand(immediate);
-    }
 
     if (isClosed) {
       url.searchParams.set('filters', 'closed');
@@ -79,8 +24,47 @@ export class FilterPagePanel {
     window.history.replaceState({}, '', url);
   }
 
+  setState(nextState, { updateUrl = true } = {}) {
+    const isClosed = nextState === 'closed';
+
+    this.stateField.value = isClosed ? 'closed' : 'open';
+    this.button.setAttribute('aria-expanded', String(!isClosed));
+    this.panel.dataset.state = isClosed ? 'closed' : 'open';
+    this.panel.setAttribute('aria-hidden', String(isClosed));
+
+    if (this.overlay) {
+      this.overlay.dataset.state = isClosed ? 'closed' : 'open';
+      this.overlay.setAttribute('aria-hidden', String(isClosed));
+    }
+
+    if (this.body) {
+      this.body.classList.toggle('filter-panel-open', !isClosed);
+    }
+
+    if (updateUrl) {
+      this.syncUrl(isClosed);
+    }
+  }
+
+  open = () => {
+    this.setState('open');
+  };
+
+  close = () => {
+    this.setState('closed');
+  };
+
   toggle = () => {
     this.setState(this.state === 'closed' ? 'open' : 'closed');
+  };
+
+  handleKeydown = (event) => {
+    if (event.key !== 'Escape' || this.state === 'closed') {
+      return;
+    }
+
+    this.close();
+    this.button?.focus();
   };
 
   init() {
@@ -88,8 +72,10 @@ export class FilterPagePanel {
       return;
     }
 
-    this.panel.addEventListener('transitionend', this.onTransitionEnd);
-    this.setState(this.state, true);
+    this.setState(this.state, { updateUrl: false });
     this.button.addEventListener('click', this.toggle);
+    this.overlay?.addEventListener('click', this.close);
+    this.closeButton?.addEventListener('click', this.close);
+    document.addEventListener('keydown', this.handleKeydown);
   }
 }

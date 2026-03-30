@@ -17,12 +17,29 @@ $movie_categories = get_terms([
     ]),
 ]);
 
+// Available contributors used for the public Author filter on this page.
+$movie_authors = get_users([
+    'fields' => 'all',
+    'has_published_posts' => [
+        'movies',
+    ],
+]);
+
+usort($movie_authors, static function (WP_User $left, WP_User $right): int {
+    return strcasecmp(
+        movies_theme_get_author_name($left->ID),
+        movies_theme_get_author_name($right->ID)
+    );
+});
+
 // Raw request values for the public filter state.
 $selected_category = isset($_GET['category']) ? sanitize_title(wp_unslash($_GET['category'])) : '';
+$selected_movie_author = isset($_GET['movie_author']) ? (int) wp_unslash($_GET['movie_author']) : 0;
 $selected_category_exists = false;
-$filters_state = isset($_GET['filters']) && sanitize_key(wp_unslash($_GET['filters'])) === 'closed'
-    ? 'closed'
-    : 'open';
+$selected_movie_author_exists = false;
+$filters_state = isset($_GET['filters']) && sanitize_key(wp_unslash($_GET['filters'])) === 'open'
+    ? 'open'
+    : 'closed';
 $eyebrow_text = isset($_GET['eyebrow'])
     ? trim(wp_strip_all_tags(sanitize_text_field(wp_unslash($_GET['eyebrow']))))
     : 'I’m looking for';
@@ -48,6 +65,17 @@ foreach ($movie_categories as $movie_category) {
 
 if (!$selected_category_exists) {
     $selected_category = '';
+}
+
+foreach ($movie_authors as $movie_author) {
+    if ($selected_movie_author === (int) $movie_author->ID) {
+        $selected_movie_author_exists = true;
+        break;
+    }
+}
+
+if (!$selected_movie_author_exists) {
+    $selected_movie_author = 0;
 }
 
 // Category filtering is handled as a taxonomy query because Genre maps to categories.
@@ -85,6 +113,10 @@ $movies_query_args = [
     'orderby' => 'rand',
 ];
 
+if ($selected_movie_author > 0) {
+    $movies_query_args['author'] = $selected_movie_author;
+}
+
 // Once a mood filter is active, switch to the full filtered list in title order.
 if ($movie_meta_query !== []) {
     $movies_query_args['posts_per_page'] = -1;
@@ -101,11 +133,17 @@ if ($movie_tax_query !== []) {
     $movies_query_args['tax_query'] = $movie_tax_query;
 }
 
+if ($selected_movie_author > 0) {
+    $movies_query_args['posts_per_page'] = -1;
+    $movies_query_args['orderby'] = 'title';
+    $movies_query_args['order'] = 'ASC';
+}
+
 // This query is passed into the Filter page results component below.
 $movies_query = new WP_Query($movies_query_args);
 ?>
 
-<main class="mx-auto max-w-[1000px] px-6 py-16 md:px-8 md:py-24">
+<main class="mx-auto max-w-[1000px] p-[30px]">
   <?php get_template_part('header/site', 'header'); ?>
 
   <?php if (have_posts()) : ?>
@@ -117,7 +155,9 @@ $movies_query = new WP_Query($movies_query_args);
             'eyebrow_text' => $eyebrow_text,
             'filters_state' => $filters_state,
             'movie_categories' => $movie_categories,
+            'movie_authors' => $movie_authors,
             'selected_category' => $selected_category,
+            'selected_movie_author' => $selected_movie_author,
             'movie_filter_keys' => $movie_filter_keys,
             'selected_movie_filters' => $selected_movie_filters,
             'scale_label_config' => $scale_label_config,

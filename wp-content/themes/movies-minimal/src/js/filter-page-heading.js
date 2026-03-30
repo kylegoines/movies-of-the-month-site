@@ -21,7 +21,10 @@ export class FilterPageHeading {
       )
       .map(({ name, label }) => ({
         name,
-        label: name === 'category' ? label : label.toLowerCase(),
+        label:
+          name === 'category' || name === 'movie_author'
+            ? label
+            : label.toLowerCase(),
       }));
   }
 
@@ -48,6 +51,29 @@ export class FilterPageHeading {
 
   appendText(text) {
     this.textNode.append(document.createTextNode(text));
+  }
+
+  appendMovieLead(movieLead, authorFilter) {
+    this.appendText(movieLead);
+
+    if (!authorFilter) {
+      return;
+    }
+
+    this.appendText(' recommended by ');
+    this.textNode.append(this.createTermButton(authorFilter));
+  }
+
+  appendFilterList(filters) {
+    filters.forEach((filter, index) => {
+      if (index > 0) {
+        this.appendText(
+          index === filters.length - 1 ? ' and ' : ', '
+        );
+      }
+
+      this.textNode.append(this.createTermButton(filter));
+    });
   }
 
   buildRequestUrl() {
@@ -112,9 +138,11 @@ export class FilterPageHeading {
 
     const selectedFilters = this.getSelectedFilters();
     const categoryFilter = selectedFilters.find(({ name }) => name === 'category');
+    const authorFilter = selectedFilters.find(({ name }) => name === 'movie_author');
     const pacingFilter = selectedFilters.find(({ name }) => name === 'pacing');
     const nonPacingFilters = selectedFilters.filter(
-      ({ name }) => name !== 'pacing' && name !== 'category'
+      ({ name }) =>
+        name !== 'pacing' && name !== 'category' && name !== 'movie_author'
     );
     const movieLead = categoryFilter
       ? `${categoryFilter.label} movies`
@@ -127,13 +155,20 @@ export class FilterPageHeading {
       return;
     }
 
+    if (authorFilter && !categoryFilter && !pacingFilter && nonPacingFilters.length === 0) {
+      this.appendText('Movies recommended by ');
+      this.textNode.append(this.createTermButton(authorFilter));
+      return;
+    }
+
     if (categoryFilter && !pacingFilter && nonPacingFilters.length === 0) {
-      this.textNode.textContent = movieLead;
+      this.appendMovieLead(movieLead, authorFilter);
       return;
     }
 
     if (pacingFilter && nonPacingFilters.length === 0) {
-      this.appendText(`${movieLead} that have `);
+      this.appendMovieLead(movieLead, authorFilter);
+      this.appendText(' that have ');
       this.textNode.append(this.createTermButton({
         name: pacingFilter.name,
         label: pacingFilter.label,
@@ -143,14 +178,9 @@ export class FilterPageHeading {
     }
 
     if (pacingFilter) {
-      this.appendText(`${movieLead} that are `);
-      nonPacingFilters.forEach((filter, index) => {
-        if (index > 0) {
-          this.appendText(', ');
-        }
-
-        this.textNode.append(this.createTermButton(filter));
-      });
+      this.appendMovieLead(movieLead, authorFilter);
+      this.appendText(' that are ');
+      this.appendFilterList(nonPacingFilters);
       this.appendText(' with ');
       this.textNode.append(this.createTermButton({
         name: pacingFilter.name,
@@ -160,14 +190,9 @@ export class FilterPageHeading {
       return;
     }
 
-    this.appendText(`${movieLead} that are `);
-    nonPacingFilters.forEach((filter, index) => {
-      if (index > 0) {
-        this.appendText(', ');
-      }
-
-      this.textNode.append(this.createTermButton(filter));
-    });
+    this.appendMovieLead(movieLead, authorFilter);
+    this.appendText(' that are ');
+    this.appendFilterList(nonPacingFilters);
   }
 
   init() {

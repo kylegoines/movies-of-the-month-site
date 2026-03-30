@@ -56,7 +56,7 @@ usort($contributors, static function (WP_User $left, WP_User $right): int {
 });
 ?>
 
-<main class="mx-auto max-w-[1000px] px-6 py-16 md:px-8 md:py-24">
+<main class="mx-auto max-w-[1000px] p-[30px]">
   <?php get_template_part('header/site', 'header'); ?>
 
   <section class="mt-[56px]">

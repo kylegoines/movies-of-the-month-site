@@ -23,7 +23,9 @@ class App {
     this.filterPagePanel = new FilterPagePanel(
       document.querySelector('[data-filter-toggle]'),
       document.querySelector('[data-filter-panel]'),
-      document.querySelector('[data-filter-state]')
+      document.querySelector('[data-filter-state]'),
+      document.querySelector('[data-filter-overlay]'),
+      document.querySelector('[data-filter-close]')
     );
     this.movieHeartManager = new MovieHeartManager(
       document.querySelectorAll('[data-heart-button]')
