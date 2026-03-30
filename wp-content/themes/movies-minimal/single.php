@@ -61,7 +61,7 @@ get_header();
           <div class="<?php echo $has_spotlight_layout ? 'relative z-[2] max-w-[720px] p-6 lg:-mt-[100px] lg:ml-auto' : 'max-w-[720px]'; ?>"<?php echo $has_spotlight_layout ? ' style="background-color: var(--color-background);"' : ''; ?>>
             <?php if ($is_hidden_gem) : ?>
               <p class="movie-title--hidden-gem mb-3 flex items-center gap-2 text-sm font-bold uppercase tracking-[0.08em]">
-                <span>Hidden Gem</span>
+                <?php echo movies_theme_get_hidden_gem_label_markup(); ?>
                 <?php if ($gem_badge !== '') : ?>
                   <span class="movie-title__gem"><?php echo $gem_badge; ?></span>
                 <?php endif; ?>

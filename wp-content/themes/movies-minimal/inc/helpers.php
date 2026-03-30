@@ -111,6 +111,18 @@ function movies_theme_get_collection_movies(int $post_id): array
     return array_values(array_filter(array_map('intval', $movies)));
 }
 
+function movies_theme_get_hidden_gem_label_markup(string $class_name = ''): string
+{
+    $tooltip_message = 'Aha! What a treasure you found. This is a hidden gem: a well-loved recommendation off the beaten path. You should be proud of yourself.';
+    $classes = trim('hidden-gem-tooltip ' . $class_name);
+
+    return sprintf(
+        '<span class="%1$s" tabindex="0"><span class="hidden-gem-tooltip__label">Hidden Gem</span><span class="hidden-gem-tooltip__popup" role="tooltip">%2$s</span></span>',
+        esc_attr($classes),
+        esc_html($tooltip_message)
+    );
+}
+
 function movies_theme_get_movie_category_list(int $post_id): string
 {
     $terms = get_the_terms($post_id, 'category');

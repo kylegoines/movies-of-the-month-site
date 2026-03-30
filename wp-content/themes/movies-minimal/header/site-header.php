@@ -22,7 +22,7 @@ $is_browse = is_page('filter');
 $is_contributors = is_page('contributors');
 ?>
 
-<header class="flex flex-wrap items-end gap-y-6 pt-[30px] pb-8">
+<header class="flex flex-wrap items-end gap-y-6">
   <h1 class="shrink-0">
     <a class="inline-block no-underline relative" href="<?php echo esc_url(
         home_url('/'),

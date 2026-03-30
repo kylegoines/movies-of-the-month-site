@@ -63,7 +63,7 @@ get_header();
                   <div class="theme-body text-sm md:text-base">
                     <?php if ($is_hidden_gem) : ?>
                       <p class="hidden-gem-label text-sm font-bold tracking-[0.04em]">
-                        Hidden Gem
+                        <?php echo movies_theme_get_hidden_gem_label_markup(); ?>
                       </p>
                     <?php endif; ?>
 

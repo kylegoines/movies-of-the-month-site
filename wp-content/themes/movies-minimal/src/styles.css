@@ -337,6 +337,60 @@
     color: var(--hidden-gem-accent);
   }
 
+  .hidden-gem-tooltip {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    cursor: help;
+    outline: none;
+  }
+
+  .hidden-gem-tooltip__popup {
+    position: absolute;
+    left: 0;
+    top: calc(100% + 12px);
+    z-index: 30;
+    width: min(280px, calc(100vw - 48px));
+    border: 1px solid color-mix(in srgb, var(--hidden-gem-accent) 30%, transparent);
+    background: var(--color-background);
+    color: var(--color-foreground);
+    box-shadow: 0 16px 40px color-mix(in srgb, var(--color-strong) 12%, transparent);
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(6px);
+    transition: opacity 0.18s ease, transform 0.18s ease;
+    transition-delay: 0s;
+    white-space: normal;
+    @apply rounded px-4 py-3 text-left text-sm normal-case tracking-[0.02em];
+  }
+
+  .hidden-gem-tooltip__popup::before {
+    content: "";
+    position: absolute;
+    left: 18px;
+
+    bottom: 100%;
+    border-width: 0 7px 7px 7px;
+    border-style: solid;
+    z-index: 10;
+        background: white;
+        top: -6px;
+    left: 18px;
+    height: 10px;
+    width: 10px;
+    transform: rotate(225deg);
+    border: 1px solid color-mix(in srgb, var(--hidden-gem-accent) 30%, transparent);
+    border-left: transparent;
+    border-top: transparent
+  }
+
+  .hidden-gem-tooltip:hover .hidden-gem-tooltip__popup,
+  .hidden-gem-tooltip:focus-visible .hidden-gem-tooltip__popup {
+    opacity: 1;
+    transform: translateY(0);
+    transition-delay: 0.35s;
+  }
+
   body.filter-panel-open {
     overflow: hidden;
   }

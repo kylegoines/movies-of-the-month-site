@@ -48,6 +48,6 @@ $movies_query = $args['movies_query'] ?? null;
       <?php wp_reset_postdata(); ?>
     </section>
   <?php else : ?>
-    <p class="theme-muted mt-12 py-6 text-sm uppercase tracking-[0.18em]">No movies yet.</p>
+    <p class="theme-muted mt-12 py-6 text-sm uppercase tracking-[0.18em]">Arg! We couldnt find anything! Do you have some ideas? Lets chat!</p>
   <?php endif; ?>
 </div>
