@@ -126,6 +126,16 @@ add_action('acf/init', function (): void {
                 'new_lines' => 'br',
             ],
             [
+                'key' => 'field_movies_theme_movie_spoiler_free_review',
+                'label' => 'Spoiler-Free Review',
+                'name' => 'spoiler_free_review',
+                'type' => 'textarea',
+                'instructions' => 'Short spoiler-free review shown on the single movie page.',
+                'required' => 0,
+                'rows' => 6,
+                'new_lines' => 'br',
+            ],
+            [
                 'key' => 'field_movies_theme_movie_genre',
                 'label' => 'Genre',
                 'name' => 'genre',

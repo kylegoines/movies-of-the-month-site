@@ -87,6 +87,15 @@ function movies_theme_get_brief_synopsis(int $post_id): string
     return trim((string) get_field('brief_synopsis', $post_id));
 }
 
+function movies_theme_get_spoiler_free_review(int $post_id): string
+{
+    if (!function_exists('get_field')) {
+        return '';
+    }
+
+    return trim((string) get_field('spoiler_free_review', $post_id));
+}
+
 function movies_theme_get_featured_content(int $post_id): string
 {
     if (!function_exists('get_field')) {
@@ -154,6 +163,27 @@ function movies_theme_get_movie_category_list(int $post_id): string
     }, $terms);
 
     return implode(', ', $names);
+}
+
+function movies_theme_get_movie_scale_value_label(int $post_id, string $field_name): string
+{
+    if (!function_exists('get_field')) {
+        return '';
+    }
+
+    $scale_label_config = movies_theme_get_scale_label_config();
+
+    if (!isset($scale_label_config[$field_name])) {
+        return '';
+    }
+
+    $value = (string) get_field($field_name, $post_id);
+
+    if ($value === '') {
+        return '';
+    }
+
+    return (string) ($scale_label_config[$field_name][$value] ?? '');
 }
 
 function movies_theme_get_list_summary(int $post_id): string

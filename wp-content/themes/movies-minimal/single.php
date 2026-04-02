@@ -15,12 +15,17 @@ get_header();
       $year = movies_theme_get_year($movie_id);
       $runtime = movies_theme_get_runtime($movie_id);
       $genre = movies_theme_get_movie_category_list($movie_id);
-      $brief_synopsis = movies_theme_get_brief_synopsis($movie_id);
+      $spoiler_free_review = movies_theme_get_spoiler_free_review($movie_id);
       $featured_content = movies_theme_get_featured_content($movie_id);
       $featured_image_id = movies_theme_get_featured_image_id($movie_id);
       $is_hidden_gem = movies_theme_is_hidden_gem($movie_id);
       $heart_count = movies_theme_get_movie_heart_count($movie_id);
       $is_liked = movies_theme_movie_is_liked_by_current_visitor($movie_id);
+      $funny_rating = movies_theme_get_movie_scale_value_label($movie_id, 'funny');
+      $scary_rating = movies_theme_get_movie_scale_value_label($movie_id, 'scary');
+      $sadness_rating = movies_theme_get_movie_scale_value_label($movie_id, 'sadness');
+      $pacing_rating = movies_theme_get_movie_scale_value_label($movie_id, 'pacing');
+      $has_ratings = $funny_rating !== '' || $scary_rating !== '' || $sadness_rating !== '' || $pacing_rating !== '';
       $gem_badge = $is_hidden_gem
           ? movies_theme_get_inline_svg('images/gemsingle.svg', 'theme-gem-badge')
           : '';
@@ -47,8 +52,21 @@ get_header();
       ]);
       ?>
       <article>
-        <div class="page-header <?php echo $has_spotlight_layout ? 'space-y-10' : 'grid gap-10 lg:grid-cols-[minmax(180px,20vw)_minmax(0,1fr)] lg:items-start'; ?>">
-          <div>
+        <div class="page-header <?php echo $has_spotlight_layout ? 'space-y-6' : 'grid gap-6 lg:grid-cols-[minmax(180px,20vw)_minmax(0,1fr)] lg:items-start lg:border-3 lg:p-3'; ?>">
+          <div class="relative">
+            <div class="collection-heart absolute -left-4 -top-4 z-[3] hidden lg:block">
+              <button
+                class="collection-heart__button theme-border rounded-full border bg-[var(--color-background)] px-3 py-2 shadow-sm"
+                type="button"
+                data-heart-button
+                data-post-id="<?php echo esc_attr((string) $movie_id); ?>"
+                aria-pressed="<?php echo $is_liked ? 'true' : 'false'; ?>"
+              >
+                <span class="collection-heart__icon" aria-hidden="true"><?php echo $is_liked ? '♥' : '♡'; ?></span>
+                <span class="collection-heart__label">Recommend</span>
+                <span class="collection-heart__count" data-heart-count><?php echo esc_html((string) $heart_count); ?></span>
+              </button>
+            </div>
             <?php if ($has_spotlight_layout && $spotlight_image !== '') : ?>
               <?php echo $spotlight_image; ?>
             <?php elseif ($poster !== '') : ?>
@@ -73,44 +91,75 @@ get_header();
             </h1>
 
             <?php if ($subtitle !== '') : ?>
-              <p class="theme-body mt-3 text-lg font-bold md:text-xl">
+              <p class="theme-body mt-2 text-lg font-bold md:text-xl">
                 <?php echo esc_html($subtitle); ?>
               </p>
             <?php endif; ?>
 
-            <div class="theme-body rhythm-lg grid max-w-[720px] gap-2 text-sm md:text-base">
+            <div class="theme-body mt-6 grid max-w-[720px] gap-1.5 text-sm md:text-base">
+              <p class="order-6 lg:order-1">
+                <span class="theme-strong font-bold">Recommended by:</span>
+                <a
+                  class="theme-strong transition-opacity hover:opacity-70 no-underline"
+                  href="<?php echo esc_url(get_author_posts_url($movie_author_id)); ?>"
+                >
+                  <?php echo esc_html($movie_author_name); ?>
+                </a>
+              </p>
+
               <?php if ($year !== '') : ?>
-                <p><span class="theme-strong font-bold">Year:</span> <?php echo esc_html($year); ?></p>
+                <p class="order-1 lg:order-2"><span class="theme-strong font-bold">Release Year:</span> <?php echo esc_html($year); ?></p>
               <?php endif; ?>
 
               <?php if ($runtime !== '') : ?>
-                <p><span class="theme-strong font-bold">Runtime:</span> <?php echo esc_html($runtime); ?></p>
+                <p class="order-2 lg:order-3"><span class="theme-strong font-bold">Runtime:</span> <?php echo esc_html($runtime); ?></p>
               <?php endif; ?>
 
               <?php if ($genre !== '') : ?>
-                <p><span class="theme-strong font-bold">Genre:</span> <?php echo esc_html($genre); ?></p>
+                <p class="order-3 lg:order-4"><span class="theme-strong font-bold">Genres:</span> <?php echo esc_html($genre); ?></p>
               <?php endif; ?>
 
-              <?php if ($brief_synopsis !== '') : ?>
-                <p class="leading-7"><span class="theme-strong font-bold">Brief Synopsis:</span> <?php echo esc_html($brief_synopsis); ?></p>
+              <?php if ($spoiler_free_review !== '') : ?>
+                <p class="order-4 mt-3 leading-7 lg:order-5">
+                  <span class="theme-strong font-bold">Spoiler-Free Review</span><br>
+                  <?php echo esc_html($spoiler_free_review); ?>
+                </p>
               <?php endif; ?>
+
+              <?php if ($has_ratings) : ?>
+                <div class="order-5 mt-4 space-y-1.5 lg:order-6">
+                  <p class="theme-strong font-bold">Ratings:</p>
+                  <?php if ($funny_rating !== '') : ?>
+                    <p><span class="theme-strong font-bold">Funny:</span> <?php echo esc_html($funny_rating); ?></p>
+                  <?php endif; ?>
+                  <?php if ($scary_rating !== '') : ?>
+                    <p><span class="theme-strong font-bold">Scary:</span> <?php echo esc_html($scary_rating); ?></p>
+                  <?php endif; ?>
+                  <?php if ($sadness_rating !== '') : ?>
+                    <p><span class="theme-strong font-bold">Sadness:</span> <?php echo esc_html($sadness_rating); ?></p>
+                  <?php endif; ?>
+                  <?php if ($pacing_rating !== '') : ?>
+                    <p><span class="theme-strong font-bold">Pacing:</span> <?php echo esc_html($pacing_rating); ?></p>
+                  <?php endif; ?>
+                </div>
+              <?php endif; ?>
+
+              <div class="collection-heart order-6 mt-4 lg:hidden">
+                <button
+                  class="collection-heart__button"
+                  type="button"
+                  data-heart-button
+                  data-post-id="<?php echo esc_attr((string) $movie_id); ?>"
+                  aria-pressed="<?php echo $is_liked ? 'true' : 'false'; ?>"
+                >
+                  <span class="collection-heart__icon" aria-hidden="true"><?php echo $is_liked ? '♥' : '♡'; ?></span>
+                  <span class="collection-heart__label">Recommend</span>
+                  <span class="collection-heart__count" data-heart-count><?php echo esc_html((string) $heart_count); ?></span>
+                </button>
+              </div>
             </div>
 
-            <div class="collection-heart mt-6">
-              <button
-                class="collection-heart__button"
-                type="button"
-                data-heart-button
-                data-post-id="<?php echo esc_attr((string) $movie_id); ?>"
-                aria-pressed="<?php echo $is_liked ? 'true' : 'false'; ?>"
-              >
-                <span class="collection-heart__icon" aria-hidden="true"><?php echo $is_liked ? '♥' : '♡'; ?></span>
-                <span class="collection-heart__label">Recommend</span>
-                <span class="collection-heart__count" data-heart-count><?php echo esc_html((string) $heart_count); ?></span>
-              </button>
-            </div>
-
-            <div class="post-content rhythm-lg">
+            <div class="post-content mt-6">
               <?php
               if ($has_spotlight_layout) {
                   echo apply_filters('the_content', $featured_content);
@@ -121,7 +170,7 @@ get_header();
             </div>
 
             <?php if ($has_spotlight_layout) : ?>
-              <p class="theme-body rhythm-lg text-right text-sm font-bold tracking-[0.04em]">
+              <p class="theme-body mt-6 text-right text-sm font-bold tracking-[0.04em]">
                 &mdash;
                 <a
                   class="theme-strong transition-opacity hover:opacity-70 no-underline"
