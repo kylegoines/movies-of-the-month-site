@@ -1,5 +1,23 @@
 <?php
 
+function movies_theme_get_site_title_marquee_state(): array
+{
+    $paused_cookie = isset($_COOKIE['movies_site_title_marquee_paused'])
+        ? sanitize_text_field(wp_unslash($_COOKIE['movies_site_title_marquee_paused']))
+        : '';
+    $progress_cookie = isset($_COOKIE['movies_site_title_marquee_progress'])
+        ? sanitize_text_field(wp_unslash($_COOKIE['movies_site_title_marquee_progress']))
+        : '';
+    $is_paused = $paused_cookie === '1';
+    $progress = is_numeric($progress_cookie) ? (float) $progress_cookie : 0.0;
+    $progress = max(0.0, min(1.0, $progress));
+
+    return [
+        'is_paused' => $is_paused,
+        'progress' => $progress,
+    ];
+}
+
 function movies_theme_get_inline_svg(string $relative_path, string $class_name = ''): string
 {
     $svg_path = get_template_directory() . '/' . ltrim($relative_path, '/');

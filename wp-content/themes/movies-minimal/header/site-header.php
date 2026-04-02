@@ -16,6 +16,16 @@ $is_this_month = is_singular('collection') && $latest_collection !== [] && get_q
 $is_past_months = is_home() && $current_view === 'past-months';
 $is_browse = is_page('filter');
 $is_contributors = is_page('contributors');
+$marquee_state = movies_theme_get_site_title_marquee_state();
+$marquee_is_paused = (bool) $marquee_state['is_paused'];
+$marquee_progress = (float) $marquee_state['progress'];
+$marquee_button_label = $marquee_is_paused ? 'Play marquee' : 'Pause marquee';
+$marquee_button_icon = $marquee_is_paused ? '>' : '||';
+$marquee_track_style = '--site-title-marquee-progress: ' . number_format($marquee_progress, 5, '.', '') . ';';
+
+if ($marquee_is_paused) {
+    $marquee_track_style .= ' --site-title-marquee-transform: translateX(calc(' . number_format($marquee_progress, 5, '.', '') . ' * -20%));';
+}
 ?>
 
 <header class="pt-[15px] pb-8">
@@ -35,7 +45,15 @@ $is_contributors = is_page('contributors');
   </button>
   <a class="site-title-marquee no-underline" href="<?php echo esc_url(home_url('/')); ?>">
     <span class="sr-only"><?php bloginfo('name'); ?></span>
-    <div class="site-title-marquee__track" aria-hidden="true" data-site-title-marquee-track>
+    <div
+      class="site-title-marquee__track"
+      aria-hidden="true"
+      data-site-title-marquee-track
+      data-state="<?php echo $marquee_is_paused ? 'paused' : 'playing'; ?>"
+      data-hover-paused="false"
+      data-marquee-progress="<?php echo esc_attr(number_format($marquee_progress, 5, '.', '')); ?>"
+      style="<?php echo esc_attr($marquee_track_style); ?>"
+    >
       <span>Movies of the Month</span>
       <span class="site-title-marquee__dot"></span>
       <span>Movies of the Month</span>
@@ -52,10 +70,10 @@ $is_contributors = is_page('contributors');
     class="site-title-marquee__toggle theme-strong theme-border"
     type="button"
     data-site-title-marquee-toggle
-    aria-pressed="false"
-    aria-label="Pause marquee"
+    aria-pressed="<?php echo $marquee_is_paused ? 'true' : 'false'; ?>"
+    aria-label="<?php echo esc_attr($marquee_button_label); ?>"
   >
-    ||
+    <?php echo esc_html($marquee_button_icon); ?>
   </button>
   <div class="w-screen ">
     <ul class="theme-strong mx-auto hidden max-w-[1000px] list-none justify-between px-8 text-xl font-bold lg:flex lg:py-6">
