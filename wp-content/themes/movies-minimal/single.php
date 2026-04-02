@@ -52,31 +52,18 @@ get_header();
       ]);
       ?>
       <article>
-        <div class="page-header <?php echo $has_spotlight_layout ? 'space-y-6' : 'grid gap-6 lg:grid-cols-[minmax(180px,20vw)_minmax(0,1fr)] lg:items-start lg:border-3 lg:p-3'; ?>">
+        <div class="page-header <?php echo $has_spotlight_layout ? 'space-y-6' : 'grid gap-6 lg:grid-cols-[280px_minmax(0,1fr)] lg:items-start lg:border-3 lg:p-3'; ?>">
           <div class="relative">
-            <div class="collection-heart absolute -left-4 -top-4 z-[3] hidden lg:block">
-              <button
-                class="collection-heart__button theme-border rounded-full border bg-[var(--color-background)] px-3 py-2 shadow-sm"
-                type="button"
-                data-heart-button
-                data-post-id="<?php echo esc_attr((string) $movie_id); ?>"
-                aria-pressed="<?php echo $is_liked ? 'true' : 'false'; ?>"
-              >
-                <span class="collection-heart__icon" aria-hidden="true"><?php echo $is_liked ? '♥' : '♡'; ?></span>
-                <span class="collection-heart__label">Recommend</span>
-                <span class="collection-heart__count" data-heart-count><?php echo esc_html((string) $heart_count); ?></span>
-              </button>
-            </div>
             <?php if ($has_spotlight_layout && $spotlight_image !== '') : ?>
               <?php echo $spotlight_image; ?>
             <?php elseif ($poster !== '') : ?>
-              <div class="w-full max-w-[220px] lg:max-w-none">
+              <div class="w-full max-w-[220px] lg:w-[280px] lg:max-w-[280px]">
                 <?php echo $poster; ?>
               </div>
             <?php endif; ?>
           </div>
 
-          <div class="<?php echo $has_spotlight_layout ? 'relative z-[2] max-w-[720px] p-6 lg:-mt-[100px] lg:ml-auto' : 'max-w-[720px]'; ?>"<?php echo $has_spotlight_layout ? ' style="background-color: var(--color-background);"' : ''; ?>>
+          <div class="<?php echo $has_spotlight_layout ? 'relative z-[2] max-w-[720px] p-6 lg:-mt-[100px] lg:ml-auto' : 'relative max-w-[720px] lg:min-h-[420px]'; ?>"<?php echo $has_spotlight_layout ? ' style="background-color: var(--color-background);"' : ''; ?>>
             <?php if ($is_hidden_gem) : ?>
               <p class="movie-title--hidden-gem mb-3 flex items-center gap-2 text-sm font-bold uppercase tracking-[0.08em]">
                 <?php echo movies_theme_get_hidden_gem_label_markup(); ?>
@@ -157,6 +144,20 @@ get_header();
                   <span class="collection-heart__count" data-heart-count><?php echo esc_html((string) $heart_count); ?></span>
                 </button>
               </div>
+            </div>
+
+            <div class="collection-heart absolute right-0 bottom-0 hidden lg:block">
+              <button
+                class="collection-heart__button"
+                type="button"
+                data-heart-button
+                data-post-id="<?php echo esc_attr((string) $movie_id); ?>"
+                aria-pressed="<?php echo $is_liked ? 'true' : 'false'; ?>"
+              >
+                <span class="collection-heart__icon" aria-hidden="true"><?php echo $is_liked ? '♥' : '♡'; ?></span>
+                <span class="collection-heart__label">Recommend</span>
+                <span class="collection-heart__count" data-heart-count><?php echo esc_html((string) $heart_count); ?></span>
+              </button>
             </div>
 
             <div class="post-content mt-6">

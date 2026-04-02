@@ -576,16 +576,16 @@
 
   .collection-heart__button {
     color: var(--primary-accent);
-    @apply inline-flex items-baseline gap-2 border-0 bg-transparent p-0 text-left text-sm font-bold tracking-[0.02em] transition-opacity hover:opacity-70;
+    @apply inline-flex items-center gap-2.5 border-0 bg-transparent p-0 text-left text-base font-bold tracking-[0.02em] transition-opacity hover:opacity-70;
   }
 
   .collection-heart__icon {
-    @apply text-base leading-none;
+    @apply text-[1.35rem] leading-none;
   }
 
   .collection-heart__count {
     color: var(--primary-accent);
-    @apply text-sm font-bold tracking-[0];
+    @apply text-base font-bold tracking-[0];
   }
 
   .filter-heading__term {

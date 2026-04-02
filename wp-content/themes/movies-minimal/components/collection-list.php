@@ -1,5 +1,5 @@
 <?php if (have_posts()) : ?>
-  <ul class="lg:mt-[12px] flex flex-col">
+  <ul class="lg:mt-[12px] flex flex-col gap-8 lg:gap-10">
     <?php while (have_posts()) : the_post(); ?>
       <?php $summary = movies_theme_get_list_summary(get_the_ID()); ?>
       <li>
