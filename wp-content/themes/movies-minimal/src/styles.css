@@ -352,6 +352,30 @@
     background-color: color-mix(in srgb, var(--secondary-accent) 65%, white 35%);
   }
 
+  .rhythm-sm {
+    @apply mt-3 md:mt-4;
+  }
+
+  .rhythm-md {
+    @apply mt-6;
+  }
+
+  .rhythm-lg {
+    @apply mt-10 md:mt-12;
+  }
+
+  .rhythm-xl {
+    @apply mt-16 md:mt-20;
+  }
+
+  .rhythm-stack-lg {
+    @apply space-y-10 md:space-y-12;
+  }
+
+  .rhythm-list-lg {
+    @apply gap-10 md:gap-12;
+  }
+
   .page-header {
     @apply mt-10 md:mt-12;
   }

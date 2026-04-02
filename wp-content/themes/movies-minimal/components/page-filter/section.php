@@ -95,7 +95,7 @@ $scale_label_config = $args['scale_label_config'] ?? [];
     </div>
   </header>
 
-  <div class="mt-12">
+  <div class="rhythm-lg">
     <div class="flex items-center justify-start gap-6">
       <button
         class="theme-strong theme-border filter-toggle-mobile cursor-pointer border bg-transparent px-4 py-2 text-sm font-bold tracking-[0.04em] transition-opacity hover:opacity-70"

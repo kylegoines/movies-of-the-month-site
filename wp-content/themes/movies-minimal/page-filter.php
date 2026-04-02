@@ -145,7 +145,7 @@ $movies_query = new WP_Query($movies_query_args);
 
 <?php get_template_part('header/site', 'header'); ?>
 
-<main class="mx-auto max-w-[1000px] px-[32px] py-[15px] md:p-[15px]">
+<main class="mx-auto max-w-[1000px] px-[32px]">
   <?php if (have_posts()) : ?>
     <?php while (have_posts()) : the_post(); ?>
       <article>
@@ -166,7 +166,7 @@ $movies_query = new WP_Query($movies_query_args);
 
         <?php // Optional page editor content shown between the controls and results. ?>
         <?php if (get_the_content() !== '') : ?>
-          <div class="post-content mt-8">
+          <div class="post-content rhythm-lg">
             <?php the_content(); ?>
           </div>
         <?php endif; ?>

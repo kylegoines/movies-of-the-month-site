@@ -58,7 +58,7 @@ usort($contributors, static function (WP_User $left, WP_User $right): int {
 
 <?php get_template_part('header/site', 'header'); ?>
 
-<main class="mx-auto max-w-[1000px] px-[32px] py-[15px] md:p-[15px]">
+<main class="mx-auto max-w-[1000px] px-[32px]">
   <section class="page-header">
     <div class="page-header__row">
       <h1 class="page-header__title theme-strong shrink-0">Contributors</h1>
@@ -66,7 +66,7 @@ usort($contributors, static function (WP_User $left, WP_User $right): int {
     </div>
 
     <?php if ($contributors !== []) : ?>
-      <div class="mt-10 space-y-12">
+      <div class="rhythm-lg rhythm-stack-lg">
         <?php foreach ($contributors as $contributor) : ?>
           <?php
           $contributor_id = (int) $contributor->ID;
@@ -121,13 +121,13 @@ usort($contributors, static function (WP_User $left, WP_User $right): int {
               </h2>
 
               <?php if ($contributor_bio !== '') : ?>
-                <div class="post-content mt-4 max-w-[680px] text-base">
+                <div class="post-content rhythm-sm max-w-[680px] text-base">
                   <?php echo wpautop(esc_html($contributor_bio)); ?>
                 </div>
               <?php endif; ?>
 
               <?php if ($contributor_links !== []) : ?>
-                <ul class="mt-5 flex flex-wrap items-center gap-x-3 gap-y-2 text-sm">
+                <ul class="rhythm-md flex flex-wrap items-center gap-x-3 gap-y-2 text-sm">
                   <?php foreach ($contributor_links as $link_label => $link_url) : ?>
                     <li class="theme-body flex items-center gap-3">
                       <a class="theme-strong font-bold no-underline" href="<?php echo esc_url($link_url); ?>" target="_blank" rel="noreferrer">
@@ -145,7 +145,7 @@ usort($contributors, static function (WP_User $left, WP_User $right): int {
         <?php endforeach; ?>
       </div>
     <?php else : ?>
-      <p class="theme-muted mt-8 text-sm uppercase tracking-[0.18em]">No contributors yet.</p>
+      <p class="theme-muted rhythm-lg text-sm uppercase tracking-[0.18em]">No contributors yet.</p>
     <?php endif; ?>
   </section>
 </main>

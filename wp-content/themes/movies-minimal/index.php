@@ -2,7 +2,7 @@
 get_header();
 ?>
 <?php get_template_part('header/site', 'header'); ?>
-<main class="mx-auto max-w-[1000px] px-[32px] py-[15px] md:p-[15px]">
+<main class="mx-auto max-w-[1000px] px-[32px]">
   
   <?php
   $current_view = isset($_GET['view']) ? sanitize_key(wp_unslash($_GET['view'])) : '';

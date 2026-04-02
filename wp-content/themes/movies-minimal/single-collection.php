@@ -4,7 +4,7 @@ get_header();
 
 <?php get_template_part('header/site', 'header'); ?>
 
-<main class="mx-auto max-w-[1000px] px-[32px] py-[15px] md:p-[15px]">
+<main class="mx-auto max-w-[1000px] px-[32px]">
   <?php if (have_posts()) : ?>
       <?php while (have_posts()) : the_post(); ?>
       <?php
@@ -18,14 +18,14 @@ get_header();
           </h1>
         
           <?php if (get_the_content() !== '') : ?>
-            <div class="post-content mt-12">
+            <div class="post-content rhythm-lg">
               <?php the_content(); ?>
             </div>
           <?php endif; ?>
         </header>
 
         <?php if ($movie_ids !== []) : ?>
-          <section class="mt-12 flex flex-col gap-12 sm:gap-14 md:gap-16">
+          <section class="rhythm-lg flex flex-col rhythm-list-lg">
             <?php foreach ($movie_ids as $movie_id) : ?>
               <?php
               $subtitle = movies_theme_get_subtitle($movie_id);

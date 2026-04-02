@@ -7,7 +7,7 @@ $movies_query = $args['movies_query'] ?? null;
 
 <div data-filter-results>
   <?php if ($movies_query instanceof WP_Query && $movies_query->have_posts()) : ?>
-    <section class="mt-12 grid grid-cols-2 gap-x-6 gap-y-10 md:grid-cols-3 xl:grid-cols-5">
+    <section class="rhythm-lg grid grid-cols-2 gap-x-6 gap-y-10 md:grid-cols-3 xl:grid-cols-5">
       <?php while ($movies_query->have_posts()) : ?>
       <?php
       // Per-movie values used by each card in the Filter page result grid.
@@ -48,6 +48,6 @@ $movies_query = $args['movies_query'] ?? null;
       <?php wp_reset_postdata(); ?>
     </section>
   <?php else : ?>
-    <p class="theme-muted mt-12 py-6 text-sm uppercase tracking-[0.18em]">Arg! We couldnt find anything! Do you have some ideas? Lets chat!</p>
+    <p class="theme-muted rhythm-lg py-6 text-sm uppercase tracking-[0.18em]">Arg! We couldnt find anything! Do you have some ideas? Lets chat!</p>
   <?php endif; ?>
 </div>

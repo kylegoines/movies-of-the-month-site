@@ -4,7 +4,7 @@ get_header();
 
 <?php get_template_part('header/site', 'header'); ?>
 
-<main class="mx-auto max-w-[1000px] px-[32px] py-[15px] md:p-[15px]">
+<main class="mx-auto max-w-[1000px] px-[32px]">
   <?php if (have_posts()) : ?>
     <?php while (have_posts()) : the_post(); ?>
       <?php
@@ -78,7 +78,7 @@ get_header();
               </p>
             <?php endif; ?>
 
-            <div class="theme-body mt-8 grid max-w-[720px] gap-2 text-sm md:text-base">
+            <div class="theme-body rhythm-lg grid max-w-[720px] gap-2 text-sm md:text-base">
               <?php if ($year !== '') : ?>
                 <p><span class="theme-strong font-bold">Year:</span> <?php echo esc_html($year); ?></p>
               <?php endif; ?>
@@ -110,7 +110,7 @@ get_header();
               </button>
             </div>
 
-            <div class="post-content mt-8">
+            <div class="post-content rhythm-lg">
               <?php
               if ($has_spotlight_layout) {
                   echo apply_filters('the_content', $featured_content);
@@ -120,7 +120,7 @@ get_header();
               ?>
             </div>
 
-            <p class="theme-body mt-10 text-sm font-bold tracking-[0.04em] <?php echo $has_spotlight_layout ? 'text-right' : ''; ?>">
+            <p class="theme-body rhythm-lg text-sm font-bold tracking-[0.04em] <?php echo $has_spotlight_layout ? 'text-right' : ''; ?>">
               &mdash;
               <a
                 class="theme-strong transition-opacity hover:opacity-70 no-underline"
@@ -133,7 +133,7 @@ get_header();
         </div>
 
         <?php if ($other_movies_by_author !== []) : ?>
-          <section class="mt-28">
+          <section class="rhythm-xl">
             <div class="mb-8 flex items-end gap-6">
               <h2 class="theme-strong text-2xl tracking-[-0.04em] md:text-4xl">
                 More from <?php echo esc_html($movie_author_name); ?>

@@ -33,18 +33,18 @@ $author_heading = $active_category_term instanceof WP_Term
 
 <?php get_template_part('header/site', 'header'); ?>
 
-<main class="mx-auto max-w-[1000px] px-[32px] py-[15px] md:p-[15px]">
+<main class="mx-auto max-w-[1000px] px-[32px]">
   <header class="page-header">
     <h1 class="page-header__title theme-strong">
       <?php echo esc_html($author_heading); ?>
     </h1>
 
     <?php if ($author_bio !== '' || $author_category_stats['categories'] !== []) : ?>
-      <aside class="theme-border mt-6 grid gap-8 border-t pt-4 md:grid-cols-2 md:gap-10">
+      <aside class="theme-border rhythm-md grid gap-8 border-t pt-4 md:grid-cols-2 md:gap-10">
         <?php if ($author_category_stats['categories'] !== []) : ?>
           <div>
             <p class="theme-muted text-xs font-bold uppercase tracking-[0.18em]">Genre Breakdown</p>
-            <ul class="mt-3 space-y-3">
+            <ul class="rhythm-sm space-y-3">
               <?php foreach ($author_category_stats['categories'] as $category_stat) : ?>
                 <li class="theme-body flex items-baseline justify-between gap-4 text-sm">
                   <span class="theme-strong font-bold"><?php echo esc_html($category_stat['term']->name); ?></span>
@@ -58,7 +58,7 @@ $author_heading = $active_category_term instanceof WP_Term
         <?php if ($author_bio !== '') : ?>
         <div>
           <p class="theme-muted text-xs font-bold uppercase tracking-[0.18em]">About</p>
-          <p class="theme-body mt-3 text-sm leading-6">
+          <p class="theme-body rhythm-sm text-sm leading-6">
             <?php echo esc_html($author_bio); ?>
           </p>
         </div>
@@ -68,8 +68,8 @@ $author_heading = $active_category_term instanceof WP_Term
   </header>
 
   <?php if ($author_categories !== []) : ?>
-    <div class="mt-8 h-1 w-full bg-black"></div>
-    <nav class="mt-6 flex flex-wrap items-center gap-6">
+    <div class="rhythm-lg h-1 w-full bg-black"></div>
+    <nav class="rhythm-md flex flex-wrap items-center gap-6">
       <a
         class="text-sm font-bold uppercase tracking-[0.08em] transition-opacity hover:opacity-70 <?php echo $active_category === '' ? 'px-3 py-2' : 'theme-strong'; ?>"
         style="<?php echo $active_category === '' ? esc_attr('background: var(--color-strong); color: var(--color-background);') : ''; ?>"
@@ -94,7 +94,7 @@ $author_heading = $active_category_term instanceof WP_Term
   <?php endif; ?>
 
   <?php if (have_posts()) : ?>
-    <section class="mt-10 grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+    <section class="rhythm-lg grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
       <?php while (have_posts()) : the_post(); ?>
         <?php
         $subtitle = movies_theme_get_subtitle(get_the_ID());
