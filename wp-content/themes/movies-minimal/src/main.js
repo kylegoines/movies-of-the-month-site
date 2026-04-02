@@ -17,17 +17,27 @@ class App {
       document.querySelectorAll('[data-signup-jump]'),
       document.getElementById('home-signup')
     );
-    this.filterPageHeading = new FilterPageHeading(
-      document.querySelector('[data-filter-form]'),
+    this.filterPageHeadingDesktop = new FilterPageHeading(
+      document.querySelector('[data-filter-form-desktop]'),
       document.querySelector('[data-filter-heading]'),
       document.querySelector('[data-filter-results]')
     );
-    this.filterPagePanel = new FilterPagePanel(
-      document.querySelector('[data-filter-toggle]'),
-      document.querySelector('[data-filter-panel]'),
-      document.querySelector('[data-filter-state]'),
-      document.querySelector('[data-filter-overlay]'),
-      document.querySelector('[data-filter-close]')
+    this.filterPageHeadingMobile = new FilterPageHeading(
+      document.querySelector('[data-filter-form-mobile]'),
+      document.querySelector('[data-filter-heading]'),
+      document.querySelector('[data-filter-results]')
+    );
+    this.filterPagePanelMobile = new FilterPagePanel(
+      document.querySelector('[data-filter-toggle-mobile]'),
+      document.querySelector('[data-filter-panel-mobile]'),
+      document.querySelector('[data-filter-form-mobile] [data-filter-state]'),
+      document.querySelector('[data-filter-overlay-mobile]'),
+      document.querySelector('[data-filter-close-mobile]')
+    );
+    this.filterPagePanelDesktop = new FilterPagePanel(
+      document.querySelector('[data-filter-toggle-desktop]'),
+      document.querySelector('[data-filter-panel-desktop]'),
+      document.querySelector('[data-filter-form-desktop] [data-filter-state]')
     );
     this.siteTitleMarquee = new SiteTitleMarquee(
       document.querySelector('[data-site-title-marquee-track]'),
@@ -48,8 +58,10 @@ class App {
   init() {
     this.themeSwitcher.init();
     this.signupJumpButton.init();
-    this.filterPagePanel.init();
-    this.filterPageHeading.init();
+    this.filterPagePanelMobile.init();
+    this.filterPagePanelDesktop.init();
+    this.filterPageHeadingDesktop.init();
+    this.filterPageHeadingMobile.init();
     this.siteMobileNav.init();
     this.siteTitleMarquee.init();
     this.movieHeartManager.init();

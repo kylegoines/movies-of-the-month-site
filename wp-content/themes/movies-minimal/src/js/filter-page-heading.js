@@ -42,6 +42,7 @@ export class FilterPageHeading {
       }
 
       select.value = '';
+      this.syncForms();
       this.updateHeading();
       void this.fetchResults();
     });
@@ -73,6 +74,24 @@ export class FilterPageHeading {
       }
 
       this.textNode.append(this.createTermButton(filter));
+    });
+  }
+
+  syncForms() {
+    const formData = new FormData(this.form);
+
+    document.querySelectorAll('[data-filter-form-sync]').forEach((form) => {
+      if (form === this.form) {
+        return;
+      }
+
+      Array.from(form.elements).forEach((element) => {
+        if (!element.name || !('value' in element)) {
+          return;
+        }
+
+        element.value = formData.get(element.name)?.toString() || '';
+      });
     });
   }
 
@@ -124,6 +143,7 @@ export class FilterPageHeading {
         this.stateField.value = nextStateField.value;
       }
 
+      this.syncForms();
       window.history.replaceState({}, '', requestUrl);
     } finally {
       this.results.style.opacity = '';
@@ -204,12 +224,14 @@ export class FilterPageHeading {
 
     this.form.addEventListener('submit', (event) => {
       event.preventDefault();
+      this.syncForms();
       this.updateHeading();
       void this.fetchResults();
     });
 
     this.selects.forEach((select) => {
       select.addEventListener('change', () => {
+        this.syncForms();
         this.updateHeading();
         void this.fetchResults();
       });

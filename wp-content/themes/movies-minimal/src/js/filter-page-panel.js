@@ -6,6 +6,7 @@ export class FilterPagePanel {
     this.overlay = overlay;
     this.closeButton = closeButton;
     this.body = document.body;
+    this.mode = this.panel?.dataset.filterPanelMode || 'accordion';
   }
 
   get state() {
@@ -24,11 +25,22 @@ export class FilterPagePanel {
     window.history.replaceState({}, '', url);
   }
 
+  syncLayout() {
+    if (!this.panel) {
+      return;
+    }
+
+    if (this.mode === 'accordion') {
+      this.panel.style.height =
+        this.state === 'closed' ? '0px' : `${this.panel.scrollHeight}px`;
+    }
+  }
+
   setState(nextState, { updateUrl = true } = {}) {
     const isClosed = nextState === 'closed';
 
     this.stateField.value = isClosed ? 'closed' : 'open';
-    this.button.setAttribute('aria-expanded', String(!isClosed));
+    this.button?.setAttribute('aria-expanded', String(!isClosed));
     this.panel.dataset.state = isClosed ? 'closed' : 'open';
     this.panel.setAttribute('aria-hidden', String(isClosed));
 
@@ -37,9 +49,11 @@ export class FilterPagePanel {
       this.overlay.setAttribute('aria-hidden', String(isClosed));
     }
 
-    if (this.body) {
-      this.body.classList.toggle('filter-panel-open', !isClosed);
+    if (this.mode === 'drawer') {
+      this.body?.classList.toggle('filter-panel-open', !isClosed);
     }
+
+    this.syncLayout();
 
     if (updateUrl) {
       this.syncUrl(isClosed);
@@ -59,7 +73,7 @@ export class FilterPagePanel {
   };
 
   handleKeydown = (event) => {
-    if (event.key !== 'Escape' || this.state === 'closed') {
+    if (event.key !== 'Escape' || this.mode !== 'drawer' || this.state === 'closed') {
       return;
     }
 
@@ -68,14 +82,15 @@ export class FilterPagePanel {
   };
 
   init() {
-    if (!this.button || !this.panel || !this.stateField) {
+    if (!this.panel || !this.stateField) {
       return;
     }
 
     this.setState(this.state, { updateUrl: false });
-    this.button.addEventListener('click', this.toggle);
+    this.button?.addEventListener('click', this.toggle);
     this.overlay?.addEventListener('click', this.close);
     this.closeButton?.addEventListener('click', this.close);
     document.addEventListener('keydown', this.handleKeydown);
+    window.addEventListener('resize', () => this.syncLayout());
   }
 }

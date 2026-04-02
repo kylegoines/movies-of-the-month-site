@@ -1,5 +1,5 @@
 <?php if (have_posts()) : ?>
-  <ul class="mt-[96px] flex flex-col">
+  <ul class="md:mt-[12px] flex flex-col">
     <?php while (have_posts()) : the_post(); ?>
       <?php $summary = movies_theme_get_list_summary(get_the_ID()); ?>
       <li>
@@ -9,7 +9,6 @@
                 <h2 class="theme-strong text-3xl tracking-[-0.05em] md:text-5xl shrink-0">
                     <?php the_title(); ?>
                 </h2>
-                <!-- <div class="accent-rule mt-auto h-[3px] w-[47px] w-full ml-7"></div> -->
             </div>
             <div class="max-w-2xl mt-6">
               <?php if ($summary !== '') : ?>

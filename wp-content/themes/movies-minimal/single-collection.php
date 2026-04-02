@@ -18,7 +18,7 @@ get_header();
           </h1>
         
           <?php if (get_the_content() !== '') : ?>
-            <div class="post-content">
+            <div class="post-content mt-12">
               <?php the_content(); ?>
             </div>
           <?php endif; ?>

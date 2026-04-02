@@ -611,6 +611,10 @@
     overflow: hidden;
   }
 
+  .filter-toggle-desktop {
+    display: none;
+  }
+
   .filter-panel-overlay {
     position: fixed;
     inset: 0;
@@ -621,7 +625,7 @@
     z-index: 40;
   }
 
-  .filter-panel {
+  .filter-panel-mobile {
     position: fixed;
     top: 0;
     right: 0;
@@ -642,7 +646,7 @@
     z-index: 50;
   }
 
-  .filter-panel[data-state='open'] {
+  .filter-panel-mobile[data-state='open'] {
     transform: translateX(0);
     opacity: 1;
     pointer-events: auto;
@@ -665,9 +669,69 @@
   }
 
   @media (min-width: 768px) {
-    .filter-panel {
-      padding: 52px 32px 32px;
-      width: min(520px, 100vw);
+    body.filter-panel-open {
+      overflow: auto;
+    }
+
+    .filter-toggle-mobile,
+    .filter-panel-mobile,
+    .filter-panel-overlay {
+      display: none;
+    }
+
+    .filter-toggle-desktop {
+      display: inline-flex;
+    }
+
+    .filter-panel-desktop {
+      position: static;
+      display: block;
+      height: 0;
+      width: auto;
+      overflow: hidden;
+      background: transparent;
+      border-left: 0;
+      box-shadow: none;
+      padding: 0;
+      margin-top: 2rem;
+      transform: none;
+      opacity: 0;
+      pointer-events: none;
+      transition: height 0.28s ease, opacity 0.28s ease;
+      z-index: auto;
+    }
+
+    .filter-panel-desktop[data-state='open'] {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .filter-panel-desktop .filter-panel__fields {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      align-items: end;
+      gap: 1.25rem;
+      padding-bottom: 0;
+    }
+
+    .filter-panel-desktop .filter-panel__field--primary {
+      grid-column: span 2;
+    }
+  }
+
+  @media (min-width: 1280px) {
+    .filter-panel-desktop .filter-panel__fields {
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+    }
+
+    .filter-panel-desktop .filter-panel__field--primary {
+      grid-column: span 1;
+    }
+  }
+
+  @media (max-width: 47.99rem) {
+    .filter-panel-desktop {
+      display: none;
     }
   }
 
