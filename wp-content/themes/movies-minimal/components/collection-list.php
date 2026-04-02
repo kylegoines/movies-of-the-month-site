@@ -1,12 +1,12 @@
 <?php if (have_posts()) : ?>
-  <ul class="md:mt-[12px] flex flex-col">
+  <ul class="lg:mt-[12px] flex flex-col">
     <?php while (have_posts()) : the_post(); ?>
       <?php $summary = movies_theme_get_list_summary(get_the_ID()); ?>
       <li>
         <a class="block no-underline" href="<?php the_permalink(); ?>">
           <div class="flex flex-col">
             <div class="flex">
-                <h2 class="theme-strong text-3xl tracking-[-0.05em] md:text-5xl shrink-0">
+                <h2 class="theme-strong text-3xl tracking-[-0.05em] lg:text-5xl shrink-0">
                     <?php the_title(); ?>
                 </h2>
             </div>

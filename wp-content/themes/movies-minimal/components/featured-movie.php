@@ -30,7 +30,7 @@ $featured_poster = $featured_image_id > 0
     <div>
     <a class="block no-underline" href="<?php echo esc_url(get_permalink($featured_movie_id)); ?>">
         <div class="flex relative">
-        <h2 class="theme-strong text-3xl tracking-[-0.05em] md:text-5xl shrink-0">
+        <h2 class="theme-strong text-3xl tracking-[-0.05em] lg:text-5xl shrink-0">
           <span class="opacity-90">Spotlight:</span> <?php echo esc_html(get_the_title($featured_movie_id)); ?>
         </h2>
         <div class="accent-rule mt-auto h-[3px] w-[47px] bottom-[-7px] w-full ml-7"></div>

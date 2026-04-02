@@ -68,7 +68,7 @@ get_header();
           ]);
           ?>
           <?php if ($featured_sidebar_poster !== '') : ?>
-            <div class="px-5 md:px-7">
+            <div class="px-5 lg:px-7">
               <a class="mt-6 block no-underline" href="<?php echo esc_url(get_permalink($featured_movie_id)); ?>">
                 <div
                   class="spotlight-gallery relative aspect-[2/3] overflow-hidden"

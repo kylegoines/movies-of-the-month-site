@@ -41,15 +41,15 @@ get_header();
                   : '';
               $movie_author_id = (int) get_post_field('post_author', $movie_id);
               $poster = get_the_post_thumbnail($movie_id, 'large', [
-                  'class' => 'h-auto w-full object-cover',
+                  'class' => 'mx-auto h-auto max-h-[250px] w-auto object-cover object-center lg:max-h-none lg:w-full',
                   'loading' => 'lazy',
               ]);
               ?>
-              <article class="theme-border grid grid-cols-[auto_minmax(0,1fr)] items-start gap-4 border-t pt-6 md:grid-cols-[220px_minmax(0,1fr)] md:gap-10">
+              <article class="theme-border grid grid-cols-[auto_minmax(0,1fr)] items-start gap-4 border-t pt-6 lg:grid-cols-[220px_minmax(0,1fr)] lg:gap-10">
                 <div>
                   <?php if ($poster !== '') : ?>
                     <a class="movie-card block no-underline" href="<?php echo esc_url(get_permalink($movie_id)); ?>">
-                      <div class="poster-frame theme-surface <?php echo $is_hidden_gem ? 'poster-frame--hidden-gem' : ''; ?>">
+                      <div class="poster-frame theme-surface mt-0 ml-0 w-[min(50vw,180px)] max-h-[250px] before:hidden lg:mt-[20px] lg:ml-[20px] lg:w-auto lg:max-h-none lg:before:block <?php echo $is_hidden_gem ? 'poster-frame--hidden-gem' : ''; ?>">
                         <?php if ($gem_badge !== '') : ?>
                           <span class="poster-frame__badge"><?php echo $gem_badge; ?></span>
                         <?php endif; ?>
@@ -60,7 +60,7 @@ get_header();
                 </div>
 
                 <div class="max-w-[720px]">
-                  <div class="theme-body text-sm md:text-base">
+                  <div class="theme-body text-sm lg:text-base">
                     <?php if ($is_hidden_gem) : ?>
                       <p class="hidden-gem-label text-sm font-bold tracking-[0.04em]">
                         <?php echo movies_theme_get_hidden_gem_label_markup(); ?>

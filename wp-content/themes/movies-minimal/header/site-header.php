@@ -58,7 +58,7 @@ $is_contributors = is_page('contributors');
     ||
   </button>
   <div class="w-screen ">
-    <ul class="theme-strong mx-auto hidden max-w-[1000px] list-none justify-between px-8 text-xl font-bold sm:flex lg:py-6">
+    <ul class="theme-strong mx-auto hidden max-w-[1000px] list-none justify-between px-8 text-xl font-bold lg:flex lg:py-6">
       <li>
         <a
           class="transition-opacity hover:opacity-70 <?php echo $is_this_month ? 'text-[var(--hidden-gem-accent)]' : ''; ?>"
