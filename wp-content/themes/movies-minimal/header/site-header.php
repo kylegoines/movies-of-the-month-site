@@ -28,7 +28,7 @@ if ($marquee_is_paused) {
 }
 ?>
 
-<header class="pt-[15px] pb-8">
+<header class="pt-[12px]">
   <button
     class="site-mobile-nav__toggle"
     type="button"
@@ -110,7 +110,7 @@ if ($marquee_is_paused) {
         </a>
       </li>
     </ul>
-    <div class="accent-rule mt-3 h-[3px] w-full"></div>
+    <div class="accent-rule h-[3px] w-full"></div>
   </div>
 
   <div

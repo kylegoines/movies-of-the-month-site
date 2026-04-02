@@ -60,9 +60,8 @@ usort($contributors, static function (WP_User $left, WP_User $right): int {
 
 <main class="mx-auto max-w-[1000px] px-[32px]">
   <section class="page-header">
-    <div class="page-header__row">
+    <div class="page-header__row mb-10 md:mb-12">
       <h1 class="page-header__title theme-strong shrink-0">Contributors</h1>
-      <div class="page-header__rule accent-rule"></div>
     </div>
 
     <?php if ($contributors !== []) : ?>

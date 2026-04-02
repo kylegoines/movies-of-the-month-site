@@ -76,7 +76,7 @@ get_header();
               <?php the_title(); ?>
             </h1>
 
-            <div class="theme-body mt-6 grid max-w-[720px] gap-1.5 text-sm md:text-base">
+            <div class="theme-body mb-6 grid max-w-[720px] gap-1.5 text-sm md:text-base">
               <p class="order-6 lg:order-1">
                 <span class="theme-strong font-bold">Recommended by:</span>
                 <a
@@ -100,14 +100,14 @@ get_header();
               <?php endif; ?>
 
               <?php if ($spoiler_free_review !== '') : ?>
-                <p class="order-4 mt-3 leading-7 lg:order-5">
+                <p class="order-4 mb-3 leading-7 lg:order-5">
                   <span class="theme-strong font-bold">Spoiler-Free Review</span><br>
                   <?php echo esc_html($spoiler_free_review); ?>
                 </p>
               <?php endif; ?>
 
               <?php if ($has_ratings) : ?>
-                <div class="order-5 mt-4 space-y-1.5 lg:order-6">
+                <div class="order-5 mb-4 space-y-1.5 lg:order-6">
                   <p class="theme-strong font-bold">Ratings:</p>
                   <?php if ($funny_rating !== '') : ?>
                     <p><span class="theme-strong font-bold">Funny:</span> <?php echo esc_html($funny_rating); ?></p>
@@ -124,7 +124,7 @@ get_header();
                 </div>
               <?php endif; ?>
 
-              <div class="collection-heart order-6 mt-4 lg:hidden">
+              <div class="collection-heart order-6 mb-4 lg:hidden">
                 <button
                   class="collection-heart__button"
                   type="button"
@@ -153,7 +153,7 @@ get_header();
               </button>
             </div>
 
-            <div class="post-content mt-6">
+            <div class="post-content mb-6">
               <?php
               if ($has_spotlight_layout) {
                   echo apply_filters('the_content', $featured_content);
@@ -164,7 +164,7 @@ get_header();
             </div>
 
             <?php if ($has_spotlight_layout) : ?>
-              <p class="theme-body mt-6 text-right text-sm font-bold tracking-[0.04em]">
+              <p class="theme-body mb-6 text-right text-sm font-bold tracking-[0.04em]">
                 &mdash;
                 <a
                   class="theme-strong transition-opacity hover:opacity-70 no-underline"

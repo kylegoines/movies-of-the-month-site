@@ -37,7 +37,7 @@ $featured_poster = $featured_image_id > 0
         
     </a>
       <?php if ($featured_poster !== '') : ?>
-        <a class="block no-underline mt-6" href="<?php echo esc_url(get_permalink($featured_movie_id)); ?>">
+        <a class="block no-underline mb-6" href="<?php echo esc_url(get_permalink($featured_movie_id)); ?>">
           <div class="relative <?php echo $featured_is_hidden_gem ? 'theme-surface' : ''; ?>">
             <?php if ($featured_gem_badge !== '') : ?>
               <span class="poster-frame__badge poster-frame__badge--featured"><?php echo $featured_gem_badge; ?></span>
@@ -52,7 +52,7 @@ $featured_poster = $featured_image_id > 0
       
 
       <?php if ($featured_content !== '') : ?>
-        <div class="post-content mt-5 ">
+        <div class="post-content mb-5 ">
           <?php echo apply_filters('the_content', $featured_content); ?>
         </div>
       <?php endif; ?>

@@ -34,7 +34,7 @@ if (!is_array($movies) || $movies === []) {
           </div>
         <?php endif; ?>
 
-        <h3 class="mt-4 flex items-center gap-2 text-xl tracking-[-0.04em] <?php echo $is_hidden_gem ? 'movie-title--hidden-gem' : 'theme-strong'; ?>">
+        <h3 class="mb-4 flex items-center gap-2 text-xl tracking-[-0.04em] <?php echo $is_hidden_gem ? 'movie-title--hidden-gem' : 'theme-strong'; ?>">
           <span><?php echo esc_html(get_the_title($movie_id)); ?></span>
           <?php if ($gem_badge !== '') : ?>
             <span class="movie-title__gem"><?php echo $gem_badge; ?></span>

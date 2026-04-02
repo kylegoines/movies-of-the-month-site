@@ -114,7 +114,7 @@ $author_heading = $active_category_term instanceof WP_Term
               </div>
             <?php endif; ?>
 
-            <h2 class="mt-4 flex items-center gap-2 text-xl tracking-[-0.04em] <?php echo $is_hidden_gem ? 'movie-title--hidden-gem' : 'theme-strong'; ?>">
+            <h2 class="mb-4 flex items-center gap-2 text-xl tracking-[-0.04em] <?php echo $is_hidden_gem ? 'movie-title--hidden-gem' : 'theme-strong'; ?>">
               <span><?php the_title(); ?></span>
               <?php if ($gem_badge !== '') : ?>
                 <span class="movie-title__gem"><?php echo $gem_badge; ?></span>

@@ -71,7 +71,7 @@ get_header();
           ?>
           <?php if ($featured_sidebar_poster !== '') : ?>
             <div class="px-5 lg:px-7">
-              <a class="mt-6 block no-underline" href="<?php echo esc_url(get_permalink($featured_movie_id)); ?>">
+              <a class="mb-6 block no-underline" href="<?php echo esc_url(get_permalink($featured_movie_id)); ?>">
                 <div
                   class="spotlight-gallery relative aspect-[2/3] overflow-hidden"
                   <?php echo $featured_sidebar_gallery_ids !== [] ? 'data-spotlight-gallery' : ''; ?>
@@ -98,7 +98,7 @@ get_header();
                 </div>
               </a>
 
-              <div class="theme-body mt-5 space-y-2 text-sm">
+              <div class="theme-body mb-5 space-y-2 text-sm">
                 <p><span class="theme-strong font-bold">Film:</span> <?php echo esc_html(get_the_title($featured_movie_id)); ?></p>
 
                 <?php if ($featured_sidebar_year !== '') : ?>
