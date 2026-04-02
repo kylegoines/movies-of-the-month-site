@@ -11,7 +11,6 @@ get_header();
       $movie_id = get_the_ID();
       $movie_author_id = (int) get_post_field('post_author', $movie_id);
       $movie_author_name = movies_theme_get_author_name($movie_author_id);
-      $subtitle = movies_theme_get_subtitle($movie_id);
       $year = movies_theme_get_year($movie_id);
       $runtime = movies_theme_get_runtime($movie_id);
       $genre = movies_theme_get_movie_category_list($movie_id);
@@ -76,12 +75,6 @@ get_header();
             <h1 class="page-header__title theme-strong">
               <?php the_title(); ?>
             </h1>
-
-            <?php if ($subtitle !== '') : ?>
-              <p class="theme-body mt-2 text-lg font-bold md:text-xl">
-                <?php echo esc_html($subtitle); ?>
-              </p>
-            <?php endif; ?>
 
             <div class="theme-body mt-6 grid max-w-[720px] gap-1.5 text-sm md:text-base">
               <p class="order-6 lg:order-1">

@@ -15,6 +15,6 @@ $movies_query = $args['movies_query'] ?? null;
       ?>
     </div>
   <?php else : ?>
-    <p class="theme-muted rhythm-lg py-6 text-sm uppercase tracking-[0.18em]">Arg! We couldnt find anything! Do you have some ideas? Lets chat!</p>
+    <p class="theme-muted rhythm-lg py-6 text-sm uppercase tracking-[0.18em]">No match yet. Try adjusting the filters.</p>
   <?php endif; ?>
 </div>

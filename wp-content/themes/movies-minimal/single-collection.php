@@ -28,11 +28,9 @@ get_header();
           <section class="rhythm-lg flex flex-col rhythm-list-lg">
             <?php foreach ($movie_ids as $movie_id) : ?>
               <?php
-              $subtitle = movies_theme_get_subtitle($movie_id);
               $year = movies_theme_get_year($movie_id);
               $runtime = movies_theme_get_runtime($movie_id);
               $genre = movies_theme_get_movie_category_list($movie_id);
-              $brief_synopsis = movies_theme_get_brief_synopsis($movie_id);
               $is_hidden_gem = movies_theme_is_hidden_gem($movie_id);
               $heart_count = movies_theme_get_movie_heart_count($movie_id);
               $is_liked = movies_theme_movie_is_liked_by_current_visitor($movie_id);
@@ -82,13 +80,6 @@ get_header();
                       <?php echo esc_html(get_the_title($movie_id)); ?>
                     </p>
 
-                    <?php if ($subtitle !== '') : ?>
-                      <p>
-                        <span class="theme-strong font-bold">Subtitle:</span>
-                        <?php echo esc_html($subtitle); ?>
-                      </p>
-                    <?php endif; ?>
-
                     <?php if ($year !== '') : ?>
                       <p>
                         <span class="theme-strong font-bold">Year:</span>
@@ -107,13 +98,6 @@ get_header();
                       <p>
                         <span class="theme-strong font-bold">Genre:</span>
                         <?php echo esc_html($genre); ?>
-                      </p>
-                    <?php endif; ?>
-
-                    <?php if ($brief_synopsis !== '') : ?>
-                      <p class="leading-7">
-                        <span class="theme-strong font-bold">Brief Synopsis:</span>
-                        <?php echo esc_html($brief_synopsis); ?>
                       </p>
                     <?php endif; ?>
 

@@ -125,10 +125,6 @@ get_header();
   
 </main>
 
-<?php get_template_part('components/signup', null, [
-    'current_view' => $current_view,
-]); ?>
-
 <?php
 get_footer();
 ?>

@@ -4,7 +4,6 @@ add_action('after_setup_theme', function (): void {
     add_theme_support('title-tag');
     add_theme_support('post-thumbnails');
     add_post_type_support('post', 'excerpt');
-    add_post_type_support('collection', 'excerpt');
 });
 
 add_action('init', function (): void {
@@ -77,3 +76,58 @@ add_filter('option_aettaec_options', function ($options) {
 
     return $options;
 });
+
+add_action('admin_post_nopriv_movies_theme_contribution_form', 'movies_theme_handle_contribution_form');
+add_action('admin_post_movies_theme_contribution_form', 'movies_theme_handle_contribution_form');
+
+function movies_theme_handle_contribution_form(): void
+{
+    $redirect_to = isset($_POST['redirect_to'])
+        ? esc_url_raw(wp_unslash($_POST['redirect_to']))
+        : home_url('/');
+
+    if (!wp_verify_nonce(
+        isset($_POST['movies_theme_contribution_nonce']) ? sanitize_text_field(wp_unslash($_POST['movies_theme_contribution_nonce'])) : '',
+        'movies_theme_contribution_form'
+    )) {
+        wp_safe_redirect(add_query_arg('signup_status', 'error', $redirect_to));
+        exit;
+    }
+
+    $honeypot = isset($_POST['company']) ? trim((string) wp_unslash($_POST['company'])) : '';
+
+    if ($honeypot !== '') {
+        wp_safe_redirect(add_query_arg('signup_status', 'success', $redirect_to));
+        exit;
+    }
+
+    $topic = isset($_POST['contribution_topic'])
+        ? sanitize_text_field(wp_unslash($_POST['contribution_topic']))
+        : '';
+    $message = isset($_POST['contribution_message'])
+        ? trim(sanitize_textarea_field(wp_unslash($_POST['contribution_message'])))
+        : '';
+    $allowed_topics = [
+        'write_for_site' => 'Write for the site',
+        'movie_recommendation' => 'Recommend a movie',
+        'general_question' => 'General question',
+    ];
+
+    if (!isset($allowed_topics[$topic]) || $message === '') {
+        wp_safe_redirect(add_query_arg('signup_status', 'error', $redirect_to));
+        exit;
+    }
+
+    $subject = sprintf('Movies of the Month form: %s', $allowed_topics[$topic]);
+    $body = implode("\n\n", [
+        'Topic: ' . $allowed_topics[$topic],
+        'Message:',
+        $message,
+    ]);
+    $sent = wp_mail('kyle.goines@gmail.com', $subject, $body, [
+        'Content-Type: text/plain; charset=UTF-8',
+    ]);
+
+    wp_safe_redirect(add_query_arg('signup_status', $sent ? 'success' : 'error', $redirect_to));
+    exit;
+}

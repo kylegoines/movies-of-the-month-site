@@ -17,7 +17,6 @@ if (!is_array($movies) || $movies === []) {
         continue;
     }
 
-    $subtitle = movies_theme_get_subtitle($movie_id);
     $is_hidden_gem = movies_theme_is_hidden_gem($movie_id);
     $gem_badge = $is_hidden_gem
         ? movies_theme_get_inline_svg('images/gemsingle.svg', 'theme-gem-badge')
@@ -41,12 +40,6 @@ if (!is_array($movies) || $movies === []) {
             <span class="movie-title__gem"><?php echo $gem_badge; ?></span>
           <?php endif; ?>
         </h3>
-
-        <?php if ($subtitle !== '') : ?>
-          <p class="theme-body mt-2 text-base font-bold">
-            <?php echo esc_html($subtitle); ?>
-          </p>
-        <?php endif; ?>
       </a>
     </article>
   <?php endforeach; ?>

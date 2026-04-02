@@ -11,6 +11,9 @@
   </select>
 </div>
 */ ?>
+<?php if (!is_page('filter')) : ?>
+  <?php get_template_part('components/signup'); ?>
+<?php endif; ?>
 <?php wp_footer(); ?>
 </body>
 </html>

@@ -68,7 +68,6 @@ add_action('init', function (): void {
         'supports' => [
             'title',
             'editor',
-            'excerpt',
             'revisions',
         ],
         'show_in_rest' => true,

@@ -855,81 +855,22 @@
         color: var(--secondary-accent);
     }
 
-    .home-signup .aettaec-msg {
-        background: transparent;
-        box-shadow: none;
-        border-color: var(--signup-border);
-        color: var(--signup-foreground);
-        @apply mb-6 border-x-0 border-t-0 px-0 py-3 text-sm;
-    }
-
-    .home-signup .aettaec-success,
-    .home-signup .aettaec-error {
-        background: transparent;
-        color: var(--signup-foreground);
-    }
-
-    .home-signup .aettaec-form {
-        background: transparent;
-        box-shadow: none;
-        border: 0;
-        margin: 0;
+    .home-signup--filter {
+        --signup-background: transparent;
+        --signup-foreground: var(--color-strong);
+        --signup-muted: color-mix(in srgb, var(--color-strong) 55%, transparent);
+        --signup-border: color-mix(in srgb, var(--color-strong) 18%, transparent);
+        border: 3px solid var(--color-strong);
         padding: 0;
-        @apply grid gap-5;
     }
 
-    .home-signup .aettaec-form label {
-        color: var(--signup-muted);
-        @apply text-xs font-bold uppercase tracking-[0.18em];
-    }
-
-    .home-signup .aettaec-form input[type="text"],
-    .home-signup .aettaec-form input[type="email"] {
-        color: var(--signup-foreground);
-        border-bottom: 1px solid var(--signup-border);
-        border-left: 0;
-        border-right: 0;
-        border-top: 0;
-        background: transparent;
-        box-shadow: none;
-        @apply w-full rounded-none border-x-0 border-t-0 px-0 py-3 text-lg outline-none;
-    }
-
-    .home-signup .aettaec-form input[type="text"]::placeholder,
-    .home-signup .aettaec-form input[type="email"]::placeholder {
-        color: var(--signup-muted);
-        opacity: 1;
-    }
-
-    .home-signup .aettaec-form input[type="text"]:focus,
-    .home-signup .aettaec-form input[type="email"]:focus {
-        border-bottom-color: var(--signup-foreground);
-    }
-
-    .home-signup .aettaec-consent {
-        @apply flex items-start gap-3 pt-2;
-    }
-
-    .home-signup .aettaec-consent input {
-        accent-color: var(--signup-foreground);
-        @apply mt-1 h-4 w-4 shrink-0;
-    }
-
-    .home-signup .aettaec-consent label {
-        color: var(--signup-foreground);
-        @apply text-sm normal-case tracking-[0];
-    }
-
-    .home-signup .aettaec-form button {
-        background: transparent;
-        color: var(--signup-foreground);
-        border: 0;
-        box-shadow: none;
-        @apply mt-3 w-fit px-0 py-0 text-lg font-bold transition-opacity hover:opacity-70;
+    .home-signup--filter .home-signup__inner {
+        margin: 0;
+        padding: 32px 28px;
     }
 }
 
 main {
-    min-height: 100vh;
-    padding-bottom: 236px!important;
+    min-height: calc(100vh - 264px);
+
 }

@@ -6,7 +6,6 @@ if (!$featured_movie instanceof WP_Post) {
 }
 
 $featured_movie_id = $featured_movie->ID;
-$featured_subtitle = movies_theme_get_subtitle($featured_movie_id);
 $featured_year = movies_theme_get_year($featured_movie_id);
 $featured_content = movies_theme_get_featured_content($featured_movie_id);
 $featured_image_id = movies_theme_get_featured_image_id($featured_movie_id);

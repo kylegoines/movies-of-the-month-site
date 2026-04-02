@@ -97,7 +97,6 @@ $author_heading = $active_category_term instanceof WP_Term
     <section class="rhythm-lg grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
       <?php while (have_posts()) : the_post(); ?>
         <?php
-        $subtitle = movies_theme_get_subtitle(get_the_ID());
         $is_hidden_gem = movies_theme_is_hidden_gem(get_the_ID());
         $gem_badge = $is_hidden_gem
             ? movies_theme_get_inline_svg('images/gemsingle.svg', 'theme-gem-badge')
@@ -121,12 +120,6 @@ $author_heading = $active_category_term instanceof WP_Term
                 <span class="movie-title__gem"><?php echo $gem_badge; ?></span>
               <?php endif; ?>
             </h2>
-
-            <?php if ($subtitle !== '') : ?>
-              <p class="theme-body mt-2 text-base font-bold">
-                <?php echo esc_html($subtitle); ?>
-              </p>
-            <?php endif; ?>
           </a>
         </article>
       <?php endwhile; ?>
