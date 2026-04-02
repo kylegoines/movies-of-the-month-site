@@ -120,15 +120,17 @@ get_header();
               ?>
             </div>
 
-            <p class="theme-body rhythm-lg text-sm font-bold tracking-[0.04em] <?php echo $has_spotlight_layout ? 'text-right' : ''; ?>">
-              &mdash;
-              <a
-                class="theme-strong transition-opacity hover:opacity-70 no-underline"
-                href="<?php echo esc_url(get_author_posts_url($movie_author_id)); ?>"
-              >
-                <?php echo esc_html($movie_author_name); ?>
-              </a>
-            </p>
+            <?php if ($has_spotlight_layout) : ?>
+              <p class="theme-body rhythm-lg text-right text-sm font-bold tracking-[0.04em]">
+                &mdash;
+                <a
+                  class="theme-strong transition-opacity hover:opacity-70 no-underline"
+                  href="<?php echo esc_url(get_author_posts_url($movie_author_id)); ?>"
+                >
+                  <?php echo esc_html($movie_author_name); ?>
+                </a>
+              </p>
+            <?php endif; ?>
           </div>
         </div>
 
@@ -141,44 +143,12 @@ get_header();
               <div class="accent-rule mb-2 h-[3px] flex-1"></div>
             </div>
 
-            <div class="grid grid-cols-2 gap-x-6 gap-y-10 md:grid-cols-4">
-              <?php foreach ($other_movies_by_author as $related_movie) : ?>
-                <?php
-                $related_movie_id = $related_movie->ID;
-                $related_subtitle = movies_theme_get_subtitle($related_movie_id);
-                $related_is_hidden_gem = movies_theme_is_hidden_gem($related_movie_id);
-                $related_gem_badge = $related_is_hidden_gem
-                    ? movies_theme_get_inline_svg('images/gemsingle.svg', 'theme-gem-badge')
-                    : '';
-                $related_poster = get_the_post_thumbnail($related_movie_id, 'large', [
-                    'class' => 'h-auto w-full object-cover',
-                    'loading' => 'lazy',
-                ]);
-                ?>
-                <article>
-                  <a class="movie-card block no-underline" href="<?php echo esc_url(get_permalink($related_movie_id)); ?>">
-                    <?php if ($related_poster !== '') : ?>
-                      <div class="poster-frame theme-surface <?php echo $related_is_hidden_gem ? 'poster-frame--hidden-gem' : ''; ?>">
-                        <?php echo $related_poster; ?>
-                      </div>
-                    <?php endif; ?>
-
-                    <h3 class="mt-4 flex items-center gap-2 text-xl tracking-[-0.04em] <?php echo $related_is_hidden_gem ? 'movie-title--hidden-gem' : 'theme-strong'; ?>">
-                      <span><?php echo esc_html(get_the_title($related_movie_id)); ?></span>
-                      <?php if ($related_gem_badge !== '') : ?>
-                        <span class="movie-title__gem"><?php echo $related_gem_badge; ?></span>
-                      <?php endif; ?>
-                    </h3>
-
-                    <?php if ($related_subtitle !== '') : ?>
-                      <p class="theme-body mt-2 text-base font-bold">
-                        <?php echo esc_html($related_subtitle); ?>
-                      </p>
-                    <?php endif; ?>
-                  </a>
-                </article>
-              <?php endforeach; ?>
-            </div>
+            <?php
+            get_template_part('components/movie-grid-full', null, [
+                'movies' => $other_movies_by_author,
+                'grid_classes' => 'grid grid-cols-2 gap-x-6 gap-y-10 sm:grid-cols-3 lg:grid-cols-4',
+            ]);
+            ?>
           </section>
         <?php endif; ?>
       </article>

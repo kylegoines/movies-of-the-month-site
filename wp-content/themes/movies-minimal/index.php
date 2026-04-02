@@ -24,7 +24,9 @@ get_header();
           </div>
         <?php endif; ?>
 
-        <?php get_template_part('components/collection', 'list'); ?>
+        <div class="rhythm-lg">
+          <?php get_template_part('components/collection', 'list'); ?>
+        </div>
       </div>
 
       <?php if ($featured_movie instanceof WP_Post) : ?>
