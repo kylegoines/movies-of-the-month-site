@@ -47,7 +47,7 @@ get_header();
       ]);
       ?>
       <article>
-        <div class="mt-[48px] <?php echo $has_spotlight_layout ? 'space-y-10' : 'grid gap-10 lg:grid-cols-[minmax(180px,20vw)_minmax(0,1fr)] lg:items-start'; ?>">
+        <div class="page-header <?php echo $has_spotlight_layout ? 'space-y-10' : 'grid gap-10 lg:grid-cols-[minmax(180px,20vw)_minmax(0,1fr)] lg:items-start'; ?>">
           <div>
             <?php if ($has_spotlight_layout && $spotlight_image !== '') : ?>
               <?php echo $spotlight_image; ?>
@@ -68,7 +68,7 @@ get_header();
               </p>
             <?php endif; ?>
 
-            <h1 class="theme-strong text-4xl tracking-[-0.06em] md:text-6xl">
+            <h1 class="page-header__title theme-strong">
               <?php the_title(); ?>
             </h1>
 

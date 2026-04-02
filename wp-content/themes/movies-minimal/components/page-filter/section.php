@@ -20,9 +20,9 @@ $scale_label_config = $args['scale_label_config'] ?? [];
 
   <label class="filter-panel__field filter-panel__field--primary block">
     <span class="theme-muted mb-2 block text-xs font-bold tracking-[0.04em]">Genre</span>
-    <span class="theme-border relative block border-b">
+    <span class="theme-border relative block border px-3">
       <select
-        class="theme-body w-full appearance-none bg-transparent px-0 py-3 pr-8 text-lg font-bold focus:outline-none"
+        class="theme-body w-full cursor-pointer appearance-none bg-transparent px-0 py-3 pr-8 text-lg font-bold focus:outline-none"
         name="category"
         data-filter-select
       >
@@ -33,15 +33,15 @@ $scale_label_config = $args['scale_label_config'] ?? [];
           </option>
         <?php endforeach; ?>
       </select>
-      <span class="theme-strong pointer-events-none absolute right-1 top-1/2 h-2.5 w-2.5 -translate-y-1/2 rotate-45 border-b-2 border-r-2" aria-hidden="true"></span>
+      <span class="theme-strong pointer-events-none absolute right-3 top-1/2 h-2.5 w-2.5 -translate-y-1/2 rotate-45 border-b-2 border-r-2" aria-hidden="true"></span>
     </span>
   </label>
 
   <label class="filter-panel__field filter-panel__field--primary block">
     <span class="theme-muted mb-2 block text-xs font-bold tracking-[0.04em]">Author</span>
-    <span class="theme-border relative block border-b">
+    <span class="theme-border relative block border px-3">
       <select
-        class="theme-body w-full appearance-none bg-transparent px-0 py-3 pr-8 text-lg font-bold focus:outline-none"
+        class="theme-body w-full cursor-pointer appearance-none bg-transparent px-0 py-3 pr-8 text-lg font-bold focus:outline-none"
         name="movie_author"
         data-filter-select
       >
@@ -52,7 +52,7 @@ $scale_label_config = $args['scale_label_config'] ?? [];
           </option>
         <?php endforeach; ?>
       </select>
-      <span class="theme-strong pointer-events-none absolute right-1 top-1/2 h-2.5 w-2.5 -translate-y-1/2 rotate-45 border-b-2 border-r-2" aria-hidden="true"></span>
+      <span class="theme-strong pointer-events-none absolute right-3 top-1/2 h-2.5 w-2.5 -translate-y-1/2 rotate-45 border-b-2 border-r-2" aria-hidden="true"></span>
     </span>
   </label>
 
@@ -61,9 +61,9 @@ $scale_label_config = $args['scale_label_config'] ?? [];
       <span class="theme-muted mb-2 block text-xs font-bold tracking-[0.04em]">
         <?php echo esc_html(ucfirst($movie_filter_key)); ?>
       </span>
-      <span class="theme-border relative block border-b">
+      <span class="theme-border relative block border px-3">
         <select
-          class="theme-body w-full appearance-none bg-transparent px-0 py-3 pr-8 text-lg font-bold focus:outline-none"
+          class="theme-body w-full cursor-pointer appearance-none bg-transparent px-0 py-3 pr-8 text-lg font-bold focus:outline-none"
           name="<?php echo esc_attr($movie_filter_key); ?>"
           data-filter-select
         >
@@ -77,7 +77,7 @@ $scale_label_config = $args['scale_label_config'] ?? [];
             </option>
           <?php endforeach; ?>
         </select>
-        <span class="theme-strong pointer-events-none absolute right-1 top-1/2 h-2.5 w-2.5 -translate-y-1/2 rotate-45 border-b-2 border-r-2" aria-hidden="true"></span>
+        <span class="theme-strong pointer-events-none absolute right-3 top-1/2 h-2.5 w-2.5 -translate-y-1/2 rotate-45 border-b-2 border-r-2" aria-hidden="true"></span>
       </span>
     </label>
   <?php endforeach; ?>

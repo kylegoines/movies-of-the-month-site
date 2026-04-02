@@ -34,15 +34,13 @@ $author_heading = $active_category_term instanceof WP_Term
 <?php get_template_part('header/site', 'header'); ?>
 
 <main class="mx-auto max-w-[1000px] px-[32px] py-[15px] md:p-[15px]">
-  <header class="mt-[48px] grid gap-10 md:grid-cols-[minmax(0,1fr)_280px] md:items-start">
-    <div>
-      <h1 class="theme-strong text-4xl tracking-[-0.06em] md:text-6xl">
-        <?php echo esc_html($author_heading); ?>
-      </h1>
-    </div>
+  <header class="page-header">
+    <h1 class="page-header__title theme-strong">
+      <?php echo esc_html($author_heading); ?>
+    </h1>
 
     <?php if ($author_bio !== '' || $author_category_stats['categories'] !== []) : ?>
-      <aside class="theme-border grid gap-8 border-t pt-4 md:pt-0">
+      <aside class="theme-border mt-6 grid gap-8 border-t pt-4 md:grid-cols-2 md:gap-10">
         <?php if ($author_category_stats['categories'] !== []) : ?>
           <div>
             <p class="theme-muted text-xs font-bold uppercase tracking-[0.18em]">Genre Breakdown</p>

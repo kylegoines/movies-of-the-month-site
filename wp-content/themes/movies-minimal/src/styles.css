@@ -352,6 +352,23 @@
     background-color: color-mix(in srgb, var(--secondary-accent) 65%, white 35%);
   }
 
+  .page-header {
+    @apply mt-10 md:mt-12;
+  }
+
+  .page-header__title {
+    color: var(--color-strong);
+    @apply m-0 text-4xl tracking-[-0.06em] md:text-6xl;
+  }
+
+  .page-header__row {
+    @apply flex flex-wrap items-end gap-x-6 gap-y-3;
+  }
+
+  .page-header__rule {
+    @apply h-[3px] min-w-[120px] flex-1;
+  }
+
   .poster-frame {
     position: relative;
     margin-top: 20px;
@@ -549,6 +566,20 @@
     @apply cursor-pointer border-0 bg-transparent p-0 font-bold transition-opacity hover:opacity-60 focus:outline-none;
   }
 
+  select[data-filter-select] {
+    color: var(--color-strong);
+    transition: color 0.18s ease;
+  }
+
+  select[data-filter-select]:has(option[value=""]:checked) {
+    color: var(--color-muted);
+  }
+
+  select[data-filter-select]:has(option[value=""]:checked):hover,
+  select[data-filter-select]:has(option[value=""]:checked):focus {
+    color: var(--color-foreground);
+  }
+
   .hidden-gem-label {
     color: var(--hidden-gem-accent);
   }
@@ -712,16 +743,6 @@
       align-items: end;
       gap: 1.25rem;
       padding-bottom: 0;
-    }
-
-    .filter-panel-desktop .filter-panel__field--primary {
-      grid-column: span 2;
-    }
-  }
-
-  @media (min-width: 1280px) {
-    .filter-panel-desktop .filter-panel__fields {
-      grid-template-columns: repeat(5, minmax(0, 1fr));
     }
 
     .filter-panel-desktop .filter-panel__field--primary {

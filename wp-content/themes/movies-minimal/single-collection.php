@@ -12,8 +12,8 @@ get_header();
       $movie_ids = movies_theme_get_collection_movies($collection_id);
       ?>
       <article>
-        <header class="max-w-[720px]">
-          <h1 class="theme-strong m-0 text-4xl tracking-[-0.06em] md:text-6xl">
+        <header class="page-header max-w-[720px]">
+          <h1 class="page-header__title theme-strong">
             <?php the_title(); ?>
           </h1>
         
