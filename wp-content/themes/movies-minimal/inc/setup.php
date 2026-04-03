@@ -124,7 +124,7 @@ function movies_theme_handle_contribution_form(): void
         'Message:',
         $message,
     ]);
-    $sent = wp_mail('kyle.goines@gmail.com', $subject, $body, [
+    $sent = wp_mail('nashafoster@gmail.com', $subject, $body, [
         'Content-Type: text/plain; charset=UTF-8',
     ]);
 
