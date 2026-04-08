@@ -107,7 +107,7 @@ usort($contributors, static function (WP_User $left, WP_User $right): int {
             </div>
 
             <div class="min-w-0">
-              <h2 class="theme-strong flex flex-wrap items-baseline gap-x-3 gap-y-1 text-3xl tracking-[-0.05em] md:text-4xl">
+              <h2 class="theme-strong flex flex-wrap items-baseline gap-x-3 gap-y-1 text-3xl tracking-[-0.05em] md:text-4xl rhythm-sm">
                 <a class="no-underline" href="<?php echo esc_url(get_author_posts_url($contributor_id)); ?>">
                   <?php echo esc_html($contributor_name); ?>
                 </a>

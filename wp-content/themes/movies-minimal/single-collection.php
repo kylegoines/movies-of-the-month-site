@@ -43,7 +43,7 @@ get_header();
                   'loading' => 'lazy',
               ]);
               ?>
-              <article class="theme-border grid grid-cols-[auto_minmax(0,1fr)] items-start gap-4 border-t pt-6 lg:grid-cols-[220px_minmax(0,1fr)] lg:gap-10">
+              <article class="theme-border grid grid-cols-[auto_minmax(0,1fr)] items-start gap-4 border-t pt-6 first:border-t-0 first:pt-0 lg:grid-cols-[220px_minmax(0,1fr)] lg:gap-10">
                 <div>
                   <?php if ($poster !== '') : ?>
                     <a class="movie-card block no-underline" href="<?php echo esc_url(get_permalink($movie_id)); ?>">

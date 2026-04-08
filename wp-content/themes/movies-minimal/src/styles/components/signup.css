@@ -1,0 +1,55 @@
+@layer components {
+  .home-signup {
+    --signup-background: var(--color-strong);
+    --signup-foreground: var(--color-background);
+    --signup-muted: color-mix(in srgb, var(--color-background) 72%, transparent);
+    --signup-border: color-mix(in srgb, var(--color-background) 32%, transparent);
+    background: var(--signup-background);
+    color: var(--signup-foreground);
+    position: relative;
+    padding: 0;
+    width: 100%;
+    @apply border-t;
+  }
+
+  .home-signup__inner {
+    margin: 0 auto;
+    padding: 48px 32px;
+    padding-left: 45px;
+  }
+
+  .home-signup__label {
+    background: var(--signup-background);
+    color: var(--signup-foreground);
+    border: 1px solid var(--signup-foreground);
+    display: inline-block;
+    position: absolute;
+    top: 0;
+    left: 1.5rem;
+    transform: translateY(-100%);
+    @apply cursor-pointer border-b-0 px-5 py-3 text-left md:left-8;
+  }
+
+  .home-signup__label-text {
+    transition: color 180ms ease;
+  }
+
+  .home-signup__label:hover .home-signup__label-text,
+  .home-signup__label:focus-visible .home-signup__label-text {
+    color: var(--secondary-accent);
+  }
+
+  .home-signup--filter {
+    --signup-background: transparent;
+    --signup-foreground: var(--color-strong);
+    --signup-muted: color-mix(in srgb, var(--color-strong) 55%, transparent);
+    --signup-border: color-mix(in srgb, var(--color-strong) 18%, transparent);
+    border: 3px solid var(--color-strong);
+    padding: 0;
+  }
+
+  .home-signup--filter .home-signup__inner {
+    margin: 0;
+    padding: 32px 28px;
+  }
+}
