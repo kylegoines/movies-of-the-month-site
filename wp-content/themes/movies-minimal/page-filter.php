@@ -35,6 +35,7 @@ usort($movie_authors, static function (WP_User $left, WP_User $right): int {
 // Raw request values for the public filter state.
 $selected_category = isset($_GET['category']) ? sanitize_title(wp_unslash($_GET['category'])) : '';
 $selected_movie_author = isset($_GET['movie_author']) ? (int) wp_unslash($_GET['movie_author']) : 0;
+$selected_sort = isset($_GET['sort']) ? sanitize_key(wp_unslash($_GET['sort'])) : 'random';
 $selected_category_exists = false;
 $selected_movie_author_exists = false;
 $filters_state = isset($_GET['filters']) && sanitize_key(wp_unslash($_GET['filters'])) === 'open'
@@ -51,6 +52,11 @@ if ($eyebrow_text === '') {
 
 // These are the ACF-backed movie mood filters available on the Filter page.
 $movie_filter_keys = ['funny', 'scary', 'sadness', 'pacing'];
+$movie_sort_options = [
+    'random' => 'Random',
+    'duration_asc' => 'Duration (ascending)',
+    'duration_desc' => 'Duration (descending)',
+];
 $selected_movie_filters = [];
 $movie_meta_query = [];
 $movie_tax_query = [];
@@ -76,6 +82,10 @@ foreach ($movie_authors as $movie_author) {
 
 if (!$selected_movie_author_exists) {
     $selected_movie_author = 0;
+}
+
+if (!array_key_exists($selected_sort, $movie_sort_options)) {
+    $selected_sort = 'random';
 }
 
 // Category filtering is handled as a taxonomy query because Genre maps to categories.
@@ -117,26 +127,33 @@ if ($selected_movie_author > 0) {
     $movies_query_args['author'] = $selected_movie_author;
 }
 
-// Once a mood filter is active, switch to the full filtered list in title order.
+// Once any public filter is active, switch to the full filtered list.
 if ($movie_meta_query !== []) {
     $movies_query_args['posts_per_page'] = -1;
-    $movies_query_args['orderby'] = 'title';
-    $movies_query_args['order'] = 'ASC';
     $movies_query_args['meta_query'] = $movie_meta_query;
 }
 
-// Category filtering uses the same full-list ordering as the mood filters.
 if ($movie_tax_query !== []) {
     $movies_query_args['posts_per_page'] = -1;
-    $movies_query_args['orderby'] = 'title';
-    $movies_query_args['order'] = 'ASC';
     $movies_query_args['tax_query'] = $movie_tax_query;
 }
 
 if ($selected_movie_author > 0) {
     $movies_query_args['posts_per_page'] = -1;
-    $movies_query_args['orderby'] = 'title';
+}
+
+if ($selected_sort !== 'random') {
+    $movies_query_args['posts_per_page'] = -1;
+}
+
+if ($selected_sort === 'duration_asc') {
+    $movies_query_args['meta_key'] = 'runtime';
+    $movies_query_args['orderby'] = 'meta_value_num';
     $movies_query_args['order'] = 'ASC';
+} elseif ($selected_sort === 'duration_desc') {
+    $movies_query_args['meta_key'] = 'runtime';
+    $movies_query_args['orderby'] = 'meta_value_num';
+    $movies_query_args['order'] = 'DESC';
 }
 
 // This query is passed into the Filter page results component below.
@@ -158,6 +175,8 @@ $movies_query = new WP_Query($movies_query_args);
             'movie_authors' => $movie_authors,
             'selected_category' => $selected_category,
             'selected_movie_author' => $selected_movie_author,
+            'movie_sort_options' => $movie_sort_options,
+            'selected_sort' => $selected_sort,
             'movie_filter_keys' => $movie_filter_keys,
             'selected_movie_filters' => $selected_movie_filters,
             'scale_label_config' => $scale_label_config,

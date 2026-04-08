@@ -254,9 +254,11 @@ add_action('acf/init', function (): void {
                 'key' => 'field_movies_theme_movie_runtime',
                 'label' => 'Runtime',
                 'name' => 'runtime',
-                'type' => 'text',
-                'instructions' => 'Example: 121 min',
+                'type' => 'number',
+                'instructions' => 'Runtime in minutes. Example: 121',
                 'required' => 0,
+                'min' => 1,
+                'step' => 1,
             ],
             [
                 'key' => 'field_movies_theme_movie_spoiler_free_review',
@@ -441,4 +443,18 @@ add_action('acf/input/admin_head', function (): void {
       }
     </style>
     <?php
+});
+
+add_filter('acf/update_value/name=runtime', function ($value) {
+    $value = trim((string) $value);
+
+    if ($value === '') {
+        return '';
+    }
+
+    if (preg_match('/\d+/', $value, $matches) !== 1) {
+        return '';
+    }
+
+    return (string) ((int) $matches[0]);
 });

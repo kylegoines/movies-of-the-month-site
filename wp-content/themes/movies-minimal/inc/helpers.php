@@ -66,7 +66,21 @@ function movies_theme_get_runtime(int $post_id): string
         return '';
     }
 
-    return trim((string) get_field('runtime', $post_id));
+    $runtime = trim((string) get_field('runtime', $post_id));
+
+    if ($runtime === '') {
+        return '';
+    }
+
+    if (ctype_digit($runtime)) {
+        return $runtime . ' min';
+    }
+
+    if (preg_match('/\d+/', $runtime, $matches) === 1) {
+        return $matches[0] . ' min';
+    }
+
+    return $runtime;
 }
 
 function movies_theme_get_spoiler_free_review(int $post_id): string

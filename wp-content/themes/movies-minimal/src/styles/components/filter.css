@@ -79,6 +79,26 @@
     padding-bottom: 1rem;
   }
 
+  .filter-sort {
+    border: 0;
+    margin: 0;
+    padding: 0;
+  }
+
+  .filter-sort__options {
+    border-color: color-mix(in srgb, var(--color-strong) 30%, transparent);
+  }
+
+  .filter-sort__option {
+    line-height: 1.35;
+  }
+
+  .filter-sort__radio {
+    accent-color: var(--hidden-gem-accent);
+    flex: 0 0 auto;
+    margin: 0;
+  }
+
   @media (min-width: 768px) {
     body.filter-panel-open {
       overflow: auto;
@@ -127,6 +147,10 @@
 
     .filter-panel-desktop .filter-panel__field--primary {
       grid-column: span 1;
+    }
+
+    .filter-panel-desktop .filter-panel__field--sort {
+      grid-column: 1 / -1;
     }
   }
 }

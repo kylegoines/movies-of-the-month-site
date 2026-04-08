@@ -6,6 +6,8 @@ $movie_categories = $args['movie_categories'] ?? [];
 $movie_authors = $args['movie_authors'] ?? [];
 $selected_category = $args['selected_category'] ?? '';
 $selected_movie_author = $args['selected_movie_author'] ?? 0;
+$movie_sort_options = $args['movie_sort_options'] ?? [];
+$selected_sort = $args['selected_sort'] ?? 'random';
 $movie_filter_keys = $args['movie_filter_keys'] ?? [];
 $selected_movie_filters = $args['selected_movie_filters'] ?? [];
 $scale_label_config = $args['scale_label_config'] ?? [];
@@ -25,6 +27,7 @@ $scale_label_config = $args['scale_label_config'] ?? [];
         class="theme-body w-full cursor-pointer appearance-none bg-transparent px-0 py-3 pr-8 text-lg font-bold focus:outline-none"
         name="category"
         data-filter-select
+        data-filter-control
       >
         <option value="">Select</option>
         <?php foreach ($movie_categories as $movie_category) : ?>
@@ -44,6 +47,7 @@ $scale_label_config = $args['scale_label_config'] ?? [];
         class="theme-body w-full cursor-pointer appearance-none bg-transparent px-0 py-3 pr-8 text-lg font-bold focus:outline-none"
         name="movie_author"
         data-filter-select
+        data-filter-control
       >
         <option value="">Select</option>
         <?php foreach ($movie_authors as $movie_author) : ?>
@@ -66,6 +70,7 @@ $scale_label_config = $args['scale_label_config'] ?? [];
           class="theme-body w-full cursor-pointer appearance-none bg-transparent px-0 py-3 pr-8 text-lg font-bold focus:outline-none"
           name="<?php echo esc_attr($movie_filter_key); ?>"
           data-filter-select
+          data-filter-control
         >
           <option value="">Select</option>
           <?php foreach ($scale_label_config[$movie_filter_key] as $scale_value => $scale_label) : ?>
@@ -81,6 +86,25 @@ $scale_label_config = $args['scale_label_config'] ?? [];
       </span>
     </label>
   <?php endforeach; ?>
+
+  <fieldset class="filter-panel__field filter-panel__field--sort filter-sort block">
+    <legend class="theme-muted mb-2 block text-xs font-bold tracking-[0.04em]">Sort by:</legend>
+    <div class="filter-sort__options theme-border grid gap-2 border p-3">
+      <?php foreach ($movie_sort_options as $sort_value => $sort_label) : ?>
+        <label class="filter-sort__option theme-body flex cursor-pointer items-center gap-3 text-sm font-bold">
+          <input
+            class="filter-sort__radio"
+            type="radio"
+            name="sort"
+            value="<?php echo esc_attr($sort_value); ?>"
+            <?php checked($selected_sort, $sort_value); ?>
+            data-filter-control
+          >
+          <span><?php echo esc_html($sort_label); ?></span>
+        </label>
+      <?php endforeach; ?>
+    </div>
+  </fieldset>
 <?php $filter_fields_markup = trim((string) ob_get_clean()); ?>
 
 <section>

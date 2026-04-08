@@ -72,7 +72,7 @@ get_header();
               </p>
             <?php endif; ?>
 
-            <h1 class="page-header__title theme-strong">
+            <h1 class="page-header__title theme-strong rhythm-sm">
               <?php the_title(); ?>
             </h1>
 

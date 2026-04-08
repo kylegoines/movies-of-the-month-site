@@ -5,6 +5,9 @@ export class FilterPageHeading {
     this.results = results;
     this.textNode = this.heading?.querySelector('span') ?? this.heading;
     this.baseText = this.heading?.dataset.baseText || 'Movies that are...';
+    this.controls = Array.from(
+      this.form?.querySelectorAll('[data-filter-control]') || []
+    );
     this.selects = Array.from(this.form?.querySelectorAll('[data-filter-select]') || []);
     this.isPending = false;
     this.stateField = this.form?.querySelector('[data-filter-state]') || null;
@@ -90,7 +93,14 @@ export class FilterPageHeading {
           return;
         }
 
-        element.value = formData.get(element.name)?.toString() || '';
+        const nextValue = formData.get(element.name)?.toString() || '';
+
+        if (element instanceof HTMLInputElement && element.type === 'radio') {
+          element.checked = element.value === nextValue;
+          return;
+        }
+
+        element.value = nextValue;
       });
     });
   }
@@ -229,8 +239,8 @@ export class FilterPageHeading {
       void this.fetchResults();
     });
 
-    this.selects.forEach((select) => {
-      select.addEventListener('change', () => {
+    this.controls.forEach((control) => {
+      control.addEventListener('change', () => {
         this.syncForms();
         this.updateHeading();
         void this.fetchResults();
