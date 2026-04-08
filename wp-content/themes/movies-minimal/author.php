@@ -33,7 +33,7 @@ $author_heading = $active_category_term instanceof WP_Term
 
 <?php get_template_part('header/site', 'header'); ?>
 
-<main class="mx-auto max-w-[1000px] px-[32px]">
+<main class="mx-auto mt-10 min-h-[calc(100vh-114px)] max-w-[1000px] px-[32px] pb-[50px] sm:min-h-[calc(100vh-154px)] sm:pb-[80px] md:mt-12 lg:min-h-[calc(100vh-232px)] lg:pb-[100px]">
   <header class="page-header">
     <h1 class="page-header__title theme-strong">
       <?php echo esc_html($author_heading); ?>

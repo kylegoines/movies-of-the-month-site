@@ -30,7 +30,7 @@ if ($marquee_is_paused) {
 
 <header class="pt-[12px]">
   <button
-    class="site-mobile-nav__toggle"
+    class="site-mobile-nav__toggle inline-flex lg:hidden"
     type="button"
     data-site-mobile-nav-toggle
     aria-expanded="false"
@@ -67,7 +67,7 @@ if ($marquee_is_paused) {
     </div>
   </a>
   <button
-    class="site-title-marquee__toggle theme-strong theme-border"
+    class="site-title-marquee__toggle theme-strong theme-border hidden lg:inline-flex"
     type="button"
     data-site-title-marquee-toggle
     aria-pressed="<?php echo $marquee_is_paused ? 'true' : 'false'; ?>"
@@ -114,7 +114,7 @@ if ($marquee_is_paused) {
   </div>
 
   <div
-    class="site-mobile-nav"
+    class="site-mobile-nav h-[calc(100vh-71px)] sm:h-[calc(100vh-107px)] lg:hidden"
     id="site-mobile-nav"
     data-site-mobile-nav
     aria-hidden="true"

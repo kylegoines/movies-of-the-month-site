@@ -58,7 +58,7 @@ usort($contributors, static function (WP_User $left, WP_User $right): int {
 
 <?php get_template_part('header/site', 'header'); ?>
 
-<main class="mx-auto max-w-[1000px] px-[32px]">
+<main class="mx-auto mt-10 min-h-[calc(100vh-114px)] max-w-[1000px] px-[32px] pb-[50px] sm:min-h-[calc(100vh-154px)] sm:pb-[80px] md:mt-12 lg:min-h-[calc(100vh-232px)] lg:pb-[100px]">
   <section class="page-header">
     <div class="page-header__row mb-10 md:mb-12">
       <h1 class="page-header__title theme-strong shrink-0">Contributors</h1>

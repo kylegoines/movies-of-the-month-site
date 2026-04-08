@@ -175,7 +175,6 @@
     right: 15px;
     bottom: 15px;
     z-index: 90;
-    display: none;
     align-items: center;
     justify-content: center;
     min-height: 48px;
@@ -234,7 +233,6 @@
     right: 0;
     bottom: 0;
     top: auto;
-    height: calc(100vh - 132px);
     z-index: 80;
     display: flex;
     flex-direction: column;
@@ -267,16 +265,6 @@
     color: #111111;
     text-decoration: none;
     @apply text-4xl font-bold leading-none tracking-[-0.04em];
-  }
-
-  @media (max-width: 63.99rem) {
-    .site-mobile-nav__toggle {
-      display: inline-flex;
-    }
-
-    .site-title-marquee__toggle {
-      display: none;
-    }
   }
 
   .spotlight-marquee {
@@ -789,12 +777,6 @@
     }
   }
 
-  @media (max-width: 47.99rem) {
-    .filter-panel-desktop {
-      display: none;
-    }
-  }
-
   .spotlight-gallery__frame {
     position: relative;
     overflow: hidden;
@@ -880,10 +862,4 @@
         margin: 0;
         padding: 32px 28px;
     }
-}
-
-main {
-    @apply mt-10 md:mt-12;
-    min-height: calc(100vh - 264px);
-
 }

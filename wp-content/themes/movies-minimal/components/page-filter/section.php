@@ -157,7 +157,7 @@ $scale_label_config = $args['scale_label_config'] ?? [];
 
     <form
       action="<?php echo esc_url(get_permalink()); ?>"
-      class="filter-panel filter-panel-desktop"
+      class="filter-panel filter-panel-desktop hidden md:block"
       id="filter-drawer-desktop"
       method="get"
       data-filter-form-desktop
