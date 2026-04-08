@@ -1,4 +1,8 @@
 @layer components {
+  .site-title-marquee-shell {
+    position: relative;
+  }
+
   .site-title-marquee {
     color: var(--color-strong);
     display: block;
@@ -46,23 +50,38 @@
   }
 
   .site-title-marquee__toggle {
-    position: fixed;
-    left: 15px;
-    bottom: 15px;
+    position: absolute;
+    top: 0.75rem;
+    right: 2rem;
     z-index: 60;
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    min-height: 56px;
-    min-width: 56px;
     cursor: pointer;
-    background: #111111;
-    color: #ffffff !important;
+    background: color-mix(in srgb, var(--color-background) 92%, white 8%);
+    color: var(--hidden-gem-accent);
     border-width: 1px;
-    border-color: #111111;
+    border-color: color-mix(in srgb, var(--hidden-gem-accent) 65%, transparent);
     border-radius: 9999px;
-    box-shadow: 0 10px 24px color-mix(in srgb, var(--color-strong) 10%, transparent);
-    @apply px-3 text-lg leading-none font-bold transition-opacity hover:opacity-70;
+    box-shadow: 0 10px 24px color-mix(in srgb, var(--hidden-gem-accent) 14%, transparent);
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(-4px);
+    transition:
+      opacity 0.3s ease 0.12s,
+      transform 0.3s ease 0.12s,
+      color 0.2s ease,
+      border-color 0.2s ease,
+      box-shadow 0.2s ease;
+    @apply px-4 py-2 text-sm leading-none font-bold hover:opacity-70 focus:outline-none;
+  }
+
+  .site-title-marquee-shell:hover .site-title-marquee__toggle,
+  .site-title-marquee-shell:focus-within .site-title-marquee__toggle {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translateY(0);
+    transition-delay: 0s;
   }
 }
 

@@ -92,6 +92,15 @@ function movies_theme_get_spoiler_free_review(int $post_id): string
     return trim((string) get_field('spoiler_free_review', $post_id));
 }
 
+function movies_theme_get_the_pitch(int $post_id): string
+{
+    if (!function_exists('get_field')) {
+        return '';
+    }
+
+    return trim((string) get_field('the_pitch', $post_id));
+}
+
 function movies_theme_get_featured_content(int $post_id): string
 {
     if (!function_exists('get_field')) {

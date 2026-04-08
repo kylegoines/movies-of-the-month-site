@@ -270,6 +270,16 @@ add_action('acf/init', function (): void {
                 'rows' => 6,
                 'new_lines' => 'br',
             ],
+            [
+                'key' => 'field_movies_theme_movie_pitch',
+                'label' => 'The Pitch',
+                'name' => 'the_pitch',
+                'type' => 'textarea',
+                'instructions' => 'A short one or two line pitch shown in collection views.',
+                'required' => 0,
+                'rows' => 3,
+                'new_lines' => 'br',
+            ],
         ],
         'location' => [
             [

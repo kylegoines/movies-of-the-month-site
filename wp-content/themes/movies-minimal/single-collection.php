@@ -13,7 +13,7 @@ get_header();
       ?>
       <article>
         <header class="page-header max-w-[720px]">
-          <h1 class="page-header__title theme-strong">
+          <h1 class="page-header__title theme-strong rhythm-lg">
             <?php the_title(); ?>
           </h1>
         
@@ -31,6 +31,7 @@ get_header();
               $year = movies_theme_get_year($movie_id);
               $runtime = movies_theme_get_runtime($movie_id);
               $genre = movies_theme_get_movie_category_list($movie_id);
+              $the_pitch = movies_theme_get_the_pitch($movie_id);
               $is_hidden_gem = movies_theme_is_hidden_gem($movie_id);
               $heart_count = movies_theme_get_movie_heart_count($movie_id);
               $is_liked = movies_theme_movie_is_liked_by_current_visitor($movie_id);
@@ -98,6 +99,13 @@ get_header();
                       <p>
                         <span class="theme-strong font-bold">Genre:</span>
                         <?php echo esc_html($genre); ?>
+                      </p>
+                    <?php endif; ?>
+
+                    <?php if ($the_pitch !== '') : ?>
+                      <p>
+                        <span class="theme-strong font-bold">The Pitch:</span>
+                        <?php echo wp_kses_post(nl2br(esc_html($the_pitch))); ?>
                       </p>
                     <?php endif; ?>
 

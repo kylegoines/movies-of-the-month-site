@@ -19,8 +19,7 @@ $is_contributors = is_page('contributors');
 $marquee_state = movies_theme_get_site_title_marquee_state();
 $marquee_is_paused = (bool) $marquee_state['is_paused'];
 $marquee_progress = (float) $marquee_state['progress'];
-$marquee_button_label = $marquee_is_paused ? 'Play marquee' : 'Pause marquee';
-$marquee_button_icon = $marquee_is_paused ? '>' : '||';
+$marquee_button_label = $marquee_is_paused ? 'Play animation' : 'Pause animation';
 $marquee_track_style = '--site-title-marquee-progress: ' . number_format($marquee_progress, 5, '.', '') . ';';
 
 if ($marquee_is_paused) {
@@ -28,7 +27,7 @@ if ($marquee_is_paused) {
 }
 ?>
 
-<header class="pt-[12px]">
+<header class="site-title-marquee-shell pt-[12px]">
   <button
     class="site-mobile-nav__toggle inline-flex lg:hidden"
     type="button"
@@ -67,13 +66,13 @@ if ($marquee_is_paused) {
     </div>
   </a>
   <button
-    class="site-title-marquee__toggle theme-strong theme-border hidden lg:inline-flex"
+    class="site-title-marquee__toggle hidden lg:inline-flex"
     type="button"
     data-site-title-marquee-toggle
     aria-pressed="<?php echo $marquee_is_paused ? 'true' : 'false'; ?>"
     aria-label="<?php echo esc_attr($marquee_button_label); ?>"
   >
-    <?php echo esc_html($marquee_button_icon); ?>
+    <?php echo esc_html($marquee_button_label); ?>
   </button>
   <div class="w-screen ">
     <ul class="theme-strong mx-auto hidden max-w-[1000px] list-none justify-between px-8 text-xl font-bold lg:flex lg:py-6">

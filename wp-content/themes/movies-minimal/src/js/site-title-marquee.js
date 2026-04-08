@@ -118,14 +118,15 @@ export class SiteTitleMarquee {
     this.button.setAttribute('aria-pressed', String(isPaused));
     this.button.setAttribute(
       'aria-label',
-      isPaused ? 'Play marquee' : 'Pause marquee'
+      isPaused ? 'Play animation' : 'Pause animation'
     );
-    this.button.textContent = isPaused ? '>' : '||';
+    this.button.textContent = isPaused ? 'Play animation' : 'Pause animation';
     this.persistPausedState(isPaused);
   }
 
   toggle = () => {
     this.setPaused(!this.isPaused, !this.isPaused);
+    this.button?.blur();
   };
 
   handleMouseEnter = () => {
