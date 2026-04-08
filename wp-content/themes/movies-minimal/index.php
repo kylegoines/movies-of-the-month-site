@@ -30,7 +30,7 @@ get_header();
       </div>
 
       <?php if ($featured_movie instanceof WP_Post) : ?>
-        <aside class="theme-accent hidden border border-3 pt-4 px-0 pb-5 lg:block lg:sticky lg:top-8 lg:min-h-[120px] overflow-hidden">
+        <aside class="theme-accent hidden border border-3 pt-0 px-0 pb-5 lg:block lg:sticky lg:top-8 lg:min-h-[120px] overflow-hidden">
           <div class="spotlight-marquee px-0">
             <div class="spotlight-marquee__track">
               <span>Spotlight</span>

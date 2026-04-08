@@ -104,13 +104,17 @@ function movies_theme_handle_contribution_form(): void
     $topic = isset($_POST['contribution_topic'])
         ? sanitize_text_field(wp_unslash($_POST['contribution_topic']))
         : '';
+    $name = isset($_POST['contribution_name'])
+        ? trim(sanitize_text_field(wp_unslash($_POST['contribution_name'])))
+        : '';
     $message = isset($_POST['contribution_message'])
         ? trim(sanitize_textarea_field(wp_unslash($_POST['contribution_message'])))
         : '';
     $allowed_topics = [
-        'write_for_site' => 'Write for the site',
-        'movie_recommendation' => 'Recommend a movie',
-        'general_question' => 'General question',
+        'write_for_site' => 'I want to be a contributor',
+        'movie_recommendation' => 'Movie Recommendation',
+        'movie_spotlight_request' => 'Movie Spotlight Request',
+        'general_inquiry' => 'General Inquiry',
     ];
 
     if (!isset($allowed_topics[$topic]) || $message === '') {
@@ -121,6 +125,7 @@ function movies_theme_handle_contribution_form(): void
     $subject = sprintf('Movies of the Month form: %s', $allowed_topics[$topic]);
     $body = implode("\n\n", [
         'Topic: ' . $allowed_topics[$topic],
+        'Name: ' . ($name !== '' ? $name : 'Not provided'),
         'Message:',
         $message,
     ]);

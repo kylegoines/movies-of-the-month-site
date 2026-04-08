@@ -133,6 +133,7 @@
     }
 
     .filter-panel-desktop[data-state='open'] {
+      height: auto;
       opacity: 1;
       pointer-events: auto;
     }

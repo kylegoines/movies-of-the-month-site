@@ -19,7 +19,7 @@ export class FilterPagePanel {
     if (isClosed) {
       url.searchParams.set('filters', 'closed');
     } else {
-      url.searchParams.delete('filters');
+      url.searchParams.set('filters', 'open');
     }
 
     window.history.replaceState({}, '', url);

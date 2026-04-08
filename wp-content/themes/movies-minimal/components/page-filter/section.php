@@ -153,6 +153,7 @@ $scale_label_config = $args['scale_label_config'] ?? [];
       class="filter-panel filter-panel-mobile"
       id="filter-drawer-mobile"
       method="get"
+      data-state="<?php echo esc_attr($filters_state); ?>"
       data-filter-form-mobile
       data-filter-form-sync
       data-filter-panel-mobile
@@ -184,6 +185,7 @@ $scale_label_config = $args['scale_label_config'] ?? [];
       class="filter-panel filter-panel-desktop hidden md:block"
       id="filter-drawer-desktop"
       method="get"
+      data-state="<?php echo esc_attr($filters_state); ?>"
       data-filter-form-desktop
       data-filter-form-sync
       data-filter-panel-desktop

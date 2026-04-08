@@ -46,6 +46,16 @@ if ($variant !== '') {
           </div>
 
           <label class="block space-y-2">
+            <span class="block text-sm font-bold uppercase tracking-[0.08em]">Name</span>
+            <input
+              class="w-full border border-[var(--signup-border)] bg-transparent px-4 py-3 text-base font-bold text-[var(--signup-foreground)] placeholder:text-[var(--signup-muted)] focus:outline-none"
+              type="text"
+              name="contribution_name"
+              placeholder="Your name"
+            >
+          </label>
+
+          <label class="block space-y-2">
             <span class="block text-sm font-bold uppercase tracking-[0.08em]">Subject</span>
             <span class="block border border-[var(--signup-border)]">
               <select
@@ -56,8 +66,9 @@ if ($variant !== '') {
               >
                 <option value="">Select a subject</option>
                 <option value="write_for_site" <?php selected($preset_topic, 'write_for_site'); ?>>I want to be a contributor</option>
-                <option value="movie_recommendation" <?php selected($preset_topic, 'movie_recommendation'); ?>>Movie recommendation</option>
-                <option value="general_question" <?php selected($preset_topic, 'general_question'); ?>>General question</option>
+                <option value="movie_recommendation" <?php selected($preset_topic, 'movie_recommendation'); ?>>Movie Recommendation</option>
+                <option value="movie_spotlight_request" <?php selected($preset_topic, 'movie_spotlight_request'); ?>>Movie Spotlight Request</option>
+                <option value="general_inquiry" <?php selected($preset_topic, 'general_inquiry'); ?>>General Inquiry</option>
               </select>
             </span>
           </label>
