@@ -187,7 +187,7 @@ add_action('acf/init', function (): void {
                 'label' => 'Featured Image',
                 'name' => 'featured_image',
                 'type' => 'image',
-                'instructions' => 'Optional image used for the homepage featured movie section.',
+                'instructions' => 'Optional image used for the homepage featured movie section. If not provided, the poster will be used.',
                 'required' => 0,
                 'return_format' => 'id',
                 'preview_size' => 'medium',
@@ -198,12 +198,55 @@ add_action('acf/init', function (): void {
                 'label' => 'Featured Content',
                 'name' => 'featured_content',
                 'type' => 'wysiwyg',
-                'instructions' => 'Rich content shown when this movie is featured on the homepage.',
+                'instructions' => 'Rich content shown when this movie is featured on the homepage. Filling this out will change the movie post into editorial mode.',
                 'required' => 0,
                 'tabs' => 'all',
                 'toolbar' => 'full',
                 'media_upload' => 0,
                 'delay' => 0,
+            ],
+            [
+                'key' => 'field_movies_theme_movie_gallery',
+                'label' => 'Spotlight Gallery',
+                'name' => 'spotlight_gallery',
+                'type' => 'gallery',
+                'instructions' => 'Optional gallery flashed on hover in the homepage spotlight module.',
+                'required' => 0,
+                'return_format' => 'id',
+                'preview_size' => 'medium',
+                'insert' => 'append',
+                'library' => 'all',
+                'min' => 0,
+                'max' => 0,
+                'mime_types' => 'jpg,jpeg,png,webp,avif',
+            ],
+        ],
+        'location' => [
+            [
+                [
+                    'param' => 'post_type',
+                    'operator' => '==',
+                    'value' => 'movies',
+                ],
+            ],
+        ],
+        'position' => 'normal',
+        'style' => 'default',
+        'active' => true,
+    ]);
+
+    acf_add_local_field_group([
+        'key' => 'group_movies_theme_movie_pullquotes',
+        'title' => 'Pullquotes',
+        'fields' => [
+            [
+                'key' => 'field_movies_theme_movie_pullquote_note',
+                'label' => 'Content Editors Note',
+                'name' => '',
+                'type' => 'message',
+                'message' => 'These pullquotes are for editorial flair. Keep them short lines, and use the Pullquote formatting dropdown to style them.',
+                'new_lines' => 'wpautop',
+                'esc_html' => 0,
             ],
             [
                 'key' => 'field_movies_theme_movie_pullquote_1',
@@ -291,21 +334,6 @@ add_action('acf/init', function (): void {
                 'return_format' => 'value',
                 'allow_null' => 0,
                 'ui' => 0,
-            ],
-            [
-                'key' => 'field_movies_theme_movie_gallery',
-                'label' => 'Spotlight Gallery',
-                'name' => 'spotlight_gallery',
-                'type' => 'gallery',
-                'instructions' => 'Optional gallery flashed on hover in the homepage spotlight module.',
-                'required' => 0,
-                'return_format' => 'id',
-                'preview_size' => 'medium',
-                'insert' => 'append',
-                'library' => 'all',
-                'min' => 0,
-                'max' => 0,
-                'mime_types' => 'jpg,jpeg,png,webp,avif',
             ],
         ],
         'location' => [
@@ -528,7 +556,37 @@ add_action('acf/input/admin_head', function (): void {
       .acf-field[data-name="intro"] .acf-editor-wrap textarea.wp-editor-area {
         min-height: 160px !important;
       }
+
+      .postbox .handle-order-higher,
+      .postbox .handle-order-lower {
+        display: none !important;
+      }
+
+      #tagsdiv-post_tag {
+        display: none !important;
+      }
     </style>
+    <?php
+});
+
+add_action('acf/input/admin_footer', function (): void {
+    $screen = function_exists('get_current_screen') ? get_current_screen() : null;
+
+    if (!$screen || $screen->post_type !== 'movies') {
+        return;
+    }
+    ?>
+    <script>
+      document.addEventListener('DOMContentLoaded', function () {
+        var pullquoteGroup = document.getElementById('acf-group_movies_theme_movie_pullquotes');
+
+        if (!pullquoteGroup || pullquoteGroup.classList.contains('closed')) {
+          return;
+        }
+
+        pullquoteGroup.classList.add('closed');
+      });
+    </script>
     <?php
 });
 

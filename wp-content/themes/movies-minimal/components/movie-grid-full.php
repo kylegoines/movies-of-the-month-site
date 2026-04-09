@@ -22,15 +22,17 @@ if (!is_array($movies) || $movies === []) {
         ? movies_theme_get_inline_svg('images/gemsingle.svg', 'theme-gem-badge')
         : '';
     $poster = get_the_post_thumbnail($movie_id, 'large', [
-        'class' => 'mx-auto h-auto w-full max-h-none object-cover object-center',
+        'class' => 'h-full w-full object-cover object-center',
         'loading' => 'lazy',
     ]);
     ?>
     <article>
       <a class="movie-card block no-underline" href="<?php echo esc_url(get_permalink($movie_id)); ?>">
         <?php if ($poster !== '') : ?>
-          <div class="poster-frame theme-surface mt-0 ml-0 w-auto max-h-none before:hidden lg:mt-[20px] lg:ml-[20px] lg:before:block <?php echo $is_hidden_gem ? 'poster-frame--hidden-gem' : ''; ?>">
-            <?php echo $poster; ?>
+          <div class="poster-frame theme-surface mt-0 ml-0 aspect-[2/3] w-full before:hidden lg:mt-[20px] lg:ml-[20px] lg:before:block <?php echo $is_hidden_gem ? 'poster-frame--hidden-gem' : ''; ?>">
+            <div class="h-full w-full overflow-hidden">
+              <?php echo $poster; ?>
+            </div>
           </div>
         <?php endif; ?>
 
