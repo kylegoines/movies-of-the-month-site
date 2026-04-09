@@ -1,21 +1,15 @@
+
 <?php if (have_posts()) : ?>
-  <ul class="mt-4 lg:mt-13 flex flex-col gap-8 lg:gap-10">
+  <ul class="mt-4 lg:mt-13 flex flex-col">
     <?php while (have_posts()) : the_post(); ?>
       <?php $summary = movies_theme_get_list_summary(get_the_ID()); ?>
-      <li>
+      <li class="border-t border-black py-8 first:border-t-0 first:pt-0 last:pb-0">
         <a class="block no-underline" href="<?php the_permalink(); ?>">
           <div class="flex flex-col">
             <div class="flex">
-                <h2 class="theme-strong text-3xl tracking-[-0.05em] lg:text-5xl shrink-0">
+                <h2 class="theme-strong shrink-0 text-3xl leading-none tracking-[-0.05em] lg:text-5xl">
                     <?php the_title(); ?>
                 </h2>
-            </div>
-            <div class="max-w-2xl mb-6">
-              <?php if ($summary !== '') : ?>
-                <div class="theme-strong mb-2 text-lg font-bold [&_p]:m-0">
-                  <?php echo esc_html($summary); ?>
-                </div>
-              <?php endif; ?>
             </div>
           </div>
         </a>

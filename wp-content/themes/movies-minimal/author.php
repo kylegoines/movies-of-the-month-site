@@ -34,21 +34,22 @@ $author_heading = $active_category_term instanceof WP_Term
 <?php get_template_part('header/site', 'header'); ?>
 
 <main class="mx-auto mt-10 min-h-[calc(100vh-114px)] max-w-[1000px] px-[32px] pb-[50px] sm:min-h-[calc(100vh-154px)] sm:pb-[80px] md:mt-12 lg:min-h-[calc(100vh-232px)] lg:pb-[100px]">
-  <header class="page-header">
-    <h1 class="page-header__title theme-strong">
+  <header class="page-header border-4 p-4">
+    <h1 class="page-header__title theme-strong rhythm-sm lg:rhythm-md">
       <?php echo esc_html($author_heading); ?>
     </h1>
 
     <?php if ($author_bio !== '' || $author_category_stats['categories'] !== []) : ?>
-      <aside class="theme-border rhythm-md grid gap-8 border-t pt-4 md:grid-cols-2 md:gap-10">
+      <aside class="theme-border rhythm-md grid gap-8 pt-4 md:grid-cols-2 md:gap-10">
         <?php if ($author_category_stats['categories'] !== []) : ?>
           <div>
-            <p class="theme-muted text-xs font-bold uppercase tracking-[0.18em]">Genre Breakdown</p>
+            <p class="theme-muted text-xs font-bold uppercase tracking-[0.18em] rhythm-sm lg:rhythm-md">Genre Breakdown</p>
             <ul class="rhythm-sm space-y-3">
               <?php foreach ($author_category_stats['categories'] as $category_stat) : ?>
-                <li class="theme-body flex items-baseline justify-between gap-4 text-sm">
-                  <span class="theme-strong font-bold"><?php echo esc_html($category_stat['term']->name); ?></span>
-                  <span><?php echo esc_html($category_stat['percentage']); ?>%</span>
+                <li class="theme-body flex items-baseline justify-between gap-4 text-sm relative">
+                  <span class="theme-strong font-bold bg-white z-[2] pr-[8px]"><?php echo esc_html($category_stat['term']->name); ?></span>
+                  <div class="absolute h-[1px] w-full bg-black top-[10px]"></div>
+                  <span class="bg-white z-[2] pl-[8px]"><?php echo esc_html($category_stat['percentage']); ?>%</span>
                 </li>
               <?php endforeach; ?>
             </ul>
@@ -57,7 +58,7 @@ $author_heading = $active_category_term instanceof WP_Term
 
         <?php if ($author_bio !== '') : ?>
         <div>
-          <p class="theme-muted text-xs font-bold uppercase tracking-[0.18em]">About</p>
+          <p class="theme-muted text-xs font-bold uppercase tracking-[0.18em] rhythm-sm lg:rhythm-md">About</p>
           <p class="theme-body rhythm-sm text-sm leading-6">
             <?php echo esc_html($author_bio); ?>
           </p>
@@ -68,7 +69,6 @@ $author_heading = $active_category_term instanceof WP_Term
   </header>
 
   <?php if ($author_categories !== []) : ?>
-    <div class="rhythm-lg h-1 w-full bg-black"></div>
     <nav class="rhythm-md flex flex-wrap items-center gap-6">
       <a
         class="text-sm font-bold uppercase tracking-[0.08em] transition-opacity hover:opacity-70 <?php echo $active_category === '' ? 'px-3 py-2' : 'theme-strong'; ?>"
