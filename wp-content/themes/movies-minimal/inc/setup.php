@@ -11,6 +11,39 @@ add_action('init', function (): void {
     $wp_rewrite->author_base = 'contributors';
 });
 
+add_action('admin_menu', function (): void {
+    remove_menu_page('edit.php');
+    remove_menu_page('edit-comments.php');
+    remove_menu_page('themes.php');
+}, 999);
+
+add_filter('custom_menu_order', '__return_true');
+
+add_filter('menu_order', function (array $menu_order): array {
+    $preferred_order = [
+        'edit.php?post_type=movies',
+        'edit.php?post_type=collection',
+        'upload.php',
+        'edit.php?post_type=home_intro',
+    ];
+
+    $ordered = [];
+
+    foreach ($preferred_order as $menu_slug) {
+        if (in_array($menu_slug, $menu_order, true)) {
+            $ordered[] = $menu_slug;
+        }
+    }
+
+    foreach ($menu_order as $menu_slug) {
+        if (!in_array($menu_slug, $ordered, true)) {
+            $ordered[] = $menu_slug;
+        }
+    }
+
+    return $ordered;
+});
+
 add_action('wp_enqueue_scripts', function (): void {
     $theme = wp_get_theme();
     $theme_version = $theme->get('Version');
