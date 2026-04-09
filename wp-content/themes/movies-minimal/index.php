@@ -9,6 +9,7 @@ get_header();
   $show_home_intro = $current_view !== 'past-months';
   $home_intro_post = $show_home_intro ? movies_theme_get_home_intro() : null;
   $featured_movie = $show_home_intro ? movies_theme_get_featured_movie() : null;
+  $recent_activity = $show_home_intro ? movies_theme_get_recent_movie_activity() : [];
   $show_home_top_section = $show_home_intro && (
       $home_intro_post instanceof WP_Post
       || $featured_movie instanceof WP_Post
@@ -25,12 +26,12 @@ get_header();
         <?php endif; ?>
 
         <div class="rhythm-lg">
-          <?php get_template_part('components/collection', 'list'); ?>
+          <?php get_template_part('components/collection', 'list', ['activity_items' => $recent_activity]); ?>
         </div>
       </div>
 
       <?php if ($featured_movie instanceof WP_Post) : ?>
-        <aside class="theme-accent hidden border border-3 pt-0 px-0 pb-5 lg:block lg:sticky lg:top-8 lg:min-h-[120px] overflow-hidden">
+        <aside class="theme-accent hidden border border-3 pt-0 px-0 pb-5 lg:block lg:sticky lg:top-[40px] lg:min-h-[120px] overflow-hidden">
           <div class="spotlight-marquee px-0">
             <div class="spotlight-marquee__track">
               <span>Spotlight</span>

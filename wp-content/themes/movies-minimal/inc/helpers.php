@@ -398,6 +398,64 @@ function movies_theme_get_featured_movie(): ?WP_Post
     return $movies[0];
 }
 
+function movies_theme_get_recent_movie_activity(int $cluster_limit = 6, int $post_limit = 36): array
+{
+    $movies = get_posts([
+        'post_type' => 'movies',
+        'post_status' => 'publish',
+        'posts_per_page' => $post_limit,
+        'orderby' => 'date',
+        'order' => 'DESC',
+        'no_found_rows' => true,
+    ]);
+
+    if ($movies === []) {
+        return [];
+    }
+
+    $clusters = [];
+    $current_cluster = null;
+
+    foreach ($movies as $movie) {
+        if (!$movie instanceof WP_Post) {
+            continue;
+        }
+
+        $author_id = (int) $movie->post_author;
+        $timestamp = get_post_time('U', true, $movie);
+
+        if ($current_cluster === null || $current_cluster['author_id'] !== $author_id) {
+            if ($current_cluster !== null) {
+                $clusters[] = $current_cluster;
+            }
+
+            $current_cluster = [
+                'author_id' => $author_id,
+                'author_name' => movies_theme_get_author_name($author_id),
+                'count' => 0,
+                'timestamp' => $timestamp,
+            ];
+        }
+
+        $current_cluster['count']++;
+        $current_cluster['timestamp'] = max($current_cluster['timestamp'], $timestamp);
+    }
+
+    if ($current_cluster !== null) {
+        $clusters[] = $current_cluster;
+    }
+
+    $clusters = array_slice($clusters, 0, $cluster_limit);
+
+    return array_values(array_map(static function (array $cluster): array {
+        return [
+            'author_id' => (int) $cluster['author_id'],
+            'author_name' => (string) $cluster['author_name'],
+            'count' => (int) $cluster['count'],
+        ];
+    }, $clusters));
+}
+
 function movies_theme_get_home_intro(): ?WP_Post
 {
     $posts = get_posts([

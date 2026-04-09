@@ -1,8 +1,13 @@
 
+<?php
+$activity_items = $args['activity_items'] ?? [];
+?>
+
 <?php if (have_posts()) : ?>
   <ul class="mt-4 lg:mt-13 flex flex-col">
     <?php while (have_posts()) : the_post(); ?>
       <?php
+      $collection_index = (int) $wp_query->current_post;
       $summary = movies_theme_get_list_summary(get_the_ID());
       $collection_movie_ids = movies_theme_get_collection_movies(get_the_ID());
       $collection_poster_urls = array_values(array_filter(array_map(static function (int $movie_id): string {
@@ -29,6 +34,10 @@
                   <?php echo esc_html($summary); ?>
                 </div>
               </div>
+            <?php endif; ?>
+
+            <?php if ($collection_index === 0 && is_array($activity_items) && $activity_items !== []) : ?>
+              <?php get_template_part('components/activity-log', null, ['activity_items' => $activity_items]); ?>
             <?php endif; ?>
           </div>
         </a>

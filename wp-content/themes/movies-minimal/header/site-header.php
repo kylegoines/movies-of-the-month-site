@@ -12,6 +12,7 @@ $latest_collection_url = $latest_collection !== []
 
 $past_months_url = add_query_arg('view', 'past-months', home_url('/'));
 $current_view = isset($_GET['view']) ? sanitize_key(wp_unslash($_GET['view'])) : '';
+$is_home_link = is_home() && $current_view !== 'past-months';
 $is_this_month = is_singular('collection') && $latest_collection !== [] && get_queried_object_id() === (int) $latest_collection[0];
 $is_past_months = is_home() && $current_view === 'past-months';
 $is_browse = is_page('filter');
@@ -78,6 +79,14 @@ if ($marquee_is_paused) {
     <ul class="theme-strong mx-auto hidden max-w-[1000px] list-none justify-between px-8 text-xl font-bold lg:flex lg:py-6">
       <li>
         <a
+          class="transition-opacity hover:opacity-70 <?php echo $is_home_link ? 'text-[var(--hidden-gem-accent)]' : ''; ?>"
+          href="<?php echo esc_url(home_url('/')); ?>"
+        >
+          Home
+        </a>
+      </li>
+      <li>
+        <a
           class="transition-opacity hover:opacity-70 <?php echo $is_this_month ? 'text-[var(--hidden-gem-accent)]' : ''; ?>"
           href="<?php echo esc_url($latest_collection_url); ?>"
         >
@@ -121,6 +130,12 @@ if ($marquee_is_paused) {
 
 
     <nav class="site-mobile-nav__body" aria-label="Mobile">
+      <a
+        class="site-mobile-nav__link <?php echo $is_home_link ? 'text-[var(--hidden-gem-accent)]' : ''; ?>"
+        href="<?php echo esc_url(home_url('/')); ?>"
+      >
+        Home
+      </a>
       <a
         class="site-mobile-nav__link <?php echo $is_this_month ? 'text-[var(--hidden-gem-accent)]' : ''; ?>"
         href="<?php echo esc_url($latest_collection_url); ?>"
