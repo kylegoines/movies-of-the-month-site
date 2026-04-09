@@ -102,7 +102,7 @@ $author_heading = $active_category_term instanceof WP_Term
             ? movies_theme_get_inline_svg('images/gemsingle.svg', 'theme-gem-badge')
             : '';
         $poster = get_the_post_thumbnail(get_the_ID(), 'large', [
-            'class' => 'h-auto w-full object-cover',
+            'class' => movies_theme_get_poster_image_class(get_the_ID(), 'h-auto w-full object-cover'),
             'loading' => 'lazy',
         ]);
         ?>

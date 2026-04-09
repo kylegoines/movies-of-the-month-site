@@ -65,7 +65,7 @@ get_header();
               }, $featured_sidebar_gallery_ids)))
               : [];
           $featured_sidebar_poster = get_the_post_thumbnail($featured_movie_id, 'large', [
-              'class' => 'h-auto w-full object-cover',
+              'class' => movies_theme_get_poster_image_class($featured_movie_id, 'h-auto w-full object-cover'),
               'loading' => 'lazy',
           ]);
           ?>

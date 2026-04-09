@@ -22,7 +22,7 @@ if (!is_array($movies) || $movies === []) {
         ? movies_theme_get_inline_svg('images/gemsingle.svg', 'theme-gem-badge')
         : '';
     $poster = get_the_post_thumbnail($movie_id, 'large', [
-        'class' => 'h-full w-full object-cover object-center',
+        'class' => movies_theme_get_poster_image_class($movie_id, 'h-full w-full object-cover object-center'),
         'loading' => 'lazy',
     ]);
     ?>

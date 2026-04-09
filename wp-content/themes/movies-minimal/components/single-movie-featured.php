@@ -7,6 +7,7 @@ $year = $args['year'] ?? '';
 $runtime = $args['runtime'] ?? '';
 $genre = $args['genre'] ?? '';
 $feature_title = $args['feature_title'] ?? '';
+$feature_byline_label = $args['feature_byline_label'] ?? 'Thoughts by';
 $featured_content = $args['featured_content'] ?? '';
 $pullquote_1 = $args['pullquote_1'] ?? '';
 $pullquote_2 = $args['pullquote_2'] ?? '';
@@ -76,10 +77,6 @@ $content_pullquotes = array_values(array_filter($pullquotes, static function (ar
       </p>
     <?php endif; ?>
 
-
-
-
-
     <div class="mb-6 grid gap-4 lg:items-start">
       <div class="post-content">
         <?php foreach ($content_pullquotes as $pullquote) : ?>
@@ -89,8 +86,9 @@ $content_pullquotes = array_values(array_filter($pullquotes, static function (ar
         <?php endforeach; ?>
         <?php if ($feature_title !== '') : ?>
           <h1 class="page-header__title theme-strong rhythm-sm"><?php echo esc_html($feature_title); ?></h1>
-                  <p class="theme-body text-sm font-bold tracking-[0.04em] lg:pt-1 rhythm-lg">
-          Thoughts by
+        <?php endif; ?>
+        <p class="theme-body text-sm font-bold tracking-[0.04em] lg:pt-1 rhythm-lg">
+          <?php echo esc_html($feature_byline_label); ?>
           <a
             class="theme-strong transition-opacity hover:opacity-70 no-underline"
             href="<?php echo esc_url(get_author_posts_url($movie_author_id)); ?>"
@@ -98,7 +96,6 @@ $content_pullquotes = array_values(array_filter($pullquotes, static function (ar
             <?php echo esc_html($movie_author_name); ?>
           </a>
         </p>
-        <?php endif; ?>
         <?php echo apply_filters('the_content', $featured_content); ?>
       </div>
     </div>

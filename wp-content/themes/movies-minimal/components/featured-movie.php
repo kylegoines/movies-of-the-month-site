@@ -19,7 +19,7 @@ $featured_poster = $featured_image_id > 0
         'loading' => 'lazy',
     ])
     : get_the_post_thumbnail($featured_movie_id, 'large', [
-        'class' => 'h-auto w-full object-cover',
+        'class' => movies_theme_get_poster_image_class($featured_movie_id, 'h-auto w-full object-cover'),
         'loading' => 'lazy',
     ]);
 ?>

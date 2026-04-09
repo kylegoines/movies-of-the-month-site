@@ -110,6 +110,17 @@ function movies_theme_get_feature_title(int $post_id): string
     return trim((string) get_field('feature_title', $post_id));
 }
 
+function movies_theme_get_feature_byline_label(int $post_id): string
+{
+    if (!function_exists('get_field')) {
+        return 'Thoughts by';
+    }
+
+    $label = trim((string) get_field('feature_byline_label', $post_id));
+
+    return $label !== '' ? $label : 'Thoughts by';
+}
+
 function movies_theme_get_pullquote_1(int $post_id): string
 {
     if (!function_exists('get_field')) {
@@ -156,6 +167,26 @@ function movies_theme_get_featured_image_id(int $post_id): int
     }
 
     return (int) get_field('featured_image', $post_id);
+}
+
+function movies_theme_should_add_poster_border(int $post_id): bool
+{
+    if (!function_exists('get_field')) {
+        return false;
+    }
+
+    return (bool) get_field('add_border_to_poster', $post_id);
+}
+
+function movies_theme_get_poster_image_class(int $post_id, string $base_classes): string
+{
+    $classes = trim($base_classes);
+
+    if (movies_theme_should_add_poster_border($post_id)) {
+        $classes .= ' poster-image--bordered';
+    }
+
+    return trim($classes);
 }
 
 function movies_theme_is_hidden_gem(int $post_id): bool

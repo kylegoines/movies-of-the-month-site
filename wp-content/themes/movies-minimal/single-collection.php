@@ -40,7 +40,7 @@ get_header();
                   : '';
               $movie_author_id = (int) get_post_field('post_author', $movie_id);
               $poster = get_the_post_thumbnail($movie_id, 'large', [
-                  'class' => 'mx-auto h-auto max-h-[250px] w-auto object-cover object-center lg:max-h-none lg:w-full',
+                  'class' => movies_theme_get_poster_image_class($movie_id, 'mx-auto h-auto max-h-[250px] w-auto object-cover object-center lg:max-h-none lg:w-full'),
                   'loading' => 'lazy',
               ]);
               ?>

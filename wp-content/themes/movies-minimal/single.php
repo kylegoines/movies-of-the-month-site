@@ -15,6 +15,7 @@ get_header();
       $runtime = movies_theme_get_runtime($movie_id);
       $genre = movies_theme_get_movie_category_list($movie_id);
       $feature_title = movies_theme_get_feature_title($movie_id);
+      $feature_byline_label = movies_theme_get_feature_byline_label($movie_id);
       $featured_content = movies_theme_get_featured_content($movie_id);
       $pullquote_1 = movies_theme_get_pullquote_1($movie_id);
       $pullquote_2 = movies_theme_get_pullquote_2($movie_id);
@@ -35,7 +36,7 @@ get_header();
           ? movies_theme_get_inline_svg('images/gemsingle.svg', 'theme-gem-badge')
           : '';
       $poster = get_the_post_thumbnail($movie_id, 'large', [
-          'class' => 'h-auto w-full object-cover',
+          'class' => movies_theme_get_poster_image_class($movie_id, 'h-auto w-full object-cover'),
           'loading' => 'eager',
       ]);
       $has_spotlight_layout = $featured_content !== '';
@@ -69,6 +70,7 @@ get_header();
                 'runtime' => $runtime,
                 'genre' => $genre,
                 'feature_title' => $feature_title,
+                'feature_byline_label' => $feature_byline_label,
                 'featured_content' => $featured_content,
                 'pullquote_1' => $pullquote_1,
                 'pullquote_2' => $pullquote_2,

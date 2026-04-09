@@ -194,6 +194,16 @@ add_action('acf/init', function (): void {
                 'library' => 'all',
             ],
             [
+                'key' => 'field_movies_theme_movie_add_border_to_poster',
+                'label' => 'Add Border to Poster',
+                'name' => 'add_border_to_poster',
+                'type' => 'true_false',
+                'instructions' => 'If the poster is mainly white, enable this to help it be visible on a white background.',
+                'required' => 0,
+                'ui' => 1,
+                'default_value' => 0,
+            ],
+            [
                 'key' => 'field_movies_theme_movie_feature_title',
                 'label' => 'Feature Title',
                 'name' => 'feature_title',
@@ -201,6 +211,16 @@ add_action('acf/init', function (): void {
                 'instructions' => 'Optional title shown above the editorial post content.',
                 'required' => 0,
                 'default_value' => '',
+                'placeholder' => '',
+            ],
+            [
+                'key' => 'field_movies_theme_movie_feature_byline_label',
+                'label' => 'Feature Byline Label',
+                'name' => 'feature_byline_label',
+                'type' => 'text',
+                'instructions' => 'Optional custom label shown before the author name. Example: Review by.',
+                'required' => 0,
+                'default_value' => 'Thoughts by',
                 'placeholder' => '',
             ],
             [
