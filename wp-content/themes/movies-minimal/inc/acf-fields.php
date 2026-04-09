@@ -206,6 +206,93 @@ add_action('acf/init', function (): void {
                 'delay' => 0,
             ],
             [
+                'key' => 'field_movies_theme_movie_pullquote_1',
+                'label' => 'Pullquote 1',
+                'name' => 'pullquote_1',
+                'type' => 'wysiwyg',
+                'instructions' => 'Rich text pullquote for this movie.',
+                'required' => 0,
+                'tabs' => 'all',
+                'toolbar' => 'pullquote',
+                'media_upload' => 0,
+                'delay' => 0,
+            ],
+            [
+                'key' => 'field_movies_theme_movie_pullquote_position_1',
+                'label' => 'Pullquote 1 Position',
+                'name' => 'pullquote_position_1',
+                'type' => 'select',
+                'instructions' => 'Choose where Pullquote 1 should appear.',
+                'required' => 0,
+                'choices' => [
+                    'position_1' => 'Position 1 (right of feature image)',
+                    'position_2' => 'Position 2 (left of content)',
+                    'position_3' => 'Position 3 (left of feature image)',
+                ],
+                'default_value' => 'position_1',
+                'return_format' => 'value',
+                'allow_null' => 0,
+                'ui' => 0,
+            ],
+            [
+                'key' => 'field_movies_theme_movie_pullquote_2',
+                'label' => 'Pullquote 2',
+                'name' => 'pullquote_2',
+                'type' => 'wysiwyg',
+                'instructions' => 'Rich text pullquote for this movie.',
+                'required' => 0,
+                'tabs' => 'all',
+                'toolbar' => 'pullquote',
+                'media_upload' => 0,
+                'delay' => 0,
+            ],
+            [
+                'key' => 'field_movies_theme_movie_pullquote_position_2',
+                'label' => 'Pullquote 2 Position',
+                'name' => 'pullquote_position_2',
+                'type' => 'select',
+                'instructions' => 'Choose where Pullquote 2 should appear.',
+                'required' => 0,
+                'choices' => [
+                    'position_1' => 'Position 1 (right of feature image)',
+                    'position_2' => 'Position 2 (left of content)',
+                    'position_3' => 'Position 3 (left of feature image)',
+                ],
+                'default_value' => 'position_2',
+                'return_format' => 'value',
+                'allow_null' => 0,
+                'ui' => 0,
+            ],
+            [
+                'key' => 'field_movies_theme_movie_pullquote_3',
+                'label' => 'Pullquote 3',
+                'name' => 'pullquote_3',
+                'type' => 'wysiwyg',
+                'instructions' => 'Rich text pullquote for this movie.',
+                'required' => 0,
+                'tabs' => 'all',
+                'toolbar' => 'pullquote',
+                'media_upload' => 0,
+                'delay' => 0,
+            ],
+            [
+                'key' => 'field_movies_theme_movie_pullquote_position_3',
+                'label' => 'Pullquote 3 Position',
+                'name' => 'pullquote_position_3',
+                'type' => 'select',
+                'instructions' => 'Choose where Pullquote 3 should appear.',
+                'required' => 0,
+                'choices' => [
+                    'position_1' => 'Position 1 (right of feature image)',
+                    'position_2' => 'Position 2 (left of content)',
+                    'position_3' => 'Position 3 (left of feature image)',
+                ],
+                'default_value' => 'position_3',
+                'return_format' => 'value',
+                'allow_null' => 0,
+                'ui' => 0,
+            ],
+            [
                 'key' => 'field_movies_theme_movie_gallery',
                 'label' => 'Spotlight Gallery',
                 'name' => 'spotlight_gallery',
@@ -261,21 +348,11 @@ add_action('acf/init', function (): void {
                 'step' => 1,
             ],
             [
-                'key' => 'field_movies_theme_movie_spoiler_free_review',
-                'label' => 'Spoiler-Free Review',
-                'name' => 'spoiler_free_review',
-                'type' => 'textarea',
-                'instructions' => 'Short spoiler-free review shown on the single movie page.',
-                'required' => 0,
-                'rows' => 6,
-                'new_lines' => 'br',
-            ],
-            [
                 'key' => 'field_movies_theme_movie_pitch',
                 'label' => 'The Pitch',
                 'name' => 'the_pitch',
                 'type' => 'textarea',
-                'instructions' => 'A short one or two line pitch shown in collection views.',
+                'instructions' => 'Describe the film in a one or two sentence pitch. This will be shown on the collections view.',
                 'required' => 0,
                 'rows' => 3,
                 'new_lines' => 'br',
@@ -453,6 +530,51 @@ add_action('acf/input/admin_head', function (): void {
       }
     </style>
     <?php
+});
+
+add_filter('acf/fields/wysiwyg/toolbars', function (array $toolbars): array {
+    $toolbars['pullquote'] = [];
+    $toolbars['pullquote'][1] = [
+        'styleselect',
+        'bold',
+        'italic',
+        'link',
+        'unlink',
+        'removeformat',
+        'undo',
+        'redo',
+    ];
+
+    return $toolbars;
+});
+
+add_filter('tiny_mce_before_init', function (array $init): array {
+    $style_formats = [
+        [
+            'title' => 'Quote Normal',
+            'inline' => 'span',
+            'classes' => '',
+        ],
+        [
+            'title' => 'Quote Bold',
+            'inline' => 'span',
+            'classes' => 'quote-bold',
+        ],
+        [
+            'title' => 'Quote Huge',
+            'inline' => 'span',
+            'classes' => 'quote-huge',
+        ],
+        [
+            'title' => 'Quote Highlight',
+            'inline' => 'span',
+            'classes' => 'quote-highlight',
+        ],
+    ];
+
+    $init['style_formats'] = wp_json_encode($style_formats);
+
+    return $init;
 });
 
 add_filter('acf/update_value/name=runtime', function ($value) {

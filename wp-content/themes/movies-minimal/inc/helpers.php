@@ -83,15 +83,6 @@ function movies_theme_get_runtime(int $post_id): string
     return $runtime;
 }
 
-function movies_theme_get_spoiler_free_review(int $post_id): string
-{
-    if (!function_exists('get_field')) {
-        return '';
-    }
-
-    return trim((string) get_field('spoiler_free_review', $post_id));
-}
-
 function movies_theme_get_the_pitch(int $post_id): string
 {
     if (!function_exists('get_field')) {
@@ -108,6 +99,45 @@ function movies_theme_get_featured_content(int $post_id): string
     }
 
     return trim((string) get_field('featured_content', $post_id));
+}
+
+function movies_theme_get_pullquote_1(int $post_id): string
+{
+    if (!function_exists('get_field')) {
+        return '';
+    }
+
+    return trim((string) get_field('pullquote_1', $post_id));
+}
+
+function movies_theme_get_pullquote_2(int $post_id): string
+{
+    if (!function_exists('get_field')) {
+        return '';
+    }
+
+    return trim((string) get_field('pullquote_2', $post_id));
+}
+
+function movies_theme_get_pullquote_3(int $post_id): string
+{
+    if (!function_exists('get_field')) {
+        return '';
+    }
+
+    return trim((string) get_field('pullquote_3', $post_id));
+}
+
+function movies_theme_get_pullquote_position(int $post_id, int $index): string
+{
+    if (!function_exists('get_field')) {
+        return 'position_1';
+    }
+
+    $position = trim((string) get_field('pullquote_position_' . $index, $post_id));
+    $allowed_positions = ['position_1', 'position_2', 'position_3'];
+
+    return in_array($position, $allowed_positions, true) ? $position : 'position_1';
 }
 
 function movies_theme_get_featured_image_id(int $post_id): int

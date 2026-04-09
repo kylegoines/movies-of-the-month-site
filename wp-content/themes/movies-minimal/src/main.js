@@ -1,5 +1,6 @@
 import './styles.css';
 import { MovieHeartManager } from './js/collection-heart';
+import { FeaturedPullquote } from './js/featured-pullquote';
 import { FilterPageHeading } from './js/filter-page-heading';
 import { FilterPagePanel } from './js/filter-page-panel';
 import { SiteMobileNav } from './js/site-mobile-nav';
@@ -50,6 +51,9 @@ class App {
     this.movieHeartManager = new MovieHeartManager(
       document.querySelectorAll('[data-heart-button]')
     );
+    this.featuredPullquote = new FeaturedPullquote(
+      document.querySelectorAll('[data-featured-pullquote]')
+    );
     this.spotlightGallery = new SpotlightGallery(
       document.querySelectorAll('[data-spotlight-gallery]')
     );
@@ -65,6 +69,7 @@ class App {
     this.siteMobileNav.init();
     this.siteTitleMarquee.init();
     this.movieHeartManager.init();
+    this.featuredPullquote.init();
     this.spotlightGallery.init();
   }
 }

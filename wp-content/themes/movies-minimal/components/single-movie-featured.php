@@ -6,8 +6,13 @@ $movie_author_name = $args['movie_author_name'] ?? '';
 $year = $args['year'] ?? '';
 $runtime = $args['runtime'] ?? '';
 $genre = $args['genre'] ?? '';
-$spoiler_free_review = $args['spoiler_free_review'] ?? '';
 $featured_content = $args['featured_content'] ?? '';
+$pullquote_1 = $args['pullquote_1'] ?? '';
+$pullquote_2 = $args['pullquote_2'] ?? '';
+$pullquote_3 = $args['pullquote_3'] ?? '';
+$pullquote_position_1 = $args['pullquote_position_1'] ?? 'position_1';
+$pullquote_position_2 = $args['pullquote_position_2'] ?? 'position_2';
+$pullquote_position_3 = $args['pullquote_position_3'] ?? 'position_3';
 $is_hidden_gem = $args['is_hidden_gem'] ?? false;
 $heart_count = $args['heart_count'] ?? 0;
 $is_liked = $args['is_liked'] ?? false;
@@ -18,10 +23,43 @@ $pacing_rating = $args['pacing_rating'] ?? '';
 $has_ratings = $args['has_ratings'] ?? false;
 $gem_badge = $args['gem_badge'] ?? '';
 $spotlight_image = $args['spotlight_image'] ?? '';
+
+$pullquotes = array_values(array_filter([
+    [
+        'content' => $pullquote_1,
+        'position' => $pullquote_position_1,
+    ],
+    [
+        'content' => $pullquote_2,
+        'position' => $pullquote_position_2,
+    ],
+    [
+        'content' => $pullquote_3,
+        'position' => $pullquote_position_3,
+    ],
+], static function (array $pullquote): bool {
+    return $pullquote['content'] !== '';
+}));
+
+$outer_pullquotes = array_values(array_filter($pullquotes, static function (array $pullquote): bool {
+    return $pullquote['position'] !== 'position_2';
+}));
+
+$content_pullquotes = array_values(array_filter($pullquotes, static function (array $pullquote): bool {
+    return $pullquote['position'] === 'position_2';
+}));
 ?>
 
 <div class="page-header space-y-6">
   <div class="relative">
+    <?php foreach ($outer_pullquotes as $pullquote) : ?>
+      <div
+        class="single-movie-featured__pullquote single-movie-featured__pullquote--<?php echo esc_attr($pullquote['position']); ?> theme-strong"
+        data-featured-pullquote
+      >
+        <?php echo apply_filters('the_content', $pullquote['content']); ?>
+      </div>
+    <?php endforeach; ?>
     <?php if ($spotlight_image !== '') : ?>
       <?php echo $spotlight_image; ?>
     <?php endif; ?>
@@ -64,13 +102,6 @@ $spotlight_image = $args['spotlight_image'] ?? '';
         <p class="order-3 lg:order-4"><span class="theme-strong font-bold">Genres:</span> <?php echo esc_html($genre); ?></p>
       <?php endif; ?>
 
-      <?php if ($spoiler_free_review !== '') : ?>
-        <p class="order-4 mb-3 leading-7 lg:order-5">
-          <span class="theme-strong font-bold">Spoiler-Free Review</span><br>
-          <?php echo esc_html($spoiler_free_review); ?>
-        </p>
-      <?php endif; ?>
-
       <?php if ($has_ratings) : ?>
         <div class="order-5 mb-4 mt-3 space-y-1.5 lg:order-6">
           <p class="theme-strong font-bold">Ratings</p>
@@ -106,17 +137,23 @@ $spotlight_image = $args['spotlight_image'] ?? '';
 
     <div class="mb-6 grid gap-4 lg:items-start">
       <div class="post-content">
+        <?php foreach ($content_pullquotes as $pullquote) : ?>
+          <div class="single-movie-featured__pullquote-inline theme-strong" data-featured-pullquote>
+            <?php echo apply_filters('the_content', $pullquote['content']); ?>
+          </div>
+        <?php endforeach; ?>
         <?php echo apply_filters('the_content', $featured_content); ?>
-              <p class="theme-body text-sm font-bold tracking-[0.04em] lg:pt-1">
-        &mdash;
-        <a
-          class="theme-strong transition-opacity hover:opacity-70 no-underline"
-          href="<?php echo esc_url(get_author_posts_url($movie_author_id)); ?>"
-        >
-          <?php echo esc_html($movie_author_name); ?>
-        </a>
-      </p>
+        <p class="theme-body text-sm font-bold tracking-[0.04em] lg:pt-1">
+          &mdash;
+          <a
+            class="theme-strong transition-opacity hover:opacity-70 no-underline"
+            href="<?php echo esc_url(get_author_posts_url($movie_author_id)); ?>"
+          >
+            <?php echo esc_html($movie_author_name); ?>
+          </a>
+        </p>
       </div>
     </div>
+
   </div>
 </div>

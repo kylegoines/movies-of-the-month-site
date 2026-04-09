@@ -6,7 +6,6 @@ $movie_author_name = $args['movie_author_name'] ?? '';
 $year = $args['year'] ?? '';
 $runtime = $args['runtime'] ?? '';
 $genre = $args['genre'] ?? '';
-$spoiler_free_review = $args['spoiler_free_review'] ?? '';
 $is_hidden_gem = $args['is_hidden_gem'] ?? false;
 $heart_count = $args['heart_count'] ?? 0;
 $is_liked = $args['is_liked'] ?? false;
@@ -63,13 +62,6 @@ $poster = $args['poster'] ?? '';
 
       <?php if ($genre !== '') : ?>
         <p class="order-3 lg:order-4"><span class="theme-strong font-bold">Genres:</span> <?php echo esc_html($genre); ?></p>
-      <?php endif; ?>
-
-      <?php if ($spoiler_free_review !== '') : ?>
-        <p class="order-4 mb-3 leading-7 lg:order-5">
-          <span class="theme-strong font-bold">Spoiler-Free Review</span><br>
-          <?php echo esc_html($spoiler_free_review); ?>
-        </p>
       <?php endif; ?>
 
       <?php if ($has_ratings) : ?>
