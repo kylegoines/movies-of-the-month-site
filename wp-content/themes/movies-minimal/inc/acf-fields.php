@@ -435,11 +435,64 @@ add_action('acf/init', function (): void {
         'title' => 'Collection Movies',
         'fields' => [
             [
+                'key' => 'field_movies_theme_collection_description',
+                'label' => 'Collection Description',
+                'name' => 'collection_description',
+                'type' => 'textarea',
+                'instructions' => 'Short description shown on the homepage collection list.',
+                'required' => 0,
+                'rows' => 3,
+                'new_lines' => 'br',
+            ],
+            [
+                'key' => 'field_movies_theme_collection_movie_entries',
+                'label' => 'Collection Movie Entries',
+                'name' => 'collection_movie_entries',
+                'type' => 'repeater',
+                'instructions' => 'Optional collection-specific movie list with custom excerpts. If filled in, this will be used instead of the basic movie relationship below.',
+                'required' => 0,
+                'layout' => 'row',
+                'button_label' => 'Add Collection Movie',
+                'sub_fields' => [
+                    [
+                        'key' => 'field_movies_theme_collection_movie_entry_movie',
+                        'label' => 'Movie',
+                        'name' => 'movie',
+                        'type' => 'relationship',
+                        'required' => 1,
+                        'post_type' => [
+                            'movies',
+                        ],
+                        'filters' => [
+                            'search',
+                        ],
+                        'elements' => [
+                            'featured_image',
+                        ],
+                        'return_format' => 'id',
+                        'min' => 1,
+                        'max' => 1,
+                    ],
+                    [
+                        'key' => 'field_movies_theme_collection_movie_entry_excerpt',
+                        'label' => 'Custom Excerpt',
+                        'name' => 'custom_excerpt',
+                        'type' => 'textarea',
+                        'instructions' => 'Optional collection-specific excerpt for this movie.',
+                        'required' => 0,
+                        'rows' => 3,
+                        'new_lines' => 'br',
+                    ],
+                ],
+                'min' => 0,
+                'max' => 0,
+            ],
+            [
                 'key' => 'field_movies_theme_collection_movies',
                 'label' => 'Movies',
                 'name' => 'movies',
                 'type' => 'relationship',
-                'instructions' => 'Select the movies that belong to this collection.',
+                'instructions' => 'Fallback basic movie list. Use Collection Movie Entries above if you want custom excerpts.',
                 'required' => 0,
                 'post_type' => [
                     'movies',
@@ -595,6 +648,11 @@ add_action('acf/input/admin_head', function (): void {
       #tagsdiv-post_tag {
         display: none !important;
       }
+
+      .acf-relationship .choices li.movies-theme-choice-disabled {
+        opacity: 0.35;
+        pointer-events: none;
+      }
     </style>
     <?php
 });
@@ -602,19 +660,82 @@ add_action('acf/input/admin_head', function (): void {
 add_action('acf/input/admin_footer', function (): void {
     $screen = function_exists('get_current_screen') ? get_current_screen() : null;
 
-    if (!$screen || $screen->post_type !== 'movies') {
+    if (!$screen) {
         return;
     }
     ?>
     <script>
       document.addEventListener('DOMContentLoaded', function () {
+        <?php if ($screen->post_type === 'movies') : ?>
         var pullquoteGroup = document.getElementById('acf-group_movies_theme_movie_pullquotes');
 
-        if (!pullquoteGroup || pullquoteGroup.classList.contains('closed')) {
+        if (pullquoteGroup && !pullquoteGroup.classList.contains('closed')) {
+          pullquoteGroup.classList.add('closed');
+        }
+        <?php endif; ?>
+
+        <?php if ($screen->post_type === 'collection') : ?>
+        var repeaterField = document.querySelector('.acf-field[data-name="collection_movie_entries"]');
+
+        if (!repeaterField) {
           return;
         }
 
-        pullquoteGroup.classList.add('closed');
+        var getRelationshipFields = function () {
+          return Array.prototype.slice.call(
+            repeaterField.querySelectorAll('.acf-field[data-name="movie"] .acf-relationship')
+          );
+        };
+
+        var getSelectedIdsForField = function (relationshipField) {
+          return Array.prototype.map.call(
+            relationshipField.querySelectorAll('.values [data-id]'),
+            function (item) {
+              return String(item.getAttribute('data-id') || '');
+            }
+          ).filter(Boolean);
+        };
+
+        var refreshDisabledChoices = function () {
+          var relationshipFields = getRelationshipFields();
+          var allSelectedIds = relationshipFields.reduce(function (selectedIds, field) {
+            return selectedIds.concat(getSelectedIdsForField(field));
+          }, []);
+
+          relationshipFields.forEach(function (field) {
+            var ownSelectedIds = getSelectedIdsForField(field);
+
+            field.querySelectorAll('.choices [data-id]').forEach(function (choice) {
+              var choiceId = String(choice.getAttribute('data-id') || '');
+              var isSelectedElsewhere = allSelectedIds.includes(choiceId) && !ownSelectedIds.includes(choiceId);
+
+              choice.classList.toggle('movies-theme-choice-disabled', isSelectedElsewhere);
+              choice.setAttribute('aria-disabled', isSelectedElsewhere ? 'true' : 'false');
+            });
+          });
+        };
+
+        repeaterField.addEventListener('click', function (event) {
+          var choice = event.target.closest('.choices [data-id]');
+
+          if (!choice || !choice.classList.contains('movies-theme-choice-disabled')) {
+            return;
+          }
+
+          event.preventDefault();
+          event.stopPropagation();
+        }, true);
+
+        var observer = new MutationObserver(refreshDisabledChoices);
+        observer.observe(repeaterField, {
+          childList: true,
+          subtree: true,
+          attributes: true,
+          attributeFilter: ['class', 'data-id']
+        });
+
+        refreshDisabledChoices();
+        <?php endif; ?>
       });
     </script>
     <?php

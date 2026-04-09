@@ -9,29 +9,47 @@ get_header();
       <?php while (have_posts()) : the_post(); ?>
       <?php
       $collection_id = get_the_ID();
-      $movie_ids = movies_theme_get_collection_movies($collection_id);
+      $collection_movie_entries = movies_theme_get_collection_movie_entries($collection_id);
+      $movie_ids = $collection_movie_entries !== []
+          ? array_values(array_map(static fn(array $entry): int => (int) $entry['movie_id'], $collection_movie_entries))
+          : movies_theme_get_collection_movies($collection_id);
+      $collection_genres = movies_theme_get_collection_genres($collection_id);
       ?>
       <article>
         <header class="page-header max-w-[720px]">
-          <h1 class="page-header__title theme-strong rhythm-lg">
+          <h1 class="page-header__title theme-strong rhythm-lg lg:text-[90px]">
             <?php the_title(); ?>
           </h1>
         
           <?php if (get_the_content() !== '') : ?>
-            <div class="post-content rhythm-lg">
+            <div class="post-content rhythm-lg text-lg leading-8 md:text-xl md:leading-9">
               <?php the_content(); ?>
+            </div>
+          <?php endif; ?>
+
+          <?php if ($collection_genres !== []) : ?>
+            <div class="flex flex-wrap gap-2">
+              <?php foreach ($collection_genres as $genre_index => $genre_name) : ?>
+                <span class="collection-list__genre-chip collection-list__genre-chip--<?php echo esc_attr((string) (($genre_index % 12) + 1)); ?>">
+                  <?php echo esc_html($genre_name); ?>
+                </span>
+              <?php endforeach; ?>
             </div>
           <?php endif; ?>
         </header>
 
         <?php if ($movie_ids !== []) : ?>
           <section class="rhythm-lg flex flex-col rhythm-list-lg">
-            <?php foreach ($movie_ids as $movie_id) : ?>
+            <?php foreach ($movie_ids as $movie_index => $movie_id) : ?>
               <?php
               $year = movies_theme_get_year($movie_id);
               $runtime = movies_theme_get_runtime($movie_id);
               $genre = movies_theme_get_movie_category_list($movie_id);
               $the_pitch = movies_theme_get_the_pitch($movie_id);
+              $collection_custom_excerpt = $collection_movie_entries !== []
+                  ? trim((string) ($collection_movie_entries[$movie_index]['custom_excerpt'] ?? ''))
+                  : '';
+              $display_excerpt = $collection_custom_excerpt !== '' ? $collection_custom_excerpt : $the_pitch;
               $is_hidden_gem = movies_theme_is_hidden_gem($movie_id);
               $heart_count = movies_theme_get_movie_heart_count($movie_id);
               $is_liked = movies_theme_movie_is_liked_by_current_visitor($movie_id);
@@ -45,7 +63,7 @@ get_header();
               ]);
               ?>
               <article class="theme-border grid grid-cols-[auto_minmax(0,1fr)] items-start gap-4 border-t pt-6 first:border-t-0 first:pt-0 lg:grid-cols-[220px_minmax(0,1fr)] lg:gap-10">
-                <div>
+                <div class="flex h-full flex-col">
                   <?php if ($poster !== '') : ?>
                     <a class="movie-card block no-underline" href="<?php echo esc_url(get_permalink($movie_id)); ?>">
                       <div class="poster-frame theme-surface mt-0 ml-0 w-[min(50vw,180px)] max-h-[250px] before:hidden lg:mt-[20px] lg:ml-[20px] lg:w-auto lg:max-h-none lg:before:block <?php echo $is_hidden_gem ? 'poster-frame--hidden-gem' : ''; ?>">
@@ -60,21 +78,17 @@ get_header();
 
                 <div class="max-w-[720px]">
                   <div class="theme-body text-sm lg:text-base">
+                    <?php if ($display_excerpt !== '') : ?>
+                      <blockquote class="single-collection__excerpt theme-strong mt-10 border border-black p-5">
+                        <p><?php echo wp_kses_post(nl2br(esc_html($display_excerpt))); ?></p>
+                      </blockquote>
+                    <?php endif; ?>
+
                     <?php if ($is_hidden_gem) : ?>
                       <p class="hidden-gem-label text-sm font-bold tracking-[0.04em]">
                         <?php echo movies_theme_get_hidden_gem_label_markup(); ?>
                       </p>
                     <?php endif; ?>
-
-                    <p>
-                      <span class="theme-strong font-bold">Staff member:</span>
-                      <a
-                        class="theme-strong transition-opacity hover:opacity-70"
-                        href="<?php echo esc_url(get_author_posts_url($movie_author_id)); ?>"
-                      >
-                        <?php echo esc_html(movies_theme_get_author_name($movie_author_id)); ?>
-                      </a>
-                    </p>
 
                     <p>
                       <span class="theme-strong font-bold">Film:</span>
@@ -102,12 +116,15 @@ get_header();
                       </p>
                     <?php endif; ?>
 
-                    <?php if ($the_pitch !== '') : ?>
-                      <p>
-                        <span class="theme-strong font-bold">The Pitch:</span>
-                        <?php echo wp_kses_post(nl2br(esc_html($the_pitch))); ?>
-                      </p>
-                    <?php endif; ?>
+                    <p>
+                      <span class="theme-strong font-bold">Recommended by:</span>
+                      <a
+                        class="theme-strong transition-opacity hover:opacity-70"
+                        href="<?php echo esc_url(get_author_posts_url($movie_author_id)); ?>"
+                      >
+                        <?php echo esc_html(movies_theme_get_author_name($movie_author_id)); ?>
+                      </a>
+                    </p>
 
                     <div class="collection-heart mt-5">
                       <button

@@ -159,6 +159,98 @@
     @apply h-[3px] min-w-[120px] flex-1;
   }
 
+  .collection-list__title {
+    --collection-title-image: none;
+  }
+
+  .collection-list__title-text {
+    display: inline-block;
+  }
+
+  .collection-list__genre-chip {
+    border: 1px solid transparent;
+    display: inline-flex;
+    align-items: center;
+    padding: 0.35rem 0.7rem;
+    font-size: 0.75rem;
+    font-weight: 700;
+    line-height: 1;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+
+  .collection-list__genre-chip--1 {
+    background: #111111;
+    border-color: #111111;
+    color: #ffffff;
+  }
+
+  .collection-list__genre-chip--2 {
+    background: #ff4fd8;
+    border-color: #ff4fd8;
+    color: #ffffff;
+  }
+
+  .collection-list__genre-chip--3 {
+    background: #4f46e5;
+    border-color: #4f46e5;
+    color: #ffffff;
+  }
+
+  .collection-list__genre-chip--4 {
+    background: #00b894;
+    border-color: #00b894;
+    color: #ffffff;
+  }
+
+  .collection-list__genre-chip--5 {
+    background: #ffb000;
+    border-color: #ffb000;
+    color: #111111;
+  }
+
+  .collection-list__genre-chip--6 {
+    background: #ff6b35;
+    border-color: #ff6b35;
+    color: #ffffff;
+  }
+
+  .collection-list__genre-chip--7 {
+    background: #7c3aed;
+    border-color: #7c3aed;
+    color: #ffffff;
+  }
+
+  .collection-list__genre-chip--8 {
+    background: #e11d48;
+    border-color: #e11d48;
+    color: #ffffff;
+  }
+
+  .collection-list__genre-chip--9 {
+    background: #14b8a6;
+    border-color: #14b8a6;
+    color: #ffffff;
+  }
+
+  .collection-list__genre-chip--10 {
+    background: #facc15;
+    border-color: #facc15;
+    color: #111111;
+  }
+
+  .collection-list__genre-chip--11 {
+    background: #2563eb;
+    border-color: #2563eb;
+    color: #ffffff;
+  }
+
+  .collection-list__genre-chip--12 {
+    background: #84cc16;
+    border-color: #84cc16;
+    color: #111111;
+  }
+
   .single-movie-featured__pullquote {
     border-left: 3px solid var(--color-strong);
     display: none;
@@ -191,6 +283,21 @@
   }
 
   @media (min-width: 64rem) {
+    .collection-list__title {
+      font-size: 100px;
+    }
+
+    .collection-list__title.is-flickering .collection-list__title-text {
+      background-image: var(--collection-title-image);
+      background-position: center center;
+      background-repeat: no-repeat;
+      background-size: cover;
+      color: transparent;
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
     .single-movie-featured__pullquote-inline {
       display: block;
       opacity: 0;
@@ -312,6 +419,33 @@
   .collection-heart__count {
     color: var(--primary-accent);
     @apply text-base font-bold tracking-[0];
+  }
+
+  .single-collection__excerpt {
+    color: var(--color-strong);
+    font-size: 1.5rem;
+    line-height: 1.15;
+    font-style: italic;
+    letter-spacing: -0.03em;
+    @apply my-6 max-w-3xl;
+  }
+
+  .single-collection__excerpt p {
+    display: inline;
+  }
+
+  .single-collection__excerpt p::before {
+    content: open-quote;
+  }
+
+  .single-collection__excerpt p::after {
+    content: close-quote;
+  }
+
+  @media (min-width: 64rem) {
+    .single-collection__excerpt {
+      font-size: 2rem;
+    }
   }
 
   .hidden-gem-label {

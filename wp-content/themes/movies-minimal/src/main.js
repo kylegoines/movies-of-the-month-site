@@ -1,4 +1,5 @@
 import './styles.css';
+import { CollectionTitleFlicker } from './js/collection-title-flicker';
 import { MovieHeartManager } from './js/collection-heart';
 import { FeaturedPullquote } from './js/featured-pullquote';
 import { FilterPageHeading } from './js/filter-page-heading';
@@ -51,6 +52,9 @@ class App {
     this.movieHeartManager = new MovieHeartManager(
       document.querySelectorAll('[data-heart-button]')
     );
+    this.collectionTitleFlicker = new CollectionTitleFlicker(
+      document.querySelectorAll('[data-collection-title-flicker]')
+    );
     this.featuredPullquote = new FeaturedPullquote(
       document.querySelectorAll('[data-featured-pullquote]')
     );
@@ -69,6 +73,7 @@ class App {
     this.siteMobileNav.init();
     this.siteTitleMarquee.init();
     this.movieHeartManager.init();
+    this.collectionTitleFlicker.init();
     this.featuredPullquote.init();
     this.spotlightGallery.init();
   }

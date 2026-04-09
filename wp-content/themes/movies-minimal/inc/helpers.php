@@ -204,6 +204,15 @@ function movies_theme_get_collection_movies(int $post_id): array
         return [];
     }
 
+    $entries = movies_theme_get_collection_movie_entries($post_id);
+
+    if ($entries !== []) {
+        return array_values(array_map(
+            static fn(array $entry): int => (int) $entry['movie_id'],
+            $entries
+        ));
+    }
+
     $movies = get_field('movies', $post_id);
 
     if (!is_array($movies)) {
@@ -211,6 +220,101 @@ function movies_theme_get_collection_movies(int $post_id): array
     }
 
     return array_values(array_filter(array_map('intval', $movies)));
+}
+
+function movies_theme_get_collection_movie_entries(int $post_id): array
+{
+    if (!function_exists('get_field')) {
+        return [];
+    }
+
+    $rows = get_field('collection_movie_entries', $post_id);
+
+    if (!is_array($rows)) {
+        return [];
+    }
+
+    $entries = [];
+
+    foreach ($rows as $row) {
+        if (!is_array($row)) {
+            continue;
+        }
+
+        $movie_field = $row['movie'] ?? null;
+        $movie_id = 0;
+
+        if (is_array($movie_field)) {
+            $movie_id = (int) ($movie_field[0] ?? 0);
+        } else {
+            $movie_id = (int) $movie_field;
+        }
+
+        if ($movie_id <= 0) {
+            continue;
+        }
+
+        $entries[] = [
+            'movie_id' => $movie_id,
+            'custom_excerpt' => trim((string) ($row['custom_excerpt'] ?? '')),
+        ];
+    }
+
+    return $entries;
+}
+
+function movies_theme_get_collection_description(int $post_id): string
+{
+    if (!function_exists('get_field')) {
+        return '';
+    }
+
+    return trim((string) get_field('collection_description', $post_id));
+}
+
+function movies_theme_get_collection_genres(int $post_id): array
+{
+    $movie_ids = movies_theme_get_collection_movies($post_id);
+
+    if ($movie_ids === []) {
+        return [];
+    }
+
+    $genres = [];
+
+    foreach ($movie_ids as $movie_id) {
+        $terms = get_the_terms($movie_id, 'category');
+
+        if (is_wp_error($terms) || $terms === false) {
+            continue;
+        }
+
+        foreach ($terms as $term) {
+            $term_id = (int) $term->term_id;
+
+            if (!isset($genres[$term_id])) {
+                $genres[$term_id] = [
+                    'name' => $term->name,
+                    'count' => 0,
+                ];
+            }
+
+            $genres[$term_id]['count']++;
+        }
+    }
+
+    uasort($genres, static function (array $left, array $right): int {
+        if ($left['count'] === $right['count']) {
+            return strcasecmp($left['name'], $right['name']);
+        }
+
+        return $right['count'] <=> $left['count'];
+    });
+
+    return array_values(array_map(
+        static fn(array $genre): string => $genre['name'],
+        array_slice($genres, 0, 6)
+    ));
 }
 
 function movies_theme_get_hidden_gem_label_markup(string $class_name = ''): string
@@ -263,6 +367,10 @@ function movies_theme_get_movie_scale_value_label(int $post_id, string $field_na
 
 function movies_theme_get_list_summary(int $post_id): string
 {
+    if (get_post_type($post_id) === 'collection') {
+        return movies_theme_get_collection_description($post_id);
+    }
+
     return movies_theme_get_post_intro($post_id);
 }
 
