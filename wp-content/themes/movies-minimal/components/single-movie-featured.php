@@ -6,6 +6,7 @@ $movie_author_name = $args['movie_author_name'] ?? '';
 $year = $args['year'] ?? '';
 $runtime = $args['runtime'] ?? '';
 $genre = $args['genre'] ?? '';
+$feature_title = $args['feature_title'] ?? '';
 $featured_content = $args['featured_content'] ?? '';
 $pullquote_1 = $args['pullquote_1'] ?? '';
 $pullquote_2 = $args['pullquote_2'] ?? '';
@@ -75,12 +76,38 @@ $content_pullquotes = array_values(array_filter($pullquotes, static function (ar
       </p>
     <?php endif; ?>
 
-    <h1 class="page-header__title theme-strong rhythm-lg">
-      <?php the_title(); ?>
-    </h1>
 
-    <div class="theme-body mb-6 grid max-w-[720px] gap-1.5 text-sm md:text-base">
-      <p class="">
+
+
+
+    <div class="mb-6 grid gap-4 lg:items-start">
+      <div class="post-content">
+        <?php foreach ($content_pullquotes as $pullquote) : ?>
+          <div class="single-movie-featured__pullquote-inline theme-strong" data-featured-pullquote>
+            <?php echo apply_filters('the_content', $pullquote['content']); ?>
+          </div>
+        <?php endforeach; ?>
+        <?php if ($feature_title !== '') : ?>
+          <h1 class="page-header__title theme-strong rhythm-sm"><?php echo esc_html($feature_title); ?></h1>
+                  <p class="theme-body text-sm font-bold tracking-[0.04em] lg:pt-1 rhythm-lg">
+          Thoughts by
+          <a
+            class="theme-strong transition-opacity hover:opacity-70 no-underline"
+            href="<?php echo esc_url(get_author_posts_url($movie_author_id)); ?>"
+          >
+            <?php echo esc_html($movie_author_name); ?>
+          </a>
+        </p>
+        <?php endif; ?>
+        <?php echo apply_filters('the_content', $featured_content); ?>
+      </div>
+    </div>
+
+    <div class="movie-card theme-body grid max-w-[720px] gap-1.5 text-sm md:text-base mt-[40px] border-4 p-4">
+        <h2 class="page-header__title theme-strong rhythm-md">
+            <?php the_title(); ?>
+        </h2>
+      <p>
         <span class="theme-strong font-bold">Recommended by:</span>
         <a
           class="theme-strong transition-opacity hover:opacity-70 no-underline"
@@ -91,19 +118,19 @@ $content_pullquotes = array_values(array_filter($pullquotes, static function (ar
       </p>
 
       <?php if ($year !== '') : ?>
-        <p class="order-1 lg:order-2"><span class="theme-strong font-bold">Release Year:</span> <?php echo esc_html($year); ?></p>
+        <p><span class="theme-strong font-bold">Release Year:</span> <?php echo esc_html($year); ?></p>
       <?php endif; ?>
 
       <?php if ($runtime !== '') : ?>
-        <p class="order-2 lg:order-3"><span class="theme-strong font-bold">Runtime:</span> <?php echo esc_html($runtime); ?></p>
+        <p><span class="theme-strong font-bold">Runtime:</span> <?php echo esc_html($runtime); ?></p>
       <?php endif; ?>
 
       <?php if ($genre !== '') : ?>
-        <p class="order-3 lg:order-4"><span class="theme-strong font-bold">Genres:</span> <?php echo esc_html($genre); ?></p>
+        <p><span class="theme-strong font-bold">Genres:</span> <?php echo esc_html($genre); ?></p>
       <?php endif; ?>
 
       <?php if ($has_ratings) : ?>
-        <div class="order-5 mb-4 mt-3 space-y-1.5 lg:order-6">
+        <div class="mt-3 space-y-1.5">
           <p class="theme-strong font-bold">Ratings</p>
           <?php if ($funny_rating !== '') : ?>
             <p><span class="theme-strong font-bold">Funny:</span> <?php echo esc_html($funny_rating); ?></p>
@@ -119,9 +146,9 @@ $content_pullquotes = array_values(array_filter($pullquotes, static function (ar
           <?php endif; ?>
         </div>
       <?php endif; ?>
-    </div>
 
-    <div class="collection-heart absolute left-[20px] bottom-0 hidden lg:block">
+
+          <div class="collection-heart mt-7">
       <button
         class="collection-heart__button"
         type="button"
@@ -134,26 +161,10 @@ $content_pullquotes = array_values(array_filter($pullquotes, static function (ar
         <span class="collection-heart__count" data-heart-count><?php echo esc_html((string) $heart_count); ?></span>
       </button>
     </div>
-
-    <div class="mb-6 grid gap-4 lg:items-start">
-      <div class="post-content">
-        <?php foreach ($content_pullquotes as $pullquote) : ?>
-          <div class="single-movie-featured__pullquote-inline theme-strong" data-featured-pullquote>
-            <?php echo apply_filters('the_content', $pullquote['content']); ?>
-          </div>
-        <?php endforeach; ?>
-        <?php echo apply_filters('the_content', $featured_content); ?>
-        <p class="theme-body text-sm font-bold tracking-[0.04em] lg:pt-1">
-          &mdash;
-          <a
-            class="theme-strong transition-opacity hover:opacity-70 no-underline"
-            href="<?php echo esc_url(get_author_posts_url($movie_author_id)); ?>"
-          >
-            <?php echo esc_html($movie_author_name); ?>
-          </a>
-        </p>
-      </div>
     </div>
+
+
+    
 
   </div>
 </div>

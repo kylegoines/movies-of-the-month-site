@@ -194,6 +194,16 @@ add_action('acf/init', function (): void {
                 'library' => 'all',
             ],
             [
+                'key' => 'field_movies_theme_movie_feature_title',
+                'label' => 'Feature Title',
+                'name' => 'feature_title',
+                'type' => 'text',
+                'instructions' => 'Optional title shown above the editorial post content.',
+                'required' => 0,
+                'default_value' => '',
+                'placeholder' => '',
+            ],
+            [
                 'key' => 'field_movies_theme_movie_featured_content',
                 'label' => 'Featured Content',
                 'name' => 'featured_content',

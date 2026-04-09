@@ -101,6 +101,15 @@ function movies_theme_get_featured_content(int $post_id): string
     return trim((string) get_field('featured_content', $post_id));
 }
 
+function movies_theme_get_feature_title(int $post_id): string
+{
+    if (!function_exists('get_field')) {
+        return '';
+    }
+
+    return trim((string) get_field('feature_title', $post_id));
+}
+
 function movies_theme_get_pullquote_1(int $post_id): string
 {
     if (!function_exists('get_field')) {

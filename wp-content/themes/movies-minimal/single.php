@@ -14,6 +14,7 @@ get_header();
       $year = movies_theme_get_year($movie_id);
       $runtime = movies_theme_get_runtime($movie_id);
       $genre = movies_theme_get_movie_category_list($movie_id);
+      $feature_title = movies_theme_get_feature_title($movie_id);
       $featured_content = movies_theme_get_featured_content($movie_id);
       $pullquote_1 = movies_theme_get_pullquote_1($movie_id);
       $pullquote_2 = movies_theme_get_pullquote_2($movie_id);
@@ -67,6 +68,7 @@ get_header();
                 'year' => $year,
                 'runtime' => $runtime,
                 'genre' => $genre,
+                'feature_title' => $feature_title,
                 'featured_content' => $featured_content,
                 'pullquote_1' => $pullquote_1,
                 'pullquote_2' => $pullquote_2,
