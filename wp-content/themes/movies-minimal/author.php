@@ -94,36 +94,12 @@ $author_heading = $active_category_term instanceof WP_Term
   <?php endif; ?>
 
   <?php if (have_posts()) : ?>
-    <section class="rhythm-lg grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-      <?php while (have_posts()) : the_post(); ?>
-        <?php
-        $is_hidden_gem = movies_theme_is_hidden_gem(get_the_ID());
-        $gem_badge = $is_hidden_gem
-            ? movies_theme_get_inline_svg('images/gemsingle.svg', 'theme-gem-badge')
-            : '';
-        $poster = get_the_post_thumbnail(get_the_ID(), 'large', [
-            'class' => movies_theme_get_poster_image_class(get_the_ID(), 'h-auto w-full object-cover'),
-            'loading' => 'lazy',
-        ]);
-        ?>
-        <article>
-          <a class="movie-card block no-underline" href="<?php the_permalink(); ?>">
-            <?php if ($poster !== '') : ?>
-              <div class="poster-frame theme-surface <?php echo $is_hidden_gem ? 'poster-frame--hidden-gem' : ''; ?>">
-                <?php echo $poster; ?>
-              </div>
-            <?php endif; ?>
-
-            <h2 class="mb-4 flex items-center gap-2 text-xl tracking-[-0.04em] <?php echo $is_hidden_gem ? 'movie-title--hidden-gem' : 'theme-strong'; ?>">
-              <span><?php the_title(); ?></span>
-              <?php if ($gem_badge !== '') : ?>
-                <span class="movie-title__gem"><?php echo $gem_badge; ?></span>
-              <?php endif; ?>
-            </h2>
-          </a>
-        </article>
-      <?php endwhile; ?>
-    </section>
+    <?php
+    get_template_part('components/movie-grid-full', null, [
+        'movies' => $wp_query->posts,
+        'grid_classes' => 'rhythm-lg grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4',
+    ]);
+    ?>
   <?php else : ?>
     <p class="theme-muted py-6 text-sm uppercase tracking-[0.18em]">No movies yet.</p>
   <?php endif; ?>
