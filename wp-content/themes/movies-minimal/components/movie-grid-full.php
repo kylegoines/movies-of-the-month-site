@@ -29,7 +29,7 @@ if (!is_array($movies) || $movies === []) {
     <article>
       <a class="movie-card block no-underline" href="<?php echo esc_url(get_permalink($movie_id)); ?>">
         <?php if ($poster !== '') : ?>
-          <div class="poster-frame theme-surface mt-0 ml-0 aspect-[2/3] w-full before:hidden lg:mt-[20px] lg:ml-[20px] lg:before:block <?php echo $is_hidden_gem ? 'poster-frame--hidden-gem' : ''; ?>">
+          <div class="poster-frame poster-frame--fixed-ratio theme-surface mt-0 ml-0 aspect-[2/3] w-full before:hidden lg:mt-[20px] lg:ml-[20px] lg:before:block <?php echo $is_hidden_gem ? 'poster-frame--hidden-gem' : ''; ?>">
             <div class="h-full w-full overflow-hidden">
               <?php echo $poster; ?>
             </div>

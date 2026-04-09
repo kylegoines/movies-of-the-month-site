@@ -1,8 +1,8 @@
 @layer components {
   .poster-frame {
     position: relative;
-    margin-top: 20px;
-    margin-left: 20px;
+    margin-top: 10px;
+    margin-left: 10px;
     z-index: 0;
   }
 
@@ -76,7 +76,7 @@
     content: "";
     position: absolute;
     inset: 0;
-    transform: translate(-20px, -20px);
+    transform: translate(-10px, -10px);
     border: 2px solid var(--color-strong);
     background-color: transparent;
     z-index: 1;
@@ -101,13 +101,12 @@
       margin-left: 0;
     }
 
-    .poster-frame.theme-surface {
+    .poster-frame.theme-surface:not(.poster-frame--fixed-ratio) {
       width: min(50vw, 180px);
       max-height: 250px;
     }
 
-    .poster-frame img,
-    .movie-card img {
+    .poster-frame:not(.poster-frame--fixed-ratio) img {
       max-height: 250px;
       width: auto;
       height: auto;
