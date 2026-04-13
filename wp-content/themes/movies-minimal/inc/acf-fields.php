@@ -1,5 +1,44 @@
 <?php
 
+function movies_theme_user_is_contributor_only(): bool
+{
+    $user = wp_get_current_user();
+
+    return $user instanceof WP_User && $user->roles === ['contributor'];
+}
+
+add_filter('acf/prepare_field/key=field_movies_theme_movie_featured', function ($field) {
+    if (movies_theme_user_is_contributor_only()) {
+        return false;
+    }
+
+    return $field;
+});
+
+add_filter('acf/prepare_field/key=field_movies_theme_movie_starting_hearts', function ($field) {
+    if (movies_theme_user_is_contributor_only()) {
+        return false;
+    }
+
+    return $field;
+});
+
+add_filter('acf/update_value/key=field_movies_theme_movie_featured', function ($value, $post_id, $field) {
+    if (!movies_theme_user_is_contributor_only()) {
+        return $value;
+    }
+
+    return get_post_meta((int) $post_id, $field['name'], true);
+}, 10, 3);
+
+add_filter('acf/update_value/key=field_movies_theme_movie_starting_hearts', function ($value, $post_id, $field) {
+    if (!movies_theme_user_is_contributor_only()) {
+        return $value;
+    }
+
+    return get_post_meta((int) $post_id, $field['name'], true);
+}, 10, 3);
+
 add_action('acf/init', function (): void {
     if (!function_exists('acf_add_local_field_group')) {
         return;
@@ -452,6 +491,7 @@ add_action('acf/init', function (): void {
                 'instructions' => 'Optional collection-specific movie list with custom excerpts. If filled in, this will be used instead of the basic movie relationship below.',
                 'required' => 0,
                 'layout' => 'row',
+                'collapsed' => 'field_movies_theme_collection_movie_entry_movie',
                 'button_label' => 'Add Collection Movie',
                 'sub_fields' => [
                     [
@@ -482,6 +522,23 @@ add_action('acf/init', function (): void {
                         'required' => 0,
                         'rows' => 3,
                         'new_lines' => 'br',
+                    ],
+                    [
+                        'key' => 'field_movies_theme_collection_movie_entry_author_name',
+                        'label' => 'Author',
+                        'name' => 'author',
+                        'type' => 'user',
+                        'instructions' => 'Optional override for the Recommended by user shown for this collection block.',
+                        'required' => 0,
+                        'role' => [
+                            'administrator',
+                            'editor',
+                            'core_contributor',
+                            'contributor',
+                        ],
+                        'return_format' => 'id',
+                        'multiple' => 0,
+                        'allow_null' => 1,
                     ],
                 ],
                 'min' => 0,
@@ -536,6 +593,26 @@ add_action('acf/init', function (): void {
                 'return_format' => 'id',
                 'preview_size' => 'medium',
                 'library' => 'all',
+            ],
+            [
+                'key' => 'field_movies_theme_author_visible_on_contributors_page',
+                'label' => 'Show On Contributors Page',
+                'name' => 'show_on_contributors_page',
+                'type' => 'true_false',
+                'instructions' => 'Enable this to show the user on the public Contributors page.',
+                'required' => 0,
+                'ui' => 1,
+                'default_value' => 1,
+            ],
+            [
+                'key' => 'field_movies_theme_author_visible_on_browse_filter',
+                'label' => 'Show On Browse Filter',
+                'name' => 'show_on_browse_filter',
+                'type' => 'true_false',
+                'instructions' => 'Enable this to show the user in the Browse page author dropdown filter.',
+                'required' => 0,
+                'ui' => 1,
+                'default_value' => 1,
             ],
             [
                 'key' => 'field_movies_theme_author_bio',

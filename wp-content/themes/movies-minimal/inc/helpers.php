@@ -257,6 +257,7 @@ function movies_theme_get_collection_movie_entries(int $post_id): array
         $entries[] = [
             'movie_id' => $movie_id,
             'custom_excerpt' => trim((string) ($row['custom_excerpt'] ?? '')),
+            'author_id' => (int) ($row['author'] ?? 0),
         ];
     }
 
@@ -483,21 +484,50 @@ function movies_theme_get_home_intro_link(int $post_id): string
 
 function movies_theme_get_author_name(int $author_id): string
 {
-    $first_name = trim((string) get_the_author_meta('first_name', $author_id));
-    $last_name = trim((string) get_the_author_meta('last_name', $author_id));
-    $full_name = trim($first_name . ' ' . $last_name);
+    return trim((string) get_the_author_meta('nickname', $author_id));
+}
 
-    if ($full_name !== '') {
-        return $full_name;
+function movies_theme_is_author_visible_on_contributors_page(int $author_id): bool
+{
+    if (!function_exists('get_field')) {
+        return false;
     }
 
-    $display_name = trim((string) get_the_author_meta('display_name', $author_id));
+    return (bool) get_field('show_on_contributors_page', 'user_' . $author_id);
+}
 
-    if ($display_name !== '') {
-        return $display_name;
+function movies_theme_is_author_visible_on_browse_filter(int $author_id): bool
+{
+    if (!function_exists('get_field')) {
+        return false;
     }
 
-    return trim((string) get_the_author_meta('user_nicename', $author_id));
+    return (bool) get_field('show_on_browse_filter', 'user_' . $author_id);
+}
+
+function movies_theme_get_visible_movie_authors_for_browse_filter(): array
+{
+    $authors = get_users([
+        'fields' => 'all',
+        'has_published_posts' => [
+            'movies',
+        ],
+    ]);
+
+    return array_values(array_filter($authors, static function (WP_User $user): bool {
+        return movies_theme_is_author_visible_on_browse_filter((int) $user->ID);
+    }));
+}
+
+function movies_theme_get_visible_movie_authors_for_contributors_page(): array
+{
+    $authors = get_users([
+        'fields' => 'all',
+    ]);
+
+    return array_values(array_filter($authors, static function (WP_User $user): bool {
+        return movies_theme_is_author_visible_on_contributors_page((int) $user->ID);
+    }));
 }
 
 function movies_theme_get_author_movie_categories(int $author_id, int $limit = 4): array

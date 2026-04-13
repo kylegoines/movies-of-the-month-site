@@ -18,12 +18,7 @@ $movie_categories = get_terms([
 ]);
 
 // Available contributors used for the public Author filter on this page.
-$movie_authors = get_users([
-    'fields' => 'all',
-    'has_published_posts' => [
-        'movies',
-    ],
-]);
+$movie_authors = movies_theme_get_visible_movie_authors_for_browse_filter();
 
 usort($movie_authors, static function (WP_User $left, WP_User $right): int {
     return strcasecmp(

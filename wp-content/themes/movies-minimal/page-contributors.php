@@ -1,11 +1,13 @@
 <?php
 get_header();
 
-$contributors = get_users([
-    'fields' => 'all',
-]);
+$contributors = movies_theme_get_visible_movie_authors_for_contributors_page();
 
 $contributors = array_values(array_filter($contributors, static function (WP_User $user): bool {
+    if (!movies_theme_is_author_visible_on_contributors_page((int) $user->ID)) {
+        return false;
+    }
+
     $user_key = 'user_' . $user->ID;
 
     $profile_image_id = function_exists('get_field')

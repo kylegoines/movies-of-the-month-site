@@ -26,6 +26,8 @@ add_action('init', function (): void {
         'public' => true,
         'has_archive' => true,
         'menu_icon' => 'dashicons-format-video',
+        'capability_type' => ['movie', 'movies'],
+        'map_meta_cap' => true,
         'rewrite' => [
             'slug' => 'movies',
         ],
@@ -62,6 +64,8 @@ add_action('init', function (): void {
         'public' => true,
         'has_archive' => true,
         'menu_icon' => 'dashicons-screenoptions',
+        'capability_type' => ['collection', 'collections'],
+        'map_meta_cap' => true,
         'rewrite' => [
             'slug' => 'collections',
         ],
@@ -91,7 +95,7 @@ add_action('init', function (): void {
         ],
         'public' => false,
         'show_ui' => true,
-        'show_in_menu' => true,
+        'show_in_menu' => false,
         'menu_icon' => 'dashicons-edit-page',
         'supports' => [
             'title',

@@ -49,6 +49,9 @@ get_header();
               $collection_custom_excerpt = $collection_movie_entries !== []
                   ? trim((string) ($collection_movie_entries[$movie_index]['custom_excerpt'] ?? ''))
                   : '';
+              $collection_author_id = $collection_movie_entries !== []
+                  ? (int) ($collection_movie_entries[$movie_index]['author_id'] ?? 0)
+                  : '';
               $display_excerpt = $collection_custom_excerpt !== '' ? $collection_custom_excerpt : $the_pitch;
               $is_hidden_gem = movies_theme_is_hidden_gem($movie_id);
               $heart_count = movies_theme_get_movie_heart_count($movie_id);
@@ -57,6 +60,8 @@ get_header();
                   ? movies_theme_get_inline_svg('images/gem.svg', 'theme-gem-badge')
                   : '';
               $movie_author_id = (int) get_post_field('post_author', $movie_id);
+              $display_author_id = $collection_author_id > 0 ? $collection_author_id : $movie_author_id;
+              $display_author_name = movies_theme_get_author_name($display_author_id);
               $poster = get_the_post_thumbnail($movie_id, 'large', [
                   'class' => movies_theme_get_poster_image_class($movie_id, 'mx-auto h-auto max-h-[250px] w-auto object-cover object-center lg:max-h-none lg:w-full'),
                   'loading' => 'lazy',
@@ -117,13 +122,13 @@ get_header();
                     <?php endif; ?>
 
                     <p>
-                      <span class="theme-strong font-bold">Recommended by:</span>
-                      <a
-                        class="theme-strong transition-opacity hover:opacity-70"
-                        href="<?php echo esc_url(get_author_posts_url($movie_author_id)); ?>"
-                      >
-                        <?php echo esc_html(movies_theme_get_author_name($movie_author_id)); ?>
-                      </a>
+                        <span class="theme-strong font-bold">Recommended by:</span>
+                        <a
+                          class="theme-strong transition-opacity hover:opacity-70"
+                          href="<?php echo esc_url(get_author_posts_url($display_author_id)); ?>"
+                        >
+                        <?php echo esc_html($display_author_name); ?>
+                        </a>
                     </p>
 
                     <div class="collection-heart mt-5">

@@ -11,11 +11,39 @@ $author_bio = $author_custom_bio !== ''
     : trim((string) get_the_author_meta('description', $author_id));
 $author_categories = movies_theme_get_author_movie_categories($author_id);
 $author_category_stats = movies_theme_get_author_movie_category_stats($author_id);
+$author_user = get_userdata($author_id);
+$author_roles = $author_user instanceof WP_User ? array_values($author_user->roles) : [];
+$author_role_badges = [];
 $active_category = sanitize_title((string) get_query_var('movie_category'));
 $active_category_term = null;
 $author_possessive_name = preg_match('/s$/i', $author_name)
     ? $author_name . "'"
     : $author_name . "'s";
+
+$role_badge_config = [
+    'administrator' => [
+        'label' => 'Administrator',
+        'style' => 'background:#f3f4f6;color:#374151;border-color:#d1d5db;',
+    ],
+    'editor' => [
+        'label' => 'Editor',
+        'style' => 'background:#eff6ff;color:#1d4ed8;border-color:#bfdbfe;',
+    ],
+    'core_contributor' => [
+        'label' => 'Core Contributor',
+        'style' => 'background:#f0fdf4;color:#166534;border-color:#bbf7d0;',
+    ],
+    'contributor' => [
+        'label' => 'Contributor',
+        'style' => 'background:#fffbeb;color:#92400e;border-color:#fde68a;',
+    ],
+];
+
+foreach ($author_roles as $author_role) {
+    if (isset($role_badge_config[$author_role])) {
+        $author_role_badges[] = $role_badge_config[$author_role];
+    }
+}
 
 if ($active_category !== '') {
     foreach ($author_categories as $author_category) {
@@ -38,6 +66,19 @@ $author_heading = $active_category_term instanceof WP_Term
     <h1 class="page-header__title theme-strong rhythm-sm lg:rhythm-md">
       <?php echo esc_html($author_heading); ?>
     </h1>
+
+    <?php if ($author_role_badges !== []) : ?>
+      <div class="rhythm-sm flex flex-wrap gap-2">
+        <?php foreach ($author_role_badges as $author_role_badge) : ?>
+          <span
+            class="inline-flex items-center rounded-full border px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.12em]"
+            style="<?php echo esc_attr($author_role_badge['style']); ?>"
+          >
+            <?php echo esc_html($author_role_badge['label']); ?>
+          </span>
+        <?php endforeach; ?>
+      </div>
+    <?php endif; ?>
 
     <?php if ($author_bio !== '' || $author_category_stats['categories'] !== []) : ?>
       <aside class="theme-border rhythm-md grid gap-8 pt-4 md:grid-cols-2 md:gap-10">
