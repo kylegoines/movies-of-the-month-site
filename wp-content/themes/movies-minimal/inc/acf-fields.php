@@ -263,6 +263,23 @@ add_action('acf/init', function (): void {
                 'placeholder' => '',
             ],
             [
+                'key' => 'field_movies_theme_movie_editorial_author',
+                'label' => 'Editorial Author Attribution',
+                'name' => 'editorial_author',
+                'type' => 'user',
+                'instructions' => 'Select the author attribution for the editorial piece on this movie. This is the user-facing byline shown with the editorial content.',
+                'required' => 0,
+                'role' => [
+                    'administrator',
+                    'editor',
+                    'core_contributor',
+                    'contributor',
+                ],
+                'return_format' => 'id',
+                'multiple' => 0,
+                'allow_null' => 1,
+            ],
+            [
                 'key' => 'field_movies_theme_movie_featured_content',
                 'label' => 'Editorial Content',
                 'name' => 'featured_content',

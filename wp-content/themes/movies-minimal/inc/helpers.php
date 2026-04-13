@@ -121,6 +121,15 @@ function movies_theme_get_feature_byline_label(int $post_id): string
     return $label !== '' ? $label : 'Thoughts by';
 }
 
+function movies_theme_get_editorial_author_id(int $post_id): int
+{
+    if (!function_exists('get_field')) {
+        return 0;
+    }
+
+    return (int) get_field('editorial_author', $post_id);
+}
+
 function movies_theme_get_pullquote_1(int $post_id): string
 {
     if (!function_exists('get_field')) {

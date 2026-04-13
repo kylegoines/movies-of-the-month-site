@@ -11,6 +11,9 @@ get_header();
       $movie_id = get_the_ID();
       $movie_author_id = (int) get_post_field('post_author', $movie_id);
       $movie_author_name = movies_theme_get_author_name($movie_author_id);
+      $editorial_author_id = movies_theme_get_editorial_author_id($movie_id);
+      $editorial_author_id = $editorial_author_id > 0 ? $editorial_author_id : $movie_author_id;
+      $editorial_author_name = movies_theme_get_author_name($editorial_author_id);
       $year = movies_theme_get_year($movie_id);
       $runtime = movies_theme_get_runtime($movie_id);
       $genre = movies_theme_get_movie_category_list($movie_id);
@@ -66,6 +69,8 @@ get_header();
                 'movie_id' => $movie_id,
                 'movie_author_id' => $movie_author_id,
                 'movie_author_name' => $movie_author_name,
+                'editorial_author_id' => $editorial_author_id,
+                'editorial_author_name' => $editorial_author_name,
                 'year' => $year,
                 'runtime' => $runtime,
                 'genre' => $genre,

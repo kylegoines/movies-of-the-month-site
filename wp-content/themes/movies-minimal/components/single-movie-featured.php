@@ -3,6 +3,8 @@
 $movie_id = $args['movie_id'] ?? 0;
 $movie_author_id = $args['movie_author_id'] ?? 0;
 $movie_author_name = $args['movie_author_name'] ?? '';
+$editorial_author_id = $args['editorial_author_id'] ?? $movie_author_id;
+$editorial_author_name = $args['editorial_author_name'] ?? $movie_author_name;
 $year = $args['year'] ?? '';
 $runtime = $args['runtime'] ?? '';
 $genre = $args['genre'] ?? '';
@@ -91,9 +93,9 @@ $content_pullquotes = array_values(array_filter($pullquotes, static function (ar
           <?php echo esc_html($feature_byline_label); ?>
           <a
             class="theme-strong transition-opacity hover:opacity-70 no-underline"
-            href="<?php echo esc_url(get_author_posts_url($movie_author_id)); ?>"
+            href="<?php echo esc_url(get_author_posts_url($editorial_author_id)); ?>"
           >
-            <?php echo esc_html($movie_author_name); ?>
+            <?php echo esc_html($editorial_author_name); ?>
           </a>
         </p>
         <?php echo apply_filters('the_content', $featured_content); ?>
