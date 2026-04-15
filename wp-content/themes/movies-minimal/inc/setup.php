@@ -385,6 +385,14 @@ add_action('wp_enqueue_scripts', function (): void {
     }
 });
 
+add_action('wp_head', function (): void {
+    $favicon_url = get_template_directory_uri() . '/images/favicon-sparkle.svg';
+    ?>
+    <link rel="icon" href="<?php echo esc_url($favicon_url); ?>" type="image/svg+xml">
+    <link rel="shortcut icon" href="<?php echo esc_url($favicon_url); ?>" type="image/svg+xml">
+    <?php
+}, 1);
+
 add_filter('option_aettaec_options', function ($options) {
     if (is_admin()) {
         return $options;

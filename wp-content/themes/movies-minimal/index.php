@@ -17,7 +17,7 @@ get_header();
   ?>
 
   <?php if ($show_home_top_section) : ?>
-    <section class="grid gap-10 lg:grid-cols-[minmax(0,1fr)_280px] lg:items-start">
+    <section class="md:grid gap-10 lg:grid-cols-[minmax(0,1fr)_280px] lg:items-start">
       <?php if ($featured_movie instanceof WP_Post) : ?>
         <aside class="theme-accent hidden overflow-hidden border-3 border pt-0 px-0 pb-5 lg:order-2 lg:block lg:sticky lg:top-[40px] lg:min-h-[120px]">
           <div class="spotlight-marquee px-0">
@@ -41,6 +41,7 @@ get_header();
           $featured_sidebar_year = movies_theme_get_year($featured_movie_id);
           $featured_sidebar_runtime = movies_theme_get_runtime($featured_movie_id);
           $featured_sidebar_genre = movies_theme_get_movie_category_list($featured_movie_id);
+          $featured_spotlight_quote = movies_theme_get_spotlight_quote($featured_movie_id);
           $featured_sidebar_gallery_ids = function_exists('get_field')
               ? get_field('spotlight_gallery', $featured_movie_id)
               : [];
@@ -92,6 +93,12 @@ get_header();
               </a>
 
               <div class="theme-body mb-5 space-y-2 text-sm">
+                <?php if ($featured_spotlight_quote !== '') : ?>
+                  <div class="post-content mb-6 text-2xl font-bold leading-tight [&_p]:font-bold">
+                    <?php echo apply_filters('the_content', $featured_spotlight_quote); ?>
+                  </div>
+                <?php endif; ?>
+
                 <p><span class="theme-strong font-bold">Film:</span> <?php echo esc_html(get_the_title($featured_movie_id)); ?></p>
 
                 <?php if ($featured_sidebar_year !== '') : ?>
@@ -119,7 +126,7 @@ get_header();
         <?php endif; ?>
 
         <?php if ($featured_movie instanceof WP_Post) : ?>
-          <aside class="theme-accent hidden overflow-hidden border-3 border pt-0 px-0 pb-5 md:block lg:hidden">
+          <aside class="theme-accent overflow-hidden border-3 border pt-0 px-0 pb-5 lg:hidden mt-6 mb-10">
             <div class="spotlight-marquee px-0">
               <div class="spotlight-marquee__track">
                 <span>Spotlight</span>
@@ -171,9 +178,9 @@ get_header();
                   </div>
                 </a>
 
-                <div class="theme-body mb-5 space-y-2 text-sm md:flex md:min-h-[320px] md:flex-col md:justify-center lg:mb-5">
+                <div class="theme-body mb-5 min-w-0 space-y-2 text-sm md:flex md:min-h-[320px] md:flex-col md:justify-center lg:mb-5">
                   <?php if ($featured_spotlight_quote !== '') : ?>
-                    <div class="post-content mb-6 text-2xl font-bold leading-tight md:mt-6 md:text-4xl [&_p]:font-bold">
+                    <div class="post-content mb-6 min-w-0 break-words text-xl font-bold leading-tight [overflow-wrap:anywhere] xs:text-2xl md:mt-6 md:text-4xl [&_p]:font-bold [&_.quote-huge]:text-[40px] xs:[&_.quote-huge]:text-[48px] md:[&_.quote-huge]:text-[60px]">
                       <?php echo apply_filters('the_content', $featured_spotlight_quote); ?>
                     </div>
                   <?php endif; ?>

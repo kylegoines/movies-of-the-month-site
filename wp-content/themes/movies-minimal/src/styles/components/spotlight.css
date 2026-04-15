@@ -6,7 +6,7 @@
     gap: 0.4rem;
     min-width: max-content;
     animation: spotlight-marquee 10s linear infinite;
-    @apply text-[38px] font-bold uppercase tracking-[-0.03em];
+    @apply text-[30px] font-bold uppercase tracking-[-0.03em] xs:text-[38px];
   }
 
   .spotlight-marquee__dot {
