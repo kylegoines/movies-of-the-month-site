@@ -18,7 +18,7 @@ $gem_badge = $args['gem_badge'] ?? '';
 $poster = $args['poster'] ?? '';
 ?>
 
-<div class="page-header grid gap-6 lg:grid-cols-[280px_minmax(0,1fr)] lg:items-start lg:border-3 lg:p-3">
+<div class="page-header grid gap-6 border-4 p-4 lg:grid-cols-[280px_minmax(0,1fr)] lg:items-start">
   <div class="relative">
     <?php if ($poster !== '') : ?>
       <div class="w-full max-w-[220px] lg:w-[280px] lg:max-w-[280px]">

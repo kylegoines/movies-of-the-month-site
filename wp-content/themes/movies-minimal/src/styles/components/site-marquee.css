@@ -25,7 +25,7 @@
     animation: site-title-marquee 18s linear infinite;
     animation-delay: calc(var(--site-title-marquee-progress, 0) * -18s);
     animation-fill-mode: both;
-    @apply text-[56px] font-black uppercase leading-none tracking-[0.04em] md:text-[92px];
+    @apply text-[44px] font-black uppercase leading-none tracking-[0.04em] xs:text-[56px] md:text-[92px];
   }
 
   .site-title-marquee__track[data-state='paused'] {

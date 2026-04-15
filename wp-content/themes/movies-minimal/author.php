@@ -61,7 +61,7 @@ $author_heading = $active_category_term instanceof WP_Term
 
 <?php get_template_part('header/site', 'header'); ?>
 
-<main class="mx-auto mt-10 min-h-[calc(100vh-114px)] max-w-[1000px] px-[32px] pb-[50px] sm:min-h-[calc(100vh-154px)] sm:pb-[80px] md:mt-12 lg:min-h-[calc(100vh-232px)] lg:pb-[100px]">
+<main class="mx-auto mt-10 min-h-[calc(100vh-114px)] md:max-w-[720px] lg:max-w-[1000px] px-[32px] pb-[50px] sm:min-h-[calc(100vh-154px)] sm:pb-[80px] md:mt-12 lg:min-h-[calc(100vh-232px)] lg:pb-[100px]">
   <header class="page-header border-4 p-4">
     <h1 class="page-header__title theme-strong rhythm-sm lg:rhythm-md">
       <?php echo esc_html($author_heading); ?>

@@ -4,7 +4,7 @@ get_header();
 
 <?php get_template_part('header/site', 'header'); ?>
 
-<main class="mx-auto mt-10 min-h-[calc(100vh-114px)] max-w-[1000px] px-[32px] pb-[50px] sm:min-h-[calc(100vh-154px)] sm:pb-[80px] md:mt-12 lg:min-h-[calc(100vh-232px)] lg:pb-[100px]">
+<main class="mx-auto mt-10 min-h-[calc(100vh-114px)] md:max-w-[720px] lg:max-w-[1000px] px-[32px] pb-[50px] sm:min-h-[calc(100vh-154px)] sm:pb-[80px] md:mt-12 lg:min-h-[calc(100vh-232px)] lg:pb-[100px]">
   <?php if (have_posts()) : ?>
       <?php while (have_posts()) : the_post(); ?>
       <?php
@@ -17,7 +17,7 @@ get_header();
       ?>
       <article>
         <header class="page-header max-w-[720px]">
-          <h1 class="page-header__title theme-strong rhythm-lg lg:text-[90px]">
+          <h1 class="page-header__title theme-strong rhythm-lg text-5xl xs:text-6xl md:text-8xl lg:text-[90px]">
             <?php the_title(); ?>
           </h1>
         
@@ -67,7 +67,7 @@ get_header();
                   'loading' => 'lazy',
               ]);
               ?>
-              <article class="theme-border grid grid-cols-[auto_minmax(0,1fr)] items-start gap-4 border-t pt-6 first:border-t-0 first:pt-0 lg:grid-cols-[220px_minmax(0,1fr)] lg:gap-10">
+              <article class="theme-border grid grid-cols-1 items-start gap-4 border-t pt-6 first:border-t-0 first:pt-0 md:grid-cols-[auto_minmax(0,1fr)] md:gap-8 lg:grid-cols-[220px_minmax(0,1fr)] lg:gap-10">
                 <div class="flex h-full flex-col">
                   <?php if ($poster !== '') : ?>
                     <a class="movie-card block no-underline" href="<?php echo esc_url(get_permalink($movie_id)); ?>">

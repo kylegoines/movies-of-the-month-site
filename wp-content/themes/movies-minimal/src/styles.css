@@ -11,6 +11,7 @@
 
 @theme {
   --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --breakpoint-xs: 26.25rem;
   --breakpoint-sm: 48.75rem;
   --breakpoint-md: 57.8125rem;
   --color-background: #ffffff;

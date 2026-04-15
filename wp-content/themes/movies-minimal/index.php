@@ -2,7 +2,7 @@
 get_header();
 ?>
 <?php get_template_part('header/site', 'header'); ?>
-<main class="mx-auto mt-10 min-h-[calc(100vh-114px)] max-w-[1000px] px-[32px] pb-[50px] sm:min-h-[calc(100vh-154px)] sm:pb-[80px] md:mt-12 lg:min-h-[calc(100vh-232px)] lg:pb-[100px]">
+<main class="mx-auto mt-10 min-h-[calc(100vh-114px)] md:max-w-[720px] lg:max-w-[1000px] px-[32px] pb-[50px] sm:min-h-[calc(100vh-154px)] sm:pb-[80px] md:mt-12 lg:min-h-[calc(100vh-232px)] lg:pb-[100px]">
   
   <?php
   $current_view = isset($_GET['view']) ? sanitize_key(wp_unslash($_GET['view'])) : '';
@@ -18,22 +18,14 @@ get_header();
 
   <?php if ($show_home_top_section) : ?>
     <section class="grid gap-10 lg:grid-cols-[minmax(0,1fr)_280px] lg:items-start">
-      <div class="max-w-[720px]">
-        <?php if ($home_intro_post instanceof WP_Post) : ?>
-          <div class="post-content">
-            <?php echo apply_filters('the_content', $home_intro_post->post_content); ?>
-          </div>
-        <?php endif; ?>
-
-        <div class="rhythm-lg">
-          <?php get_template_part('components/collection', 'list', ['activity_items' => $recent_activity]); ?>
-        </div>
-      </div>
-
       <?php if ($featured_movie instanceof WP_Post) : ?>
-        <aside class="theme-accent hidden border border-3 pt-0 px-0 pb-5 lg:block lg:sticky lg:top-[40px] lg:min-h-[120px] overflow-hidden">
+        <aside class="theme-accent hidden overflow-hidden border-3 border pt-0 px-0 pb-5 lg:order-2 lg:block lg:sticky lg:top-[40px] lg:min-h-[120px]">
           <div class="spotlight-marquee px-0">
             <div class="spotlight-marquee__track">
+              <span>Spotlight</span>
+              <span class="spotlight-marquee__dot" aria-hidden="true"></span>
+              <span>Spotlight</span>
+              <span class="spotlight-marquee__dot" aria-hidden="true"></span>
               <span>Spotlight</span>
               <span class="spotlight-marquee__dot" aria-hidden="true"></span>
               <span>Spotlight</span>
@@ -118,6 +110,111 @@ get_header();
           <?php endif; ?>
         </aside>
       <?php endif; ?>
+
+      <div class="mx-auto max-w-[720px] lg:order-1">
+        <?php if ($home_intro_post instanceof WP_Post) : ?>
+          <div class="post-content">
+            <?php echo apply_filters('the_content', $home_intro_post->post_content); ?>
+          </div>
+        <?php endif; ?>
+
+        <?php if ($featured_movie instanceof WP_Post) : ?>
+          <aside class="theme-accent hidden overflow-hidden border-3 border pt-0 px-0 pb-5 md:block lg:hidden">
+            <div class="spotlight-marquee px-0">
+              <div class="spotlight-marquee__track">
+                <span>Spotlight</span>
+                <span class="spotlight-marquee__dot" aria-hidden="true"></span>
+                <span>Spotlight</span>
+                <span class="spotlight-marquee__dot" aria-hidden="true"></span>
+                <span>Spotlight</span>
+                <span class="spotlight-marquee__dot" aria-hidden="true"></span>
+                <span>Spotlight</span>
+                <span class="spotlight-marquee__dot" aria-hidden="true"></span>
+                <span>Spotlight</span>
+                <span class="spotlight-marquee__dot" aria-hidden="true"></span>
+                <span>Spotlight</span>
+                <span class="spotlight-marquee__dot" aria-hidden="true"></span>
+              </div>
+            </div>
+            <?php
+            $featured_movie_id = $featured_movie->ID;
+            $featured_sidebar_year = movies_theme_get_year($featured_movie_id);
+            $featured_sidebar_runtime = movies_theme_get_runtime($featured_movie_id);
+            $featured_sidebar_genre = movies_theme_get_movie_category_list($featured_movie_id);
+            $featured_sidebar_gallery_ids = function_exists('get_field')
+                ? get_field('spotlight_gallery', $featured_movie_id)
+                : [];
+            $featured_sidebar_gallery_ids = is_array($featured_sidebar_gallery_ids)
+                ? array_values(array_filter(array_map(static function ($gallery_item): int {
+                    if (is_array($gallery_item) && isset($gallery_item['ID'])) {
+                        return (int) $gallery_item['ID'];
+                    }
+
+                    if (is_object($gallery_item) && isset($gallery_item->ID)) {
+                        return (int) $gallery_item->ID;
+                    }
+
+                    return (int) $gallery_item;
+                }, $featured_sidebar_gallery_ids)))
+                : [];
+            $featured_sidebar_poster = get_the_post_thumbnail($featured_movie_id, 'large', [
+                'class' => movies_theme_get_poster_image_class($featured_movie_id, 'h-auto w-full object-cover'),
+                'loading' => 'lazy',
+            ]);
+            ?>
+            <?php if ($featured_sidebar_poster !== '') : ?>
+              <div class="px-5 md:grid md:grid-cols-[220px_minmax(0,1fr)] md:items-start md:gap-8">
+                <a class="mb-6 block no-underline md:mb-0" href="<?php echo esc_url(get_permalink($featured_movie_id)); ?>">
+                  <div
+                    class="spotlight-gallery relative aspect-[2/3] overflow-hidden md:aspect-auto md:min-h-[320px]"
+                    <?php echo $featured_sidebar_gallery_ids !== [] ? 'data-spotlight-gallery' : ''; ?>
+                  >
+                    <div class="spotlight-gallery__frame">
+                      <div class="spotlight-gallery__slide spotlight-gallery__slide--active">
+                        <?php echo $featured_sidebar_poster; ?>
+                      </div>
+
+                      <?php foreach ($featured_sidebar_gallery_ids as $gallery_image_id) : ?>
+                        <?php
+                        $gallery_image = wp_get_attachment_image($gallery_image_id, 'large', false, [
+                            'class' => 'h-full w-full object-cover object-center',
+                            'loading' => 'lazy',
+                        ]);
+                        ?>
+                        <?php if ($gallery_image !== '') : ?>
+                          <div class="spotlight-gallery__slide" data-spotlight-gallery-slide>
+                            <?php echo $gallery_image; ?>
+                          </div>
+                        <?php endif; ?>
+                      <?php endforeach; ?>
+                    </div>
+                  </div>
+                </a>
+
+                <div class="theme-body mb-5 space-y-2 text-sm md:pt-2 lg:mb-5">
+                  <p><span class="theme-strong font-bold">Film:</span> <?php echo esc_html(get_the_title($featured_movie_id)); ?></p>
+
+                  <?php if ($featured_sidebar_year !== '') : ?>
+                    <p><span class="theme-strong font-bold">Year:</span> <?php echo esc_html($featured_sidebar_year); ?></p>
+                  <?php endif; ?>
+
+                  <?php if ($featured_sidebar_runtime !== '') : ?>
+                    <p><span class="theme-strong font-bold">Runtime:</span> <?php echo esc_html($featured_sidebar_runtime); ?></p>
+                  <?php endif; ?>
+
+                  <?php if ($featured_sidebar_genre !== '') : ?>
+                    <p><span class="theme-strong font-bold">Genre:</span> <?php echo esc_html($featured_sidebar_genre); ?></p>
+                  <?php endif; ?>
+                </div>
+              </div>
+            <?php endif; ?>
+          </aside>
+        <?php endif; ?>
+
+        <div class="rhythm-lg">
+          <?php get_template_part('components/collection', 'list', ['activity_items' => $recent_activity]); ?>
+        </div>
+      </div>
     </section>
   <?php else : ?>
     <?php get_template_part('components/collection', 'list'); ?>

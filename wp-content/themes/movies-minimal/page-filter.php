@@ -157,7 +157,7 @@ $movies_query = new WP_Query($movies_query_args);
 
 <?php get_template_part('header/site', 'header'); ?>
 
-<main class="mx-auto mt-10 min-h-[calc(100vh-114px)] max-w-[1000px] px-[32px] pb-[50px] sm:min-h-[calc(100vh-154px)] sm:pb-[80px] md:mt-12 lg:min-h-[calc(100vh-232px)] lg:pb-[100px]">
+<main class="mx-auto mt-10 min-h-[calc(100vh-114px)] md:max-w-[720px] lg:max-w-[1000px] px-[32px] pb-[50px] sm:min-h-[calc(100vh-154px)] sm:pb-[80px] md:mt-12 lg:min-h-[calc(100vh-232px)] lg:pb-[100px]">
   <?php if (have_posts()) : ?>
     <?php while (have_posts()) : the_post(); ?>
       <article>
