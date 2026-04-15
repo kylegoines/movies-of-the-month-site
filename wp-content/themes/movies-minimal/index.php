@@ -141,6 +141,7 @@ get_header();
             $featured_sidebar_year = movies_theme_get_year($featured_movie_id);
             $featured_sidebar_runtime = movies_theme_get_runtime($featured_movie_id);
             $featured_sidebar_genre = movies_theme_get_movie_category_list($featured_movie_id);
+            $featured_spotlight_quote = movies_theme_get_spotlight_quote($featured_movie_id);
             $featured_sidebar_gallery_ids = function_exists('get_field')
                 ? get_field('spotlight_gallery', $featured_movie_id)
                 : [];
@@ -165,33 +166,18 @@ get_header();
             <?php if ($featured_sidebar_poster !== '') : ?>
               <div class="px-5 md:grid md:grid-cols-[220px_minmax(0,1fr)] md:items-start md:gap-8">
                 <a class="mb-6 block no-underline md:mb-0" href="<?php echo esc_url(get_permalink($featured_movie_id)); ?>">
-                  <div
-                    class="spotlight-gallery relative aspect-[2/3] overflow-hidden md:aspect-auto md:min-h-[320px]"
-                    <?php echo $featured_sidebar_gallery_ids !== [] ? 'data-spotlight-gallery' : ''; ?>
-                  >
-                    <div class="spotlight-gallery__frame">
-                      <div class="spotlight-gallery__slide spotlight-gallery__slide--active">
-                        <?php echo $featured_sidebar_poster; ?>
-                      </div>
-
-                      <?php foreach ($featured_sidebar_gallery_ids as $gallery_image_id) : ?>
-                        <?php
-                        $gallery_image = wp_get_attachment_image($gallery_image_id, 'large', false, [
-                            'class' => 'h-full w-full object-cover object-center',
-                            'loading' => 'lazy',
-                        ]);
-                        ?>
-                        <?php if ($gallery_image !== '') : ?>
-                          <div class="spotlight-gallery__slide" data-spotlight-gallery-slide>
-                            <?php echo $gallery_image; ?>
-                          </div>
-                        <?php endif; ?>
-                      <?php endforeach; ?>
-                    </div>
+                  <div class="relative aspect-[2/3] overflow-hidden md:aspect-auto md:min-h-[320px]">
+                    <?php echo $featured_sidebar_poster; ?>
                   </div>
                 </a>
 
-                <div class="theme-body mb-5 space-y-2 text-sm md:pt-2 lg:mb-5">
+                <div class="theme-body mb-5 space-y-2 text-sm md:flex md:min-h-[320px] md:flex-col md:justify-center lg:mb-5">
+                  <?php if ($featured_spotlight_quote !== '') : ?>
+                    <div class="post-content mb-6 text-2xl font-bold leading-tight md:mt-6 md:text-4xl [&_p]:font-bold">
+                      <?php echo apply_filters('the_content', $featured_spotlight_quote); ?>
+                    </div>
+                  <?php endif; ?>
+
                   <p><span class="theme-strong font-bold">Film:</span> <?php echo esc_html(get_the_title($featured_movie_id)); ?></p>
 
                   <?php if ($featured_sidebar_year !== '') : ?>

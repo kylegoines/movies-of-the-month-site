@@ -130,6 +130,15 @@ function movies_theme_get_editorial_author_id(int $post_id): int
     return (int) get_field('editorial_author', $post_id);
 }
 
+function movies_theme_get_spotlight_quote(int $post_id): string
+{
+    if (!function_exists('get_field')) {
+        return '';
+    }
+
+    return trim((string) get_field('spotlight_quote', $post_id));
+}
+
 function movies_theme_get_pullquote_1(int $post_id): string
 {
     if (!function_exists('get_field')) {
