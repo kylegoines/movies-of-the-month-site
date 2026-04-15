@@ -1,6 +1,7 @@
 @layer components {
   .site-title-marquee-shell {
     position: relative;
+    overflow-x: hidden;
   }
 
   .site-title-marquee {

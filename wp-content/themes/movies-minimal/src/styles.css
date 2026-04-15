@@ -59,11 +59,13 @@
 @layer base {
   html {
     @apply m-0 p-0;
+    overflow-x: hidden;
   }
 
   body {
     background-color: var(--color-background);
     color: var(--color-foreground);
+    overflow-x: hidden;
     @apply m-0 font-sans antialiased;
   }
 

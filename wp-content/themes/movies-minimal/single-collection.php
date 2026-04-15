@@ -52,7 +52,7 @@ get_header();
               $collection_author_id = $collection_movie_entries !== []
                   ? (int) ($collection_movie_entries[$movie_index]['author_id'] ?? 0)
                   : '';
-              $display_excerpt = $collection_custom_excerpt !== '' ? $collection_custom_excerpt : $the_pitch;
+              $border_excerpt = $the_pitch;
               $is_hidden_gem = movies_theme_is_hidden_gem($movie_id);
               $heart_count = movies_theme_get_movie_heart_count($movie_id);
               $is_liked = movies_theme_movie_is_liked_by_current_visitor($movie_id);
@@ -83,10 +83,10 @@ get_header();
 
                 <div class="max-w-[720px]">
                   <div class="theme-body text-sm lg:text-base">
-                    <?php if ($display_excerpt !== '') : ?>
-                      <blockquote class="single-collection__excerpt theme-strong mt-10 border border-black p-5">
-                        <p><?php echo wp_kses_post(nl2br(esc_html($display_excerpt))); ?></p>
-                      </blockquote>
+                    <?php if ($border_excerpt !== '') : ?>
+                      <div class="single-collection__excerpt theme-strong mt-10 border border-black p-5">
+                        <p><?php echo wp_kses_post(nl2br(esc_html($border_excerpt))); ?></p>
+                      </div>
                     <?php endif; ?>
 
                     <?php if ($is_hidden_gem) : ?>
@@ -130,6 +130,12 @@ get_header();
                         <?php echo esc_html($display_author_name); ?>
                         </a>
                     </p>
+
+                    <?php if ($collection_custom_excerpt !== '') : ?>
+                      <p class="mt-3">
+                        <?php echo wp_kses_post(nl2br(esc_html($collection_custom_excerpt))); ?>
+                      </p>
+                    <?php endif; ?>
 
                     <div class="collection-heart mt-5">
                       <button

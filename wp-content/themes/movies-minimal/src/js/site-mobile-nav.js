@@ -3,10 +3,11 @@ export class SiteMobileNav {
     this.toggleButton = toggleButton;
     this.panel = panel;
     this.body = document.body;
+    this.root = document.documentElement;
   }
 
   setOpen(isOpen) {
-    if (!this.toggleButton || !this.panel || !this.body) {
+    if (!this.toggleButton || !this.panel || !this.body || !this.root) {
       return;
     }
 
@@ -19,6 +20,7 @@ export class SiteMobileNav {
     this.panel.setAttribute('aria-hidden', String(!isOpen));
     this.panel.dataset.state = isOpen ? 'open' : 'closed';
     this.body.classList.toggle('site-mobile-nav-open', isOpen);
+    this.root.classList.toggle('site-mobile-nav-open', isOpen);
   }
 
   open = () => {

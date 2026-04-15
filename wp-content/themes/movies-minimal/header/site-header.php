@@ -75,7 +75,7 @@ if ($marquee_is_paused) {
   >
     <?php echo esc_html($marquee_button_label); ?>
   </button>
-  <div class="w-screen ">
+  <div class="w-full">
     <ul class="theme-strong mx-auto hidden max-w-[1000px] list-none justify-between px-8 text-xl font-bold lg:flex lg:py-6">
       <li>
         <a

@@ -17,13 +17,15 @@ if ($variant !== '') {
 ?>
 
 <section class="<?php echo esc_attr($section_classes); ?>" id="home-signup">
-  <?php if ($show_label_button) : ?>
+    <!-- <div class="bg-red-50"> -->
+  
+  <div class="home-signup__inner ">
+    <div class="max-w-[1000px] space-y-6 mx-auto relative">
+        <?php if ($show_label_button) : ?>
     <button class="home-signup__label" type="button" data-signup-jump>
       <span class="home-signup__label-text text-[32px] leading-none font-bold"><?php echo esc_html($label_text); ?></span>
     </button>
   <?php endif; ?>
-  <div class="home-signup__inner">
-    <div class="max-w-[760px] space-y-6">
       <div class="space-y-3">
         <h2 class="text-3xl leading-none font-bold md:text-4xl"><?php echo esc_html($heading_text); ?></h2>
       </div>
@@ -93,4 +95,5 @@ if ($variant !== '') {
       <?php endif; ?>
     </div>
   </div>
+      <!-- </div> -->
 </section>

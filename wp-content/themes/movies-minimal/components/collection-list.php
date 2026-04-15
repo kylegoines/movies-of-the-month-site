@@ -19,7 +19,7 @@ $activity_items = $args['activity_items'] ?? [];
           <div class="flex flex-col">
             <div class="flex">
                 <h2
-                  class="collection-list__title theme-strong shrink-0 text-3xl leading-none tracking-[-0.05em] lg:text-[90px]"
+                  class="collection-list__title theme-strong shrink-0 text-6xl leading-none tracking-[-0.05em] md:text-8xl lg:text-[90px]"
                   <?php if ($collection_poster_urls !== []) : ?>
                     data-collection-title-flicker
                     data-collection-title-images="<?php echo esc_attr(wp_json_encode($collection_poster_urls)); ?>"

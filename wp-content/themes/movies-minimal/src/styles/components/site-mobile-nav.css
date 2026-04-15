@@ -1,4 +1,5 @@
 @layer components {
+  html.site-mobile-nav-open,
   body.site-mobile-nav-open {
     overflow: hidden;
   }
