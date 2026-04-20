@@ -464,50 +464,118 @@ function movies_theme_get_recent_movie_activity(int $cluster_limit = 6, int $pos
     ]);
 
     if ($movies === []) {
+        $clusters = [];
+    } else {
+        $clusters = [];
+        $current_cluster = null;
+
+        foreach ($movies as $movie) {
+            if (!$movie instanceof WP_Post) {
+                continue;
+            }
+
+            $author_id = (int) $movie->post_author;
+            $timestamp = get_post_time('U', true, $movie);
+
+            if ($current_cluster === null || $current_cluster['author_id'] !== $author_id) {
+                if ($current_cluster !== null) {
+                    $clusters[] = $current_cluster;
+                }
+
+                $current_cluster = [
+                    'type' => 'movies',
+                    'author_id' => $author_id,
+                    'author_name' => movies_theme_get_author_name($author_id),
+                    'count' => 0,
+                    'timestamp' => $timestamp,
+                ];
+            }
+
+            $current_cluster['count']++;
+            $current_cluster['timestamp'] = max($current_cluster['timestamp'], $timestamp);
+        }
+
+        if ($current_cluster !== null) {
+            $clusters[] = $current_cluster;
+        }
+    }
+
+    $editorial_movies = get_posts([
+        'post_type' => 'movies',
+        'post_status' => 'publish',
+        'posts_per_page' => $post_limit,
+        'orderby' => 'meta_value_num',
+        'order' => 'DESC',
+        'meta_key' => '_movies_theme_editorial_logged_at',
+        'meta_query' => [
+            [
+                'key' => '_movies_theme_editorial_logged_at',
+                'compare' => 'EXISTS',
+            ],
+        ],
+        'no_found_rows' => true,
+    ]);
+
+    $editorial_events = array_values(array_filter(array_map(static function ($movie): ?array {
+        if (!$movie instanceof WP_Post) {
+            return null;
+        }
+
+        $timestamp = (int) get_post_meta($movie->ID, '_movies_theme_editorial_logged_at', true);
+        $author_id = movies_theme_get_editorial_author_id((int) $movie->ID);
+
+        if ($author_id <= 0) {
+            $author_id = (int) get_post_meta($movie->ID, '_movies_theme_editorial_logged_author', true);
+        }
+
+        if ($author_id <= 0) {
+            $author_id = (int) $movie->post_author;
+        }
+
+        if ($timestamp <= 0 || $author_id <= 0) {
+            return null;
+        }
+
+        return [
+            'type' => 'editorial',
+            'author_id' => $author_id,
+            'author_name' => movies_theme_get_author_name($author_id),
+            'movie_id' => (int) $movie->ID,
+            'movie_title' => get_the_title($movie),
+            'timestamp' => $timestamp,
+        ];
+    }, $editorial_movies)));
+
+    $activity_items = array_merge($clusters, $editorial_events);
+
+    if ($activity_items === []) {
         return [];
     }
 
-    $clusters = [];
-    $current_cluster = null;
+    usort($activity_items, static function (array $left, array $right): int {
+        return ((int) ($right['timestamp'] ?? 0)) <=> ((int) ($left['timestamp'] ?? 0));
+    });
 
-    foreach ($movies as $movie) {
-        if (!$movie instanceof WP_Post) {
-            continue;
-        }
+    $activity_items = array_slice($activity_items, 0, $cluster_limit);
 
-        $author_id = (int) $movie->post_author;
-        $timestamp = get_post_time('U', true, $movie);
-
-        if ($current_cluster === null || $current_cluster['author_id'] !== $author_id) {
-            if ($current_cluster !== null) {
-                $clusters[] = $current_cluster;
-            }
-
-            $current_cluster = [
-                'author_id' => $author_id,
-                'author_name' => movies_theme_get_author_name($author_id),
-                'count' => 0,
-                'timestamp' => $timestamp,
+    return array_values(array_map(static function (array $item): array {
+        if (($item['type'] ?? 'movies') === 'editorial') {
+            return [
+                'type' => 'editorial',
+                'author_id' => (int) $item['author_id'],
+                'author_name' => (string) $item['author_name'],
+                'movie_id' => (int) ($item['movie_id'] ?? 0),
+                'movie_title' => (string) ($item['movie_title'] ?? ''),
             ];
         }
 
-        $current_cluster['count']++;
-        $current_cluster['timestamp'] = max($current_cluster['timestamp'], $timestamp);
-    }
-
-    if ($current_cluster !== null) {
-        $clusters[] = $current_cluster;
-    }
-
-    $clusters = array_slice($clusters, 0, $cluster_limit);
-
-    return array_values(array_map(static function (array $cluster): array {
         return [
-            'author_id' => (int) $cluster['author_id'],
-            'author_name' => (string) $cluster['author_name'],
-            'count' => (int) $cluster['count'],
+            'type' => 'movies',
+            'author_id' => (int) $item['author_id'],
+            'author_name' => (string) $item['author_name'],
+            'count' => (int) ($item['count'] ?? 0),
         ];
-    }, $clusters));
+    }, $activity_items));
 }
 
 function movies_theme_get_home_intro(): ?WP_Post

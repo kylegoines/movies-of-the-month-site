@@ -6,7 +6,9 @@ if (!is_array($activity_items) || $activity_items === []) {
 }
 
 $top_activity_count = max(array_map(static function (array $activity_item): int {
-    return (int) ($activity_item['count'] ?? 0);
+    return ($activity_item['type'] ?? 'movies') === 'movies'
+        ? (int) ($activity_item['count'] ?? 0)
+        : 0;
 }, $activity_items));
 $top_contributor_badge = movies_theme_get_inline_svg('images/badge-basic.svg', 'activity-log__top-badge');
 $top_contributor_badge = is_string($top_contributor_badge)
@@ -21,7 +23,10 @@ $top_contributor_badge = is_string($top_contributor_badge)
 
   <ul class="space-y-3">
     <?php foreach ($activity_items as $activity_item) : ?>
-      <?php $is_top_contributor = (int) ($activity_item['count'] ?? 0) === $top_activity_count && $top_activity_count > 0; ?>
+      <?php
+      $is_movie_activity = ($activity_item['type'] ?? 'movies') === 'movies';
+      $is_top_contributor = $is_movie_activity && (int) ($activity_item['count'] ?? 0) === $top_activity_count && $top_activity_count > 0;
+      ?>
       <li class="theme-body text-sm md:text-base">
         <a
           class="theme-strong font-bold transition-opacity hover:opacity-70 no-underline"
@@ -29,11 +34,21 @@ $top_contributor_badge = is_string($top_contributor_badge)
         >
           <?php echo esc_html($activity_item['author_name'] ?? ''); ?>
         </a>
-        <?php echo esc_html(sprintf(
-            ' contributed %s %s',
-            number_format_i18n((int) ($activity_item['count'] ?? 0)),
-            _n('movie', 'movies', (int) ($activity_item['count'] ?? 0), 'movies-minimal')
-        )); ?>
+        <?php if ($is_movie_activity) : ?>
+          <?php echo esc_html(sprintf(
+              ' contributed %s %s',
+              number_format_i18n((int) ($activity_item['count'] ?? 0)),
+              _n('movie', 'movies', (int) ($activity_item['count'] ?? 0), 'movies-minimal')
+          )); ?>
+        <?php else : ?>
+          <?php echo esc_html__(' added a featured article for ', 'movies-minimal'); ?>
+          <a
+            class="theme-strong font-bold transition-opacity hover:opacity-70 no-underline"
+            href="<?php echo esc_url(get_permalink((int) ($activity_item['movie_id'] ?? 0))); ?>"
+          >
+            <?php echo esc_html($activity_item['movie_title'] ?? ''); ?>
+          </a>
+        <?php endif; ?>
         <?php if ($is_top_contributor && $top_contributor_badge !== '') : ?>
           <span
             class="mt-2 block w-fit border px-2.5 py-1 text-[11px] font-bold uppercase tracking-[0.08em] text-[#1d4ed8]"

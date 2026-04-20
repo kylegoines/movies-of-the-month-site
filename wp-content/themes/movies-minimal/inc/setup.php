@@ -393,6 +393,92 @@ add_action('wp_head', function (): void {
     <?php
 }, 1);
 
+add_action('save_post_movies', function (int $post_id, WP_Post $post, bool $update): void {
+    if (wp_is_post_revision($post_id) || wp_is_post_autosave($post_id)) {
+        return;
+    }
+
+    if ($post->post_status !== 'publish') {
+        return;
+    }
+
+    if (!function_exists('get_field')) {
+        return;
+    }
+
+    $featured_content = trim((string) get_field('featured_content', $post_id));
+
+    if ($featured_content === '') {
+        return;
+    }
+
+    $logged_at = (int) get_post_meta($post_id, '_movies_theme_editorial_logged_at', true);
+
+    if ($logged_at > 0) {
+        return;
+    }
+
+    $editorial_author_id = movies_theme_get_editorial_author_id($post_id);
+
+    if ($editorial_author_id <= 0) {
+        $editorial_author_id = (int) $post->post_author;
+    }
+
+    update_post_meta($post_id, '_movies_theme_editorial_logged_at', time());
+    update_post_meta($post_id, '_movies_theme_editorial_logged_author', $editorial_author_id);
+}, 10, 3);
+
+add_action('init', function (): void {
+    if (get_option('movies_theme_editorial_activity_backfilled', false)) {
+        return;
+    }
+
+    if (!function_exists('get_field')) {
+        return;
+    }
+
+    $movies = get_posts([
+        'post_type' => 'movies',
+        'post_status' => 'publish',
+        'posts_per_page' => -1,
+        'orderby' => 'date',
+        'order' => 'ASC',
+        'no_found_rows' => true,
+    ]);
+
+    foreach ($movies as $movie) {
+        if (!$movie instanceof WP_Post) {
+            continue;
+        }
+
+        $post_id = (int) $movie->ID;
+        $logged_at = (int) get_post_meta($post_id, '_movies_theme_editorial_logged_at', true);
+
+        if ($logged_at > 0) {
+            continue;
+        }
+
+        $featured_content = trim((string) get_field('featured_content', $post_id));
+
+        if ($featured_content === '') {
+            continue;
+        }
+
+        $editorial_author_id = movies_theme_get_editorial_author_id($post_id);
+
+        if ($editorial_author_id <= 0) {
+            $editorial_author_id = (int) $movie->post_author;
+        }
+
+        $logged_timestamp = (int) get_post_time('U', true, $movie);
+
+        update_post_meta($post_id, '_movies_theme_editorial_logged_at', $logged_timestamp > 0 ? $logged_timestamp : time());
+        update_post_meta($post_id, '_movies_theme_editorial_logged_author', $editorial_author_id);
+    }
+
+    update_option('movies_theme_editorial_activity_backfilled', 1, false);
+}, 20);
+
 add_filter('option_aettaec_options', function ($options) {
     if (is_admin()) {
         return $options;
