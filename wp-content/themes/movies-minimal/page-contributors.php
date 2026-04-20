@@ -74,6 +74,22 @@ usort($contributors, static function (WP_User $left, WP_User $right): int {
           $contributor_key = 'user_' . $contributor_id;
           $contributor_name = movies_theme_get_author_name($contributor_id);
           $contributor_count = count_user_posts($contributor_id, 'movies', true);
+          $contributor_editorial_count = movies_theme_get_editorial_article_count($contributor_id);
+          $contributor_stats = [];
+
+          if ($contributor_count > 0) {
+              $contributor_stats[] = sprintf(
+                  _n('%s Contribution', '%s Contributions', $contributor_count, 'movies-minimal'),
+                  number_format_i18n($contributor_count)
+              );
+          }
+
+          if ($contributor_editorial_count > 0) {
+              $contributor_stats[] = sprintf(
+                  _n('%s Featured Article', '%s Featured Articles', $contributor_editorial_count, 'movies-minimal'),
+                  number_format_i18n($contributor_editorial_count)
+              );
+          }
           $contributor_image_id = function_exists('get_field')
               ? (int) get_field('profile_image', $contributor_key)
               : 0;
@@ -113,12 +129,11 @@ usort($contributors, static function (WP_User $left, WP_User $right): int {
                 <a class="no-underline" href="<?php echo esc_url(get_author_posts_url($contributor_id)); ?>">
                   <?php echo esc_html($contributor_name); ?>
                 </a>
-                <span class="theme-muted text-base tracking-normal md:text-lg">
-                  <?php echo esc_html(sprintf(
-                      _n('%s contribution', '%s contributions', $contributor_count, 'movies-minimal'),
-                      number_format_i18n($contributor_count)
-                  )); ?>
-                </span>
+                <?php if ($contributor_stats !== []) : ?>
+                  <span class="theme-muted text-base tracking-normal md:text-lg">
+                    <?php echo esc_html(implode(' • ', $contributor_stats)); ?>
+                  </span>
+                <?php endif; ?>
               </h2>
 
               <?php if ($contributor_bio !== '') : ?>

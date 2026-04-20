@@ -130,6 +130,26 @@ function movies_theme_get_editorial_author_id(int $post_id): int
     return (int) get_field('editorial_author', $post_id);
 }
 
+function movies_theme_get_editorial_article_count(int $author_id): int
+{
+    $movie_ids = get_posts([
+        'post_type' => 'movies',
+        'post_status' => 'publish',
+        'posts_per_page' => -1,
+        'fields' => 'ids',
+        'no_found_rows' => true,
+        'meta_query' => [
+            [
+                'key' => 'editorial_author',
+                'value' => (string) $author_id,
+                'compare' => '=',
+            ],
+        ],
+    ]);
+
+    return is_array($movie_ids) ? count($movie_ids) : 0;
+}
+
 function movies_theme_get_spotlight_quote(int $post_id): string
 {
     if (!function_exists('get_field')) {

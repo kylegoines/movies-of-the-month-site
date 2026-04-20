@@ -16,7 +16,7 @@ $is_home_link = is_home() && $current_view !== 'past-months';
 $is_this_month = is_singular('collection') && $latest_collection !== [] && get_queried_object_id() === (int) $latest_collection[0];
 $is_past_months = is_home() && $current_view === 'past-months';
 $is_browse = is_page('browse-movies') || is_singular('movies');
-$is_contributors = is_page('contributors');
+$is_contributors = is_page('contributors') || is_author();
 $marquee_state = movies_theme_get_site_title_marquee_state();
 $marquee_is_paused = (bool) $marquee_state['is_paused'];
 $marquee_progress = (float) $marquee_state['progress'];
