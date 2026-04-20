@@ -75,8 +75,8 @@
   }
 
   ::selection {
-    background: var(--secondary-accent);
-    color: var(--color-strong);
+    background: #000000;
+    color: #ffffff;
   }
 
   h1,
@@ -530,5 +530,9 @@
 }
 
 .quote-highlight{
-    color: var(--hidden-gem-accent);
+    background: var(--hidden-gem-accent);
+    color: #ffffff;
+    padding: 0 0.18em;
+    -webkit-box-decoration-break: clone;
+    box-decoration-break: clone;
 }
