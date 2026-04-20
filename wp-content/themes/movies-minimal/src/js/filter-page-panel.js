@@ -38,9 +38,14 @@ export class FilterPagePanel {
 
   setState(nextState, { updateUrl = true } = {}) {
     const isClosed = nextState === 'closed';
+    const openLabel = this.button?.dataset.filterLabelOpen || 'Open Filters';
+    const closeLabel = this.button?.dataset.filterLabelClose || 'Hide Filters';
 
     this.stateField.value = isClosed ? 'closed' : 'open';
     this.button?.setAttribute('aria-expanded', String(!isClosed));
+    if (this.button) {
+      this.button.textContent = isClosed ? openLabel : closeLabel;
+    }
     this.panel.dataset.state = isClosed ? 'closed' : 'open';
     this.panel.setAttribute('aria-hidden', String(isClosed));
 

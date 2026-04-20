@@ -123,6 +123,14 @@
     fill: currentColor;
   }
 
+  svg.activity-log__top-badge path,
+  svg.activity-log__top-badge rect,
+  svg.activity-log__top-badge circle,
+  svg.activity-log__top-badge polygon,
+  svg.activity-log__top-badge ellipse {
+    fill: currentColor;
+  }
+
   .theme-strong {
     color: var(--color-strong);
   }

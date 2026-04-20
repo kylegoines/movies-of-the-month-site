@@ -27,6 +27,7 @@ get_header();
       $pullquote_position_2 = movies_theme_get_pullquote_position($movie_id, 2);
       $pullquote_position_3 = movies_theme_get_pullquote_position($movie_id, 3);
       $featured_image_id = movies_theme_get_featured_image_id($movie_id);
+      $related_movies = movies_theme_get_related_movies($movie_id);
       $is_hidden_gem = movies_theme_is_hidden_gem($movie_id);
       $heart_count = movies_theme_get_movie_heart_count($movie_id);
       $is_liked = movies_theme_movie_is_liked_by_current_visitor($movie_id);
@@ -97,6 +98,24 @@ get_header();
             ]
         );
         ?>
+
+        <?php if (!$has_spotlight_layout && $related_movies !== []) : ?>
+          <section class="rhythm-xl">
+            <div class="mb-8 flex items-end gap-6">
+              <h2 class="theme-strong text-2xl tracking-[-0.04em] md:text-4xl">
+                Related Movies
+              </h2>
+              <div class="accent-rule mb-2 h-[3px] flex-1"></div>
+            </div>
+
+            <?php
+            get_template_part('components/movie-grid-full', null, [
+                'movies' => $related_movies,
+                'grid_classes' => 'grid grid-cols-2 gap-x-6 gap-y-10 sm:grid-cols-3 lg:grid-cols-4',
+            ]);
+            ?>
+          </section>
+        <?php endif; ?>
 
         <?php if ($other_movies_by_author !== []) : ?>
           <section class="rhythm-xl">

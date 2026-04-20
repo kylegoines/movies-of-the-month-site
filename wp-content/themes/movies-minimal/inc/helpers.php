@@ -240,6 +240,21 @@ function movies_theme_get_collection_movies(int $post_id): array
     return array_values(array_filter(array_map('intval', $movies)));
 }
 
+function movies_theme_get_related_movies(int $post_id): array
+{
+    if (!function_exists('get_field')) {
+        return [];
+    }
+
+    $movies = get_field('related_movies', $post_id);
+
+    if (!is_array($movies)) {
+        return [];
+    }
+
+    return array_values(array_filter(array_map('intval', $movies)));
+}
+
 function movies_theme_get_collection_movie_entries(int $post_id): array
 {
     if (!function_exists('get_field')) {

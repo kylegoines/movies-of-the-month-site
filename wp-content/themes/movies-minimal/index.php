@@ -92,11 +92,13 @@ get_header();
                 </div>
               </a>
 
-              <div class="theme-body mb-5 space-y-2 text-sm">
-                <?php if ($featured_spotlight_quote !== '') : ?>
-                  <div class="post-content mb-6 text-2xl font-bold leading-tight [&_p]:font-bold">
-                    <?php echo apply_filters('the_content', $featured_spotlight_quote); ?>
-                  </div>
+                <div class="theme-body mb-5 space-y-2 text-sm">
+                  <?php if ($featured_spotlight_quote !== '') : ?>
+                    <a class="block no-underline transition-opacity hover:opacity-70" href="<?php echo esc_url(get_permalink($featured_movie_id)); ?>">
+                      <div class="post-content mb-6 text-2xl font-bold leading-tight [&_p]:font-bold">
+                        <?php echo apply_filters('the_content', $featured_spotlight_quote); ?>
+                      </div>
+                    </a>
                 <?php endif; ?>
 
                 <p><span class="theme-strong font-bold">Film:</span> <?php echo esc_html(get_the_title($featured_movie_id)); ?></p>
@@ -180,9 +182,11 @@ get_header();
 
                 <div class="theme-body mb-5 min-w-0 space-y-2 text-sm md:flex md:min-h-[320px] md:flex-col md:justify-center lg:mb-5">
                   <?php if ($featured_spotlight_quote !== '') : ?>
-                    <div class="post-content mb-6 min-w-0 break-words text-xl font-bold leading-tight [overflow-wrap:anywhere] xs:text-2xl md:mt-6 md:text-4xl [&_p]:font-bold [&_.quote-huge]:text-[40px] xs:[&_.quote-huge]:text-[48px] md:[&_.quote-huge]:text-[60px]">
-                      <?php echo apply_filters('the_content', $featured_spotlight_quote); ?>
-                    </div>
+                    <a class="block no-underline transition-opacity hover:opacity-70" href="<?php echo esc_url(get_permalink($featured_movie_id)); ?>">
+                      <div class="post-content mb-6 min-w-0 break-words text-xl font-bold leading-tight [overflow-wrap:anywhere] xs:text-2xl md:mt-6 md:text-4xl [&_p]:font-bold [&_.quote-huge]:text-[40px] xs:[&_.quote-huge]:text-[48px] md:[&_.quote-huge]:text-[60px]">
+                        <?php echo apply_filters('the_content', $featured_spotlight_quote); ?>
+                      </div>
+                    </a>
                   <?php endif; ?>
 
                   <p><span class="theme-strong font-bold">Film:</span> <?php echo esc_html(get_the_title($featured_movie_id)); ?></p>

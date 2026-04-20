@@ -125,19 +125,23 @@ $scale_label_config = $args['scale_label_config'] ?? [];
         class="theme-strong theme-border filter-toggle-mobile cursor-pointer border bg-transparent px-4 py-2 text-sm font-bold tracking-[0.04em] transition-opacity hover:opacity-70"
         type="button"
         data-filter-toggle-mobile
+        data-filter-label-open="Open Filters"
+        data-filter-label-close="Hide Filters"
         aria-controls="filter-drawer-mobile"
         aria-expanded="<?php echo $filters_state === 'open' ? 'true' : 'false'; ?>"
       >
-        Filters
+        <?php echo $filters_state === 'open' ? 'Hide Filters' : 'Open Filters'; ?>
       </button>
       <button
         class="theme-strong theme-border filter-toggle-desktop cursor-pointer border bg-transparent px-4 py-2 text-sm font-bold tracking-[0.04em] transition-opacity hover:opacity-70"
         type="button"
         data-filter-toggle-desktop
+        data-filter-label-open="Open Filters"
+        data-filter-label-close="Hide Filters"
         aria-controls="filter-drawer-desktop"
         aria-expanded="<?php echo $filters_state === 'open' ? 'true' : 'false'; ?>"
       >
-        Filters
+        <?php echo $filters_state === 'open' ? 'Hide Filters' : 'Open Filters'; ?>
       </button>
     </div>
 

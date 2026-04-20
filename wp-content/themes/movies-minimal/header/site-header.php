@@ -15,7 +15,7 @@ $current_view = isset($_GET['view']) ? sanitize_key(wp_unslash($_GET['view'])) :
 $is_home_link = is_home() && $current_view !== 'past-months';
 $is_this_month = is_singular('collection') && $latest_collection !== [] && get_queried_object_id() === (int) $latest_collection[0];
 $is_past_months = is_home() && $current_view === 'past-months';
-$is_browse = is_page('filter');
+$is_browse = is_page('browse-movies') || is_singular('movies');
 $is_contributors = is_page('contributors');
 $marquee_state = movies_theme_get_site_title_marquee_state();
 $marquee_is_paused = (bool) $marquee_state['is_paused'];
@@ -104,7 +104,7 @@ if ($marquee_is_paused) {
       <li>
         <a
           class="transition-opacity hover:opacity-70 <?php echo $is_browse ? 'text-[var(--hidden-gem-accent)]' : ''; ?>"
-          href="<?php echo esc_url(home_url('/filter/')); ?>"
+          href="<?php echo esc_url(home_url('/browse-movies/')); ?>"
         >
           Browse
         </a>
@@ -150,7 +150,7 @@ if ($marquee_is_paused) {
       </a>
       <a
         class="site-mobile-nav__link <?php echo $is_browse ? 'text-[var(--hidden-gem-accent)]' : ''; ?>"
-        href="<?php echo esc_url(home_url('/filter/')); ?>"
+        href="<?php echo esc_url(home_url('/browse-movies/')); ?>"
       >
         Browse
       </a>

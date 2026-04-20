@@ -515,6 +515,45 @@ add_action('acf/init', function (): void {
     ]);
 
     acf_add_local_field_group([
+        'key' => 'group_movies_theme_movie_related',
+        'title' => 'Related',
+        'fields' => [
+            [
+                'key' => 'field_movies_theme_movie_related_movies',
+                'label' => 'Related Movies',
+                'name' => 'related_movies',
+                'type' => 'relationship',
+                'instructions' => 'Optional related movies shown on the standard single movie page above the More from author section.',
+                'required' => 0,
+                'post_type' => [
+                    'movies',
+                ],
+                'filters' => [
+                    'search',
+                ],
+                'elements' => [
+                    'featured_image',
+                ],
+                'return_format' => 'id',
+                'min' => 0,
+                'max' => 0,
+            ],
+        ],
+        'location' => [
+            [
+                [
+                    'param' => 'post_type',
+                    'operator' => '==',
+                    'value' => 'movies',
+                ],
+            ],
+        ],
+        'position' => 'normal',
+        'style' => 'default',
+        'active' => true,
+    ]);
+
+    acf_add_local_field_group([
         'key' => 'group_movies_theme_collection_movies',
         'title' => 'Collection Movies',
         'fields' => [
@@ -790,9 +829,14 @@ add_action('acf/input/admin_footer', function (): void {
       document.addEventListener('DOMContentLoaded', function () {
         <?php if ($screen->post_type === 'movies') : ?>
         var pullquoteGroup = document.getElementById('acf-group_movies_theme_movie_pullquotes');
+        var relatedGroup = document.getElementById('acf-group_movies_theme_movie_related');
 
         if (pullquoteGroup && !pullquoteGroup.classList.contains('closed')) {
           pullquoteGroup.classList.add('closed');
+        }
+
+        if (relatedGroup && !relatedGroup.classList.contains('closed')) {
+          relatedGroup.classList.add('closed');
         }
         <?php endif; ?>
 

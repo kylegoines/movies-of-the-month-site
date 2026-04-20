@@ -1,6 +1,6 @@
 <?php
 
-// The prepared movie query is passed in from page-filter.php.
+// The prepared movie query is passed in from page-browse-movies.php.
 // This component is responsible only for rendering the current result set.
 $movies_query = $args['movies_query'] ?? null;
 ?>
