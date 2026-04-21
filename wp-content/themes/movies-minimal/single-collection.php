@@ -14,27 +14,39 @@ get_header();
           ? array_values(array_map(static fn(array $entry): int => (int) $entry['movie_id'], $collection_movie_entries))
           : movies_theme_get_collection_movies($collection_id);
       $collection_genres = movies_theme_get_collection_genres($collection_id);
+      $recent_activity = movies_theme_get_recent_movie_activity();
       ?>
       <article>
-        <header class="page-header max-w-[720px]">
-          <h1 class="page-header__title theme-strong rhythm-lg text-5xl xs:text-6xl md:text-8xl lg:text-[90px]">
-            <?php the_title(); ?>
-          </h1>
-        
-          <?php if (get_the_content() !== '') : ?>
-            <div class="post-content rhythm-lg text-lg leading-8 md:text-xl md:leading-9">
-              <?php the_content(); ?>
-            </div>
-          <?php endif; ?>
+        <header class="page-header lg:relative" data-collection-activity-shell>
+          <div data-collection-activity-content>
+            <h1 class="page-header__title theme-strong rhythm-lg text-5xl xs:text-6xl md:text-8xl lg:text-[90px]">
+              <?php the_title(); ?>
+            </h1>
 
-          <?php if ($collection_genres !== []) : ?>
-            <div class="flex flex-wrap gap-2">
-              <?php foreach ($collection_genres as $genre_index => $genre_name) : ?>
-                <span class="collection-list__genre-chip collection-list__genre-chip--<?php echo esc_attr((string) (($genre_index % 12) + 1)); ?>">
-                  <?php echo esc_html($genre_name); ?>
-                </span>
-              <?php endforeach; ?>
-            </div>
+            <?php if (get_the_content() !== '') : ?>
+              <div class="post-content rhythm-lg text-lg leading-8 md:text-xl md:leading-9">
+                <?php the_content(); ?>
+              </div>
+            <?php endif; ?>
+
+            <?php if ($collection_genres !== []) : ?>
+              <div class="flex flex-wrap gap-2">
+                <?php foreach ($collection_genres as $genre_index => $genre_name) : ?>
+                  <span class="collection-list__genre-chip collection-list__genre-chip--<?php echo esc_attr((string) (($genre_index % 12) + 1)); ?>">
+                    <?php echo esc_html($genre_name); ?>
+                  </span>
+                <?php endforeach; ?>
+              </div>
+            <?php endif; ?>
+          </div>
+
+          <?php if ($recent_activity !== []) : ?>
+            <aside data-collection-activity-sidebar data-layout="embedded">
+              <?php get_template_part('components/activity-log', null, [
+                  'activity_items' => $recent_activity,
+                  'section_classes' => 'collection-activity-log border-3 p-4',
+              ]); ?>
+            </aside>
           <?php endif; ?>
         </header>
 

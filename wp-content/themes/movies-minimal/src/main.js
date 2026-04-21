@@ -1,4 +1,5 @@
 import './styles.css';
+import { CollectionActivityLayout } from './js/collection-activity-layout';
 import { CollectionTitleFlicker } from './js/collection-title-flicker';
 import { MovieHeartManager } from './js/collection-heart';
 import { FeaturedPullquote } from './js/featured-pullquote';
@@ -55,6 +56,9 @@ class App {
     this.collectionTitleFlicker = new CollectionTitleFlicker(
       document.querySelectorAll('[data-collection-title-flicker]')
     );
+    this.collectionActivityLayout = new CollectionActivityLayout(
+      document.querySelectorAll('[data-collection-activity-sidebar]')
+    );
     this.featuredPullquote = new FeaturedPullquote(
       document.querySelectorAll('[data-featured-pullquote]')
     );
@@ -74,6 +78,7 @@ class App {
     this.siteTitleMarquee.init();
     this.movieHeartManager.init();
     this.collectionTitleFlicker.init();
+    this.collectionActivityLayout.init();
     this.featuredPullquote.init();
     this.spotlightGallery.init();
   }

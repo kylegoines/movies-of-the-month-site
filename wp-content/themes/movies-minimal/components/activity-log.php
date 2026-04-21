@@ -1,5 +1,6 @@
 <?php
 $activity_items = $args['activity_items'] ?? [];
+$section_classes = trim((string) ($args['section_classes'] ?? 'mb-10 mt-8 border-3 p-4 md:mb-12'));
 
 if (!is_array($activity_items) || $activity_items === []) {
     return;
@@ -16,7 +17,7 @@ $top_contributor_badge = is_string($top_contributor_badge)
     : '';
 ?>
 
-<section class="mb-10 p-4 md:mb-12 border-3 mt-8">
+<section class="<?php echo esc_attr($section_classes); ?>">
   <div class="mb-4 flex items-end gap-4">
     <h2 class="theme-strong text-xl tracking-[-0.04em] md:text-2xl">This Months Activity</h2>
   </div>

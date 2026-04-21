@@ -517,6 +517,31 @@
     transition-delay: 0.35s;
   }
 
+  [data-collection-activity-sidebar] {
+    margin-top: 2.5rem;
+  }
+
+  [data-collection-activity-sidebar][data-layout='floating'] {
+    margin-top: 0;
+  }
+
+  .collection-activity-log {
+    position: static;
+  }
+
+  [data-collection-activity-sidebar][data-layout='floating'] {
+    position: absolute;
+    top: 0;
+    right: -340px;
+    width: 300px;
+    display: block;
+  }
+
+  [data-collection-activity-sidebar][data-layout='floating'] .collection-activity-log {
+    position: sticky;
+    top: 40px;
+  }
+
 }
 
 
