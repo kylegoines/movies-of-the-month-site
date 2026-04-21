@@ -52,7 +52,7 @@ get_header();
               $collection_author_id = $collection_movie_entries !== []
                   ? (int) ($collection_movie_entries[$movie_index]['author_id'] ?? 0)
                   : '';
-              $border_excerpt = $the_pitch;
+              $border_excerpt = $collection_custom_excerpt;
               $is_hidden_gem = movies_theme_is_hidden_gem($movie_id);
               $heart_count = movies_theme_get_movie_heart_count($movie_id);
               $is_liked = movies_theme_movie_is_liked_by_current_visitor($movie_id);
@@ -60,8 +60,9 @@ get_header();
                   ? movies_theme_get_inline_svg('images/gem.svg', 'theme-gem-badge')
                   : '';
               $movie_author_id = (int) get_post_field('post_author', $movie_id);
-              $display_author_id = $collection_author_id > 0 ? $collection_author_id : $movie_author_id;
-              $display_author_name = movies_theme_get_author_name($display_author_id);
+              $quote_author_id = $collection_author_id > 0 ? $collection_author_id : $movie_author_id;
+              $quote_author_name = movies_theme_get_author_name($quote_author_id);
+              $movie_author_name = movies_theme_get_author_name($movie_author_id);
               $poster = get_the_post_thumbnail($movie_id, 'large', [
                   'class' => movies_theme_get_poster_image_class($movie_id, 'mx-auto h-auto max-h-[250px] w-auto object-cover object-center lg:max-h-none lg:w-full'),
                   'loading' => 'lazy',
@@ -84,8 +85,14 @@ get_header();
                 <div class="max-w-[720px]">
                   <div class="theme-body text-sm lg:text-base">
                     <?php if ($border_excerpt !== '') : ?>
-                      <div class="single-collection__excerpt theme-strong mt-10 border border-black p-5">
+                      <div class="single-collection__excerpt theme-strong relative mt-10 border border-black p-5 text-xl font-bold leading-tight xs:text-2xl md:text-4xl [&_p]:font-bold">
                         <p><?php echo wp_kses_post(nl2br(esc_html($border_excerpt))); ?></p>
+                        <a
+                          class="theme-strong absolute right-4 -bottom-2 bg-[var(--color-background)] px-2 text-xs font-bold tracking-[0.04em] no-underline transition-colors hover:text-[#d946ef]"
+                          href="<?php echo esc_url(get_author_posts_url($quote_author_id)); ?>"
+                        >
+                          <?php echo esc_html($quote_author_name); ?>
+                        </a>
                       </div>
                     <?php endif; ?>
 
@@ -125,15 +132,16 @@ get_header();
                         <span class="theme-strong font-bold">Recommended by:</span>
                         <a
                           class="theme-strong transition-opacity hover:opacity-70"
-                          href="<?php echo esc_url(get_author_posts_url($display_author_id)); ?>"
+                          href="<?php echo esc_url(get_author_posts_url($movie_author_id)); ?>"
                         >
-                        <?php echo esc_html($display_author_name); ?>
+                        <?php echo esc_html($movie_author_name); ?>
                         </a>
                     </p>
 
-                    <?php if ($collection_custom_excerpt !== '') : ?>
-                      <p class="mt-3">
-                        <?php echo wp_kses_post(nl2br(esc_html($collection_custom_excerpt))); ?>
+                    <?php if ($the_pitch !== '') : ?>
+                      <p>
+                        <span class="theme-strong font-bold">The Pitch:</span>
+                        <?php echo wp_kses_post(nl2br(esc_html($the_pitch))); ?>
                       </p>
                     <?php endif; ?>
 
