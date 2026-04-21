@@ -37,7 +37,10 @@ $activity_items = $args['activity_items'] ?? [];
             <?php endif; ?>
 
             <?php if ($collection_index === 0 && is_array($activity_items) && $activity_items !== []) : ?>
-              <?php get_template_part('components/activity-log', null, ['activity_items' => $activity_items]); ?>
+              <?php get_template_part('components/activity-log', null, [
+                  'activity_items' => $activity_items,
+                  'section_classes' => 'mt-8 md:mb-12',
+              ]); ?>
             <?php endif; ?>
           </div>
         </a>

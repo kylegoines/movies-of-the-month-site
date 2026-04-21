@@ -487,11 +487,13 @@ function movies_theme_get_recent_movie_activity(int $cluster_limit = 6, int $pos
                     'author_id' => $author_id,
                     'author_name' => movies_theme_get_author_name($author_id),
                     'count' => 0,
+                    'movie_ids' => [],
                     'timestamp' => $timestamp,
                 ];
             }
 
             $current_cluster['count']++;
+            $current_cluster['movie_ids'][] = (int) $movie->ID;
             $current_cluster['timestamp'] = max($current_cluster['timestamp'], $timestamp);
         }
 
@@ -574,6 +576,7 @@ function movies_theme_get_recent_movie_activity(int $cluster_limit = 6, int $pos
             'author_id' => (int) $item['author_id'],
             'author_name' => (string) $item['author_name'],
             'count' => (int) ($item['count'] ?? 0),
+            'movie_ids' => array_values(array_slice(array_map('intval', $item['movie_ids'] ?? []), 0, 5)),
         ];
     }, $activity_items));
 }

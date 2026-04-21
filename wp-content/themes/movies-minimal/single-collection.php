@@ -17,8 +17,8 @@ get_header();
       $recent_activity = movies_theme_get_recent_movie_activity();
       ?>
       <article>
-        <header class="page-header lg:relative" data-collection-activity-shell>
-          <div data-collection-activity-content>
+        <header class="page-header">
+          <div>
             <h1 class="page-header__title theme-strong rhythm-lg text-5xl xs:text-6xl md:text-8xl lg:text-[90px]">
               <?php the_title(); ?>
             </h1>
@@ -27,6 +27,18 @@ get_header();
               <div class="post-content rhythm-lg text-lg leading-8 md:text-xl md:leading-9">
                 <?php the_content(); ?>
               </div>
+            <?php endif; ?>
+
+            <?php if ($recent_activity !== []) : ?>
+              <button
+                class="theme-strong theme-border mb-6 inline-flex cursor-pointer items-center border bg-transparent px-4 py-2 text-sm font-bold tracking-[0.04em] transition-opacity hover:opacity-70"
+                type="button"
+                data-collection-activity-toggle
+                aria-expanded="false"
+                aria-controls="collection-activity-panel"
+              >
+                Show all activity
+              </button>
             <?php endif; ?>
 
             <?php if ($collection_genres !== []) : ?>
@@ -39,16 +51,13 @@ get_header();
               </div>
             <?php endif; ?>
           </div>
-
-          <?php if ($recent_activity !== []) : ?>
-            <aside data-collection-activity-sidebar data-layout="embedded">
-              <?php get_template_part('components/activity-log', null, [
-                  'activity_items' => $recent_activity,
-                  'section_classes' => 'collection-activity-log border-3 p-4',
-              ]); ?>
-            </aside>
-          <?php endif; ?>
         </header>
+
+        <?php if ($recent_activity !== []) : ?>
+          <?php get_template_part('components/collection-activity-panel', null, [
+              'activity_items' => $recent_activity,
+          ]); ?>
+        <?php endif; ?>
 
         <?php if ($movie_ids !== []) : ?>
           <section class="rhythm-lg flex flex-col rhythm-list-lg">

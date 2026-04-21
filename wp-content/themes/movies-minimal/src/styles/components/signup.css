@@ -12,6 +12,21 @@
     @apply border-t;
   }
 
+  .home-signup__marquee {
+    background: var(--signup-background);
+    color: #ffffff;
+    margin-left: calc(50% - 50vw);
+    margin-right: calc(50% - 50vw);
+    margin-top: 0;
+    padding-bottom: 8px;
+    padding-top: 8px;
+    transform: rotate(180deg);
+  }
+
+  .home-signup__marquee-track {
+    animation-direction: reverse;
+  }
+
   .home-signup__inner {
     margin: 0 auto;
     padding: 48px 32px;
@@ -51,5 +66,14 @@
   .home-signup--filter .home-signup__inner {
     margin: 0;
     padding: 32px 28px;
+  }
+
+  .home-signup--filter .home-signup__marquee {
+    --signup-background: transparent;
+    color: var(--color-strong);
+  }
+
+  .home-signup--filter .home-signup__marquee .site-title-marquee__dot {
+    background: var(--color-strong);
   }
 }

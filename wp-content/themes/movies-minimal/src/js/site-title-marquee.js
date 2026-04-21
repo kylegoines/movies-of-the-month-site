@@ -1,6 +1,10 @@
 export class SiteTitleMarquee {
   constructor(track, button) {
     this.track = track;
+    this.tracks = [
+      track,
+      ...document.querySelectorAll('[data-site-title-marquee-track-linked]'),
+    ].filter(Boolean);
     this.button = button;
     this.isPaused = track?.dataset.state === 'paused';
     this.isHoverPaused = false;
@@ -39,17 +43,17 @@ export class SiteTitleMarquee {
     );
   }
 
-  setFrozenTransform(transformValue = '') {
-    if (!this.track) {
+  setTrackFrozenTransform(track, transformValue = '') {
+    if (!track) {
       return;
     }
 
     if (transformValue === '') {
-      this.track.style.removeProperty('--site-title-marquee-transform');
+      track.style.removeProperty('--site-title-marquee-transform');
       return;
     }
 
-    this.track.style.setProperty('--site-title-marquee-transform', transformValue);
+    track.style.setProperty('--site-title-marquee-transform', transformValue);
   }
 
   getCurrentProgress() {
@@ -106,15 +110,22 @@ export class SiteTitleMarquee {
     }
 
     if (isPaused && syncCurrentProgress) {
-      const computedStyle = window.getComputedStyle(this.track);
-      this.setFrozenTransform(computedStyle.transform === 'none' ? '' : computedStyle.transform);
+      this.tracks.forEach((track) => {
+        const computedStyle = window.getComputedStyle(track);
+        this.setTrackFrozenTransform(
+          track,
+          computedStyle.transform === 'none' ? '' : computedStyle.transform
+        );
+      });
       this.setProgress(this.getCurrentProgress());
     } else if (!isPaused) {
-      this.setFrozenTransform('');
+      this.tracks.forEach((track) => this.setTrackFrozenTransform(track, ''));
     }
 
     this.isPaused = isPaused;
-    this.track.dataset.state = isPaused ? 'paused' : 'playing';
+    this.tracks.forEach((track) => {
+      track.dataset.state = isPaused ? 'paused' : 'playing';
+    });
     this.button.setAttribute('aria-pressed', String(isPaused));
     this.button.setAttribute(
       'aria-label',

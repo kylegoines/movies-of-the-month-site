@@ -1,0 +1,102 @@
+@layer components {
+  body.collection-activity-panel-open {
+    overflow: hidden;
+  }
+
+  .collection-activity-panel-overlay {
+    position: fixed;
+    inset: 0;
+    background: color-mix(in srgb, var(--color-strong) 30%, transparent);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.28s ease;
+    z-index: 60;
+  }
+
+  .collection-activity-panel-overlay[data-state='open'] {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .collection-activity-panel {
+    position: fixed;
+    top: 0;
+    right: 0;
+    z-index: 70;
+    display: flex;
+    height: 100vh;
+    width: min(440px, calc(100vw - 24px));
+    flex-direction: column;
+    gap: 1.5rem;
+    overflow-y: auto;
+    background: var(--color-background);
+    border-left: 1px solid color-mix(in srgb, var(--color-strong) 18%, transparent);
+    box-shadow: -24px 0 80px color-mix(in srgb, var(--color-strong) 10%, transparent);
+    padding: 50px 24px 24px;
+    transform: translateX(100%);
+    opacity: 0;
+    pointer-events: none;
+    transition: transform 0.32s ease, opacity 0.32s ease;
+  }
+
+  .collection-activity-panel[data-state='open'] {
+    transform: translateX(0);
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .collection-activity-panel__header {
+    position: sticky;
+    top: 0;
+    background: var(--color-background);
+    padding-bottom: 0.5rem;
+  }
+
+  .collection-activity-panel__divider {
+    height: 1px;
+    background: #d4d4d4;
+  }
+
+  .collection-activity-panel__timeline-section {
+    padding-top: 0.75rem;
+  }
+
+  .collection-activity-panel__timeline {
+    position: relative;
+    margin: 0;
+    padding-left: 1.5rem;
+  }
+
+  .collection-activity-panel__timeline::before {
+    content: '';
+    position: absolute;
+    top: 13px;
+    bottom: 0.2rem;
+    left: 0.3rem;
+    width: 1px;
+    background: #d4d4d4;
+  }
+
+  .collection-activity-panel__item {
+    position: relative;
+  }
+
+  .collection-activity-panel__item::before {
+    content: '';
+    position: absolute;
+    top: 9px;
+    left: -23px;
+    z-index: 1;
+    height: 0.5rem;
+    width: 0.5rem;
+    border-radius: 9999px;
+    border: 2px solid #000000;
+    background: var(--color-background);
+  }
+
+  @media (min-width: 64rem) {
+    .collection-activity-panel {
+      padding-top: 80px;
+    }
+  }
+}

@@ -95,5 +95,19 @@ if ($variant !== '') {
       <?php endif; ?>
     </div>
   </div>
+  <div class="home-signup__marquee site-title-marquee site-title-marquee--inverse" aria-hidden="true">
+    <div class="home-signup__marquee-track site-title-marquee__track" data-site-title-marquee-track-linked>
+      <span>Movies of the Month</span>
+      <span class="site-title-marquee__dot"></span>
+      <span>Movies of the Month</span>
+      <span class="site-title-marquee__dot"></span>
+      <span>Movies of the Month</span>
+      <span class="site-title-marquee__dot"></span>
+      <span>Movies of the Month</span>
+      <span class="site-title-marquee__dot"></span>
+      <span>Movies of the Month</span>
+      <span class="site-title-marquee__dot"></span>
+    </div>
+  </div>
       <!-- </div> -->
 </section>
