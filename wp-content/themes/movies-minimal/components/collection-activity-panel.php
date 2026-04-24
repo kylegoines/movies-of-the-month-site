@@ -36,7 +36,7 @@ $award_items = array_values(array_filter($activity_items, static function (array
   aria-hidden="true"
 >
   <div class="collection-activity-panel__header flex items-center justify-between gap-4">
-    <h2 class="theme-strong text-xl tracking-[-0.04em] md:text-2xl">This Months Activity</h2>
+    <h2 class="theme-strong text-xl tracking-[-0.04em] md:text-2xl">Recent Activity</h2>
     <button
       class="theme-strong theme-border cursor-pointer border bg-transparent px-3 py-2 text-sm font-bold tracking-[0.04em] transition-opacity hover:opacity-70"
       type="button"

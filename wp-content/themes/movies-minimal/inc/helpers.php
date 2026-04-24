@@ -92,6 +92,15 @@ function movies_theme_get_the_pitch(int $post_id): string
     return trim((string) get_field('the_pitch', $post_id));
 }
 
+function movies_theme_get_collection_quotes_heading(int $post_id): string
+{
+    if (!function_exists('get_field')) {
+        return '';
+    }
+
+    return trim((string) get_field('collection_quotes_heading', $post_id));
+}
+
 function movies_theme_get_featured_content(int $post_id): string
 {
     if (!function_exists('get_field')) {
@@ -238,26 +247,12 @@ function movies_theme_is_hidden_gem(int $post_id): bool
 
 function movies_theme_get_collection_movies(int $post_id): array
 {
-    if (!function_exists('get_field')) {
-        return [];
-    }
-
     $entries = movies_theme_get_collection_movie_entries($post_id);
 
-    if ($entries !== []) {
-        return array_values(array_map(
-            static fn(array $entry): int => (int) $entry['movie_id'],
-            $entries
-        ));
-    }
-
-    $movies = get_field('movies', $post_id);
-
-    if (!is_array($movies)) {
-        return [];
-    }
-
-    return array_values(array_filter(array_map('intval', $movies)));
+    return array_values(array_map(
+        static fn(array $entry): int => (int) $entry['movie_id'],
+        $entries
+    ));
 }
 
 function movies_theme_get_related_movies(int $post_id): array
@@ -307,10 +302,32 @@ function movies_theme_get_collection_movie_entries(int $post_id): array
             continue;
         }
 
+        $quotes = [];
+        $quote_rows = $row['quotes'] ?? [];
+
+        if (is_array($quote_rows)) {
+            foreach ($quote_rows as $quote_row) {
+                if (!is_array($quote_row)) {
+                    continue;
+                }
+
+                $quote = trim((string) ($quote_row['quote'] ?? ''));
+                $author_id = (int) ($quote_row['author'] ?? 0);
+
+                if ($quote === '') {
+                    continue;
+                }
+
+                $quotes[] = [
+                    'quote' => $quote,
+                    'author_id' => $author_id,
+                ];
+            }
+        }
+
         $entries[] = [
             'movie_id' => $movie_id,
-            'custom_excerpt' => trim((string) ($row['custom_excerpt'] ?? '')),
-            'author_id' => (int) ($row['author'] ?? 0),
+            'quotes' => $quotes,
         ];
     }
 

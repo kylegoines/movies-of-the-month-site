@@ -10,9 +10,7 @@ get_header();
       <?php
       $collection_id = get_the_ID();
       $collection_movie_entries = movies_theme_get_collection_movie_entries($collection_id);
-      $movie_ids = $collection_movie_entries !== []
-          ? array_values(array_map(static fn(array $entry): int => (int) $entry['movie_id'], $collection_movie_entries))
-          : movies_theme_get_collection_movies($collection_id);
+      $movie_ids = movies_theme_get_collection_movies($collection_id);
       $collection_genres = movies_theme_get_collection_genres($collection_id);
       $recent_activity = movies_theme_get_recent_movie_activity();
       ?>
@@ -67,13 +65,13 @@ get_header();
               $runtime = movies_theme_get_runtime($movie_id);
               $genre = movies_theme_get_movie_category_list($movie_id);
               $the_pitch = movies_theme_get_the_pitch($movie_id);
-              $collection_custom_excerpt = $collection_movie_entries !== []
-                  ? trim((string) ($collection_movie_entries[$movie_index]['custom_excerpt'] ?? ''))
-                  : '';
-              $collection_author_id = $collection_movie_entries !== []
-                  ? (int) ($collection_movie_entries[$movie_index]['author_id'] ?? 0)
-                  : '';
-              $border_excerpt = $collection_custom_excerpt;
+              $collection_quotes_heading = movies_theme_get_collection_quotes_heading($movie_id);
+              $collection_quotes = $collection_movie_entries !== []
+                  ? array_values(array_filter(
+                      $collection_movie_entries[$movie_index]['quotes'] ?? [],
+                      static fn($quote): bool => is_array($quote) && trim((string) ($quote['quote'] ?? '')) !== ''
+                  ))
+                  : [];
               $is_hidden_gem = movies_theme_is_hidden_gem($movie_id);
               $heart_count = movies_theme_get_movie_heart_count($movie_id);
               $is_liked = movies_theme_movie_is_liked_by_current_visitor($movie_id);
@@ -81,8 +79,6 @@ get_header();
                   ? movies_theme_get_inline_svg('images/gem.svg', 'theme-gem-badge')
                   : '';
               $movie_author_id = (int) get_post_field('post_author', $movie_id);
-              $quote_author_id = $collection_author_id > 0 ? $collection_author_id : $movie_author_id;
-              $quote_author_name = movies_theme_get_author_name($quote_author_id);
               $movie_author_name = movies_theme_get_author_name($movie_author_id);
               $poster = get_the_post_thumbnail($movie_id, 'large', [
                   'class' => movies_theme_get_poster_image_class($movie_id, 'mx-auto h-auto max-h-[250px] w-auto object-cover object-center lg:max-h-none lg:w-full'),
@@ -101,22 +97,24 @@ get_header();
                       </div>
                     </a>
                   <?php endif; ?>
+
+                  <div class="collection-heart mt-4 hidden lg:block">
+                    <button
+                      class="collection-heart__button"
+                      type="button"
+                      data-heart-button
+                      data-post-id="<?php echo esc_attr((string) $movie_id); ?>"
+                      aria-pressed="<?php echo $is_liked ? 'true' : 'false'; ?>"
+                    >
+                      <span class="collection-heart__icon" aria-hidden="true"><?php echo $is_liked ? '♥' : '♡'; ?></span>
+                      <span class="collection-heart__label">Recommend</span>
+                      <span class="collection-heart__count" data-heart-count><?php echo esc_html((string) $heart_count); ?></span>
+                    </button>
+                  </div>
                 </div>
 
                 <div class="max-w-[720px]">
                   <div class="theme-body text-sm lg:text-base">
-                    <?php if ($border_excerpt !== '') : ?>
-                      <div class="single-collection__excerpt theme-strong relative mt-10 border border-black p-5 text-xl font-bold leading-tight xs:text-2xl md:text-4xl [&_p]:font-bold">
-                        <p><?php echo wp_kses_post(nl2br(esc_html($border_excerpt))); ?></p>
-                        <a
-                          class="theme-strong absolute right-4 -bottom-2 bg-[var(--color-background)] px-2 text-xs font-bold tracking-[0.04em] no-underline transition-colors hover:text-[#d946ef]"
-                          href="<?php echo esc_url(get_author_posts_url($quote_author_id)); ?>"
-                        >
-                          <?php echo esc_html($quote_author_name); ?>
-                        </a>
-                      </div>
-                    <?php endif; ?>
-
                     <?php if ($is_hidden_gem) : ?>
                       <p class="hidden-gem-label text-sm font-bold tracking-[0.04em]">
                         <?php echo movies_theme_get_hidden_gem_label_markup(); ?>
@@ -149,7 +147,14 @@ get_header();
                       </p>
                     <?php endif; ?>
 
-                    <p>
+                    <?php if ($the_pitch !== '') : ?>
+                      <p class="mt-4">
+                        <span class="theme-strong font-bold">The Pitch:</span>
+                        <?php echo wp_kses_post(nl2br(esc_html($the_pitch))); ?>
+                      </p>
+                    <?php endif; ?>
+
+                    <p class="mt-4">
                         <span class="theme-strong font-bold">Recommended by:</span>
                         <a
                           class="theme-strong transition-opacity hover:opacity-70"
@@ -159,27 +164,75 @@ get_header();
                         </a>
                     </p>
 
-                    <?php if ($the_pitch !== '') : ?>
-                      <p>
-                        <span class="theme-strong font-bold">The Pitch:</span>
-                        <?php echo wp_kses_post(nl2br(esc_html($the_pitch))); ?>
-                      </p>
+                    <?php if ($collection_quotes !== []) : ?>
+                      <div class="md:hidden lg:block">
+                        <p class="theme-strong mt-8 font-bold tracking-[0.02em] pb-5">
+                          <?php echo esc_html($collection_quotes_heading !== '' ? $collection_quotes_heading : 'What other Contributers are saying:'); ?>
+                        </p>
+                        <div class="flex flex-col gap-2">
+                          <?php foreach ($collection_quotes as $quote_item) : ?>
+                            <?php
+                            $quote_author_id = (int) ($quote_item['author_id'] ?? 0);
+                            $quote_author_name = $quote_author_id > 0 ? movies_theme_get_author_name($quote_author_id) : '';
+                            ?>
+                            <div class="single-collection__excerpt theme-strong relative mt-1 border border-black p-5 text-xl font-bold leading-tight xs:text-2xl md:text-4xl [&_p]:font-bold">
+                              <p><?php echo wp_kses_post(nl2br(esc_html((string) ($quote_item['quote'] ?? '')))); ?></p>
+                              <?php if ($quote_author_id > 0 && $quote_author_name !== '') : ?>
+                                <a
+                                  class="theme-strong absolute right-4 -bottom-2 bg-[var(--color-background)] px-2 text-xs font-bold tracking-[0.04em] no-underline transition-colors hover:text-[#d946ef]"
+                                  href="<?php echo esc_url(get_author_posts_url($quote_author_id)); ?>"
+                                >
+                                  <?php echo esc_html($quote_author_name); ?>
+                                </a>
+                              <?php endif; ?>
+                            </div>
+                          <?php endforeach; ?>
+                        </div>
+                      </div>
                     <?php endif; ?>
 
-                    <div class="collection-heart mt-5">
-                      <button
-                        class="collection-heart__button"
-                        type="button"
-                        data-heart-button
-                        data-post-id="<?php echo esc_attr((string) $movie_id); ?>"
-                        aria-pressed="<?php echo $is_liked ? 'true' : 'false'; ?>"
-                      >
-                        <span class="collection-heart__icon" aria-hidden="true"><?php echo $is_liked ? '♥' : '♡'; ?></span>
-                        <span class="collection-heart__label">Recommend</span>
-                        <span class="collection-heart__count" data-heart-count><?php echo esc_html((string) $heart_count); ?></span>
-                      </button>
+                  </div>
+                </div>
+
+                <?php if ($collection_quotes !== []) : ?>
+                  <div class="hidden md:col-span-2 md:block lg:hidden">
+                    <p class="theme-strong mt-8 font-bold tracking-[0.02em] pb-5">
+                      <?php echo esc_html($collection_quotes_heading !== '' ? $collection_quotes_heading : 'What other Contributers are saying:'); ?>
+                    </p>
+                    <div class="flex flex-col gap-2">
+                      <?php foreach ($collection_quotes as $quote_item) : ?>
+                        <?php
+                        $quote_author_id = (int) ($quote_item['author_id'] ?? 0);
+                        $quote_author_name = $quote_author_id > 0 ? movies_theme_get_author_name($quote_author_id) : '';
+                        ?>
+                        <div class="single-collection__excerpt theme-strong relative mt-1 border border-black p-5 text-xl font-bold leading-tight xs:text-2xl md:text-4xl [&_p]:font-bold">
+                          <p><?php echo wp_kses_post(nl2br(esc_html((string) ($quote_item['quote'] ?? '')))); ?></p>
+                          <?php if ($quote_author_id > 0 && $quote_author_name !== '') : ?>
+                            <a
+                              class="theme-strong absolute right-4 -bottom-2 bg-[var(--color-background)] px-2 text-xs font-bold tracking-[0.04em] no-underline transition-colors hover:text-[#d946ef]"
+                              href="<?php echo esc_url(get_author_posts_url($quote_author_id)); ?>"
+                            >
+                              <?php echo esc_html($quote_author_name); ?>
+                            </a>
+                          <?php endif; ?>
+                        </div>
+                      <?php endforeach; ?>
                     </div>
                   </div>
+                <?php endif; ?>
+
+                <div class="collection-heart mt-5 lg:hidden md:col-span-2">
+                  <button
+                    class="collection-heart__button"
+                    type="button"
+                    data-heart-button
+                    data-post-id="<?php echo esc_attr((string) $movie_id); ?>"
+                    aria-pressed="<?php echo $is_liked ? 'true' : 'false'; ?>"
+                  >
+                    <span class="collection-heart__icon" aria-hidden="true"><?php echo $is_liked ? '♥' : '♡'; ?></span>
+                    <span class="collection-heart__label">Recommend</span>
+                    <span class="collection-heart__count" data-heart-count><?php echo esc_html((string) $heart_count); ?></span>
+                  </button>
                 </div>
               </article>
             <?php endforeach; ?>
