@@ -30,18 +30,35 @@
   .home-signup__inner {
     margin: 0 auto;
     padding: 48px 32px;
+    padding-bottom: 120px;
     padding-top: 0;
     padding-left: 45px;
+  }
+
+  @media (min-width: 64rem) {
+    .home-signup {
+      margin-top: 180px;
+    }
+
+    .home-signup__inner {
+      padding-bottom: 120px;
+    }
+  }
+
+  .home-signup__tabs {
+    position: absolute;
+    top: 0;
+    transform: translateY(-100%);
+    left: 0;
   }
 
   .home-signup__label {
     background: var(--signup-background);
     color: var(--signup-foreground);
     border: 1px solid var(--signup-foreground);
-    display: inline-block;
-    position: absolute;
-    top: 0;
-    transform: translateY(-100%);
+    display: inline-flex;
+    align-items: center;
+    gap: 16px;
     @apply cursor-pointer border-b-0 px-5 py-3 text-left;
   }
 
@@ -52,6 +69,53 @@
   .home-signup__label:hover .home-signup__label-text,
   .home-signup__label:focus-visible .home-signup__label-text {
     color: var(--secondary-accent);
+  }
+
+  .home-signup__social-icons {
+    display: inline-flex;
+    align-items: center;
+    gap: 14px;
+    margin-left: 2px;
+  }
+
+  .home-signup__social-icon {
+    width: 26px;
+    height: 26px;
+    display: block;
+    color: #ffffff;
+  }
+
+  .home-signup__social-icon path,
+  .home-signup__social-icon rect,
+  .home-signup__social-icon circle,
+  .home-signup__social-icon polygon,
+  .home-signup__social-icon ellipse {
+    fill: #ffffff !important;
+  }
+
+  .home-signup__social-link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: opacity 180ms ease;
+  }
+
+  .home-signup__social-link:hover,
+  .home-signup__social-link:focus-visible {
+    opacity: 0.85;
+  }
+
+  .home-signup__social-link:hover .home-signup__social-icon path,
+  .home-signup__social-link:hover .home-signup__social-icon rect,
+  .home-signup__social-link:hover .home-signup__social-icon circle,
+  .home-signup__social-link:hover .home-signup__social-icon polygon,
+  .home-signup__social-link:hover .home-signup__social-icon ellipse,
+  .home-signup__social-link:focus-visible .home-signup__social-icon path,
+  .home-signup__social-link:focus-visible .home-signup__social-icon rect,
+  .home-signup__social-link:focus-visible .home-signup__social-icon circle,
+  .home-signup__social-link:focus-visible .home-signup__social-icon polygon,
+  .home-signup__social-link:focus-visible .home-signup__social-icon ellipse {
+    fill: #1d9bf0 !important;
   }
 
   .home-signup--filter {

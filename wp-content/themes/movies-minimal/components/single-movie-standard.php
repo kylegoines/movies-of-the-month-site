@@ -6,6 +6,7 @@ $movie_author_name = $args['movie_author_name'] ?? '';
 $year = $args['year'] ?? '';
 $runtime = $args['runtime'] ?? '';
 $genre = $args['genre'] ?? '';
+$the_pitch = $args['the_pitch'] ?? '';
 $is_hidden_gem = $args['is_hidden_gem'] ?? false;
 $heart_count = $args['heart_count'] ?? 0;
 $is_liked = $args['is_liked'] ?? false;
@@ -62,6 +63,13 @@ $poster = $args['poster'] ?? '';
 
       <?php if ($genre !== '') : ?>
         <p class="order-3 lg:order-4"><span class="theme-strong font-bold">Genres:</span> <?php echo esc_html($genre); ?></p>
+      <?php endif; ?>
+
+      <?php if ($the_pitch !== '') : ?>
+        <p class="mt-4 order-4 lg:order-5">
+          <span class="theme-strong font-bold">The Pitch:</span>
+          <?php echo wp_kses_post(nl2br(esc_html($the_pitch))); ?>
+        </p>
       <?php endif; ?>
 
       <?php if ($has_ratings) : ?>

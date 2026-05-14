@@ -41,8 +41,21 @@ get_header();
 
             <?php if ($collection_genres !== []) : ?>
               <div class="flex flex-wrap gap-2">
-                <?php foreach ($collection_genres as $genre_index => $genre_name) : ?>
-                  <span class="collection-list__genre-chip collection-list__genre-chip--<?php echo esc_attr((string) (($genre_index % 12) + 1)); ?>">
+                <?php foreach ($collection_genres as $genre_index => $genre) : ?>
+                  <?php
+                  $genre_name = is_array($genre) ? (string) ($genre['name'] ?? '') : '';
+                  $genre_background_color = is_array($genre) ? (string) ($genre['background_color'] ?? '') : '';
+                  $genre_text_color = is_array($genre) ? (string) ($genre['text_color'] ?? '') : '';
+                  $genre_style = $genre_background_color !== '' && $genre_text_color !== ''
+                      ? sprintf('background:%1$s;border-color:%1$s;color:%2$s;', $genre_background_color, $genre_text_color)
+                      : '';
+                  ?>
+                  <span
+                    class="collection-list__genre-chip<?php echo $genre_style === '' ? ' collection-list__genre-chip--' . esc_attr((string) (($genre_index % 12) + 1)) : ''; ?>"
+                    <?php if ($genre_style !== '') : ?>
+                      style="<?php echo esc_attr($genre_style); ?>"
+                    <?php endif; ?>
+                  >
                     <?php echo esc_html($genre_name); ?>
                   </span>
                 <?php endforeach; ?>

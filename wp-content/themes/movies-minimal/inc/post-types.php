@@ -95,7 +95,7 @@ add_action('init', function (): void {
         ],
         'public' => false,
         'show_ui' => true,
-        'show_in_menu' => false,
+        'show_in_menu' => true,
         'menu_icon' => 'dashicons-edit-page',
         'supports' => [
             'title',

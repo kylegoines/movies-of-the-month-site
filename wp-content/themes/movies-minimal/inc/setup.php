@@ -190,8 +190,327 @@ add_action('admin_menu', function (): void {
         remove_menu_page('tools.php');
         remove_menu_page('options-general.php');
         remove_menu_page('edit.php?post_type=acf-field-group');
+        remove_menu_page('wp-mail-smtp');
     }
 }, 999);
+
+add_action('admin_menu', function (): void {
+    if (!current_user_can('manage_categories')) {
+        return;
+    }
+
+    add_menu_page(
+        'Categories',
+        'Categories',
+        'manage_categories',
+        'edit-tags.php?taxonomy=category',
+        '',
+        'dashicons-tag',
+        24
+    );
+}, 20);
+
+add_action('wp_dashboard_setup', function (): void {
+    remove_meta_box('dashboard_quick_press', 'dashboard', 'side');
+    remove_meta_box('dashboard_primary', 'dashboard', 'side');
+    remove_meta_box('dashboard_site_health', 'dashboard', 'normal');
+    remove_meta_box('dashboard_right_now', 'dashboard', 'normal');
+
+    wp_add_dashboard_widget(
+        'movies_theme_recent_movie_activity',
+        'Recent Movie Activity',
+        'movies_theme_render_recent_movie_activity_widget'
+    );
+});
+
+add_action('admin_notices', function (): void {
+    $screen = get_current_screen();
+
+    if (!($screen instanceof WP_Screen) || $screen->base !== 'dashboard') {
+        return;
+    }
+
+    if (isset($_COOKIE['movies_theme_hide_contributor_guide']) && $_COOKIE['movies_theme_hide_contributor_guide'] === '1') {
+        return;
+    }
+
+    movies_theme_render_contributor_guide_panel();
+});
+
+add_action('admin_head-index.php', function (): void {
+    ?>
+    <style>
+      body.index-php .notice.notice-warning {
+        display: none !important;
+      }
+    </style>
+    <?php
+});
+
+function movies_theme_render_contributor_guide_panel(): void
+{
+    ?>
+    <style>
+      .movies-theme-dashboard-guide-wrap {
+        margin: 16px 0 20px;
+      }
+
+      .movies-theme-dashboard-guide-wrap .notice-dismiss {
+        display: none;
+      }
+
+      .movies-theme-dashboard-guide {
+        background: #ffffff;
+        border: 1px solid #dcdcde;
+        box-shadow: 0 1px 1px rgba(0, 0, 0, 0.04);
+        color: #111111;
+        font-size: 30px !important;
+        line-height: 1.38 !important;
+        padding: 32px 36px 34px;
+        position: relative;
+      }
+
+      .movies-theme-dashboard-guide__title {
+        font-size: 48px !important;
+        font-weight: 700;
+        letter-spacing: -0.03em;
+        line-height: 1.08;
+        margin: 0 0 38px;
+        padding-top: 28px;
+      }
+
+      .movies-theme-dashboard-guide__accent {
+        color: #d946ef;
+      }
+
+      .movies-theme-dashboard-guide p {
+        font-size: 30px !important;
+        line-height: 1.38 !important;
+        margin: 0 0 30px;
+        max-width: 920px;
+      }
+
+      .movies-theme-dashboard-guide p:last-child {
+        margin-bottom: 0;
+      }
+
+      .movies-theme-dashboard-guide__close {
+        appearance: none;
+        position: absolute;
+        right: 36px;
+        top: 24px;
+        background: transparent;
+        border: 0;
+        color: #6b7280;
+        cursor: pointer;
+        font-size: 15px;
+        font-weight: 600;
+        letter-spacing: 0.01em;
+        padding: 0;
+        text-transform: uppercase;
+      }
+
+      .movies-theme-dashboard-guide__close:hover,
+      .movies-theme-dashboard-guide__close:focus {
+        color: #111111;
+      }
+    </style>
+    <div class="notice notice-info is-dismissible movies-theme-dashboard-guide-wrap" data-guide-cookie="movies_theme_hide_contributor_guide">
+      <div class="movies-theme-dashboard-guide">
+        <button type="button" class="movies-theme-dashboard-guide__close">Close this message</button>
+        <h2 class="movies-theme-dashboard-guide__title">
+          Movies of the Month <span class="movies-theme-dashboard-guide__accent">Contributor Guide</span>
+        </h2>
+        <p>We are excited to have you join us as a contributor at Movies of the Month!</p>
+        <p>Each month Nasha will post the “Movies of the Month” - a collection of recommendations from our contributors.</p>
+        <p>As a contributor, you can add recommendations and editorials (articles) on a rolling basis. Nasha will curate the list each month.</p>
+        <p>Before the “Movies of the Month” goes live, contributors will have an option to give their own feedback on movies being recommended by other contributors. So if you love (or dislike!) a movie, you can back a recommendation or (politely) give your own two cents.</p>
+      </div>
+    </div>
+    <script>
+      document.addEventListener('DOMContentLoaded', function () {
+        var guide = document.querySelector('.movies-theme-dashboard-guide-wrap');
+
+        if (!guide) {
+          return;
+        }
+
+        var cookieName = guide.getAttribute('data-guide-cookie');
+
+        if (!cookieName) {
+          return;
+        }
+
+        var dismissButton = guide.querySelector('.movies-theme-dashboard-guide__close');
+
+        if (!dismissButton) {
+          return;
+        }
+
+        dismissButton.addEventListener('click', function () {
+          var expires = new Date();
+          expires.setFullYear(expires.getFullYear() + 1);
+          document.cookie = cookieName + '=1; expires=' + expires.toUTCString() + '; path=/; SameSite=Lax';
+          guide.classList.add('is-hidden');
+        });
+      });
+    </script>
+    <?php
+}
+
+function movies_theme_render_recent_movie_activity_widget(): void
+{
+    $recent_movies = get_posts([
+        'post_type' => 'movies',
+        'post_status' => ['publish', 'draft', 'pending', 'future', 'private'],
+        'posts_per_page' => 20,
+        'orderby' => 'date',
+        'order' => 'DESC',
+        'no_found_rows' => true,
+    ]);
+
+    $poster_items = [];
+
+    foreach ($recent_movies as $movie_post) {
+        if (!($movie_post instanceof WP_Post)) {
+            continue;
+        }
+
+        $poster_html = get_the_post_thumbnail((int) $movie_post->ID, 'medium', [
+            'loading' => 'lazy',
+            'decoding' => 'async',
+            'alt' => get_the_title($movie_post),
+        ]);
+
+        if ($poster_html === '') {
+            continue;
+        }
+
+        $poster_items[] = [
+            'title' => get_the_title($movie_post),
+            'edit_link' => get_edit_post_link((int) $movie_post->ID),
+            'poster_html' => $poster_html,
+        ];
+    }
+
+    ?>
+    <style>
+      #movies_theme_recent_movie_activity .inside {
+        margin: 0;
+        padding: 18px 20px 20px;
+      }
+
+      .movies-theme-dashboard-marquee {
+        overflow: hidden;
+        position: relative;
+      }
+
+      .movies-theme-dashboard-marquee::after,
+      .movies-theme-dashboard-marquee::before {
+        content: '';
+        pointer-events: none;
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        width: 44px;
+        z-index: 2;
+      }
+
+      .movies-theme-dashboard-marquee::before {
+        background: linear-gradient(90deg, #ffffff 0%, rgba(255, 255, 255, 0) 100%);
+        left: 0;
+      }
+
+      .movies-theme-dashboard-marquee::after {
+        background: linear-gradient(270deg, #ffffff 0%, rgba(255, 255, 255, 0) 100%);
+        right: 0;
+      }
+
+      .movies-theme-dashboard-marquee__track {
+        align-items: stretch;
+        display: flex;
+        gap: 16px;
+        width: max-content;
+        animation: movies-theme-dashboard-marquee-scroll 36s linear infinite;
+      }
+
+      .movies-theme-dashboard-marquee:hover .movies-theme-dashboard-marquee__track {
+        animation-play-state: paused;
+      }
+
+      .movies-theme-dashboard-marquee__item {
+        display: block;
+        flex: 0 0 auto;
+        text-decoration: none;
+        width: 132px;
+      }
+
+      .movies-theme-dashboard-marquee__item:focus {
+        box-shadow: none;
+        outline: none;
+      }
+
+      .movies-theme-dashboard-marquee__poster {
+        aspect-ratio: 2 / 3;
+        background: #f6f7f7;
+        border-radius: 12px;
+        box-shadow: 0 8px 20px rgba(17, 17, 17, 0.08);
+        overflow: hidden;
+      }
+
+      .movies-theme-dashboard-marquee__poster img {
+        display: block;
+        height: 100%;
+        object-fit: cover;
+        width: 100%;
+      }
+
+      .movies-theme-dashboard-marquee__caption {
+        color: #1d2327;
+        display: block;
+        font-size: 12px;
+        font-weight: 600;
+        line-height: 1.35;
+        margin-top: 10px;
+      }
+
+      @keyframes movies-theme-dashboard-marquee-scroll {
+        from {
+          transform: translateX(0);
+        }
+
+        to {
+          transform: translateX(calc(-50% - 8px));
+        }
+      }
+    </style>
+    <?php if ($poster_items === []) : ?>
+      <p>No movie posters available yet.</p>
+    <?php else : ?>
+      <?php $loop_items = array_merge($poster_items, $poster_items); ?>
+      <div class="movies-theme-dashboard-marquee" aria-label="Recent movie posters">
+        <div class="movies-theme-dashboard-marquee__track">
+          <?php foreach ($loop_items as $index => $item) : ?>
+            <?php
+            $title = is_string($item['title']) ? $item['title'] : '';
+            $edit_link = is_string($item['edit_link']) ? $item['edit_link'] : '';
+            $poster_html = is_string($item['poster_html']) ? $item['poster_html'] : '';
+            $is_duplicate = $index >= count($poster_items);
+            ?>
+            <a
+              class="movies-theme-dashboard-marquee__item"
+              href="<?php echo esc_url($edit_link !== '' ? $edit_link : '#'); ?>"
+              <?php echo $is_duplicate ? 'aria-hidden="true" tabindex="-1"' : ''; ?>
+            >
+              <span class="movies-theme-dashboard-marquee__poster"><?php echo $poster_html; ?></span>
+              <span class="movies-theme-dashboard-marquee__caption"><?php echo esc_html($title); ?></span>
+            </a>
+          <?php endforeach; ?>
+        </div>
+      </div>
+    <?php endif; ?>
+    <?php
+}
 
 add_filter('custom_menu_order', '__return_true');
 
@@ -220,6 +539,70 @@ add_filter('editable_roles', function (array $roles): array {
     return $ordered_roles;
 });
 
+add_action('category_add_form_fields', function (): void {
+    ?>
+    <div class="form-field term-group">
+        <label for="movies-theme-category-color">Category Color</label>
+        <input type="color" id="movies-theme-category-color" name="movies_theme_color" value="#111111">
+        <p>Optional color used for category chips on the site.</p>
+    </div>
+    <div class="form-field term-group">
+        <label for="movies-theme-invert-chip-text">
+            <input type="checkbox" id="movies-theme-invert-chip-text" name="movies_theme_invert_chip_text" value="1">
+            Invert chip text color
+        </label>
+        <p>Flip the chip text between black and white instead of using the automatic contrast choice.</p>
+    </div>
+    <?php
+});
+
+add_action('category_edit_form_fields', function (WP_Term $term): void {
+    $color = movies_theme_get_category_color((int) $term->term_id);
+    $invert_chip_text = movies_theme_should_invert_category_chip_text((int) $term->term_id);
+    ?>
+    <tr class="form-field term-group-wrap">
+        <th scope="row"><label for="movies-theme-category-color">Category Color</label></th>
+        <td>
+            <input type="color" id="movies-theme-category-color" name="movies_theme_color" value="<?php echo esc_attr($color !== '' ? $color : '#111111'); ?>">
+            <p class="description">Optional color used for category chips on the site.</p>
+        </td>
+    </tr>
+    <tr class="form-field term-group-wrap">
+        <th scope="row">Invert Chip Text</th>
+        <td>
+            <label for="movies-theme-invert-chip-text">
+                <input type="checkbox" id="movies-theme-invert-chip-text" name="movies_theme_invert_chip_text" value="1" <?php checked($invert_chip_text); ?>>
+                Flip the chip text between black and white instead of using the automatic contrast choice.
+            </label>
+        </td>
+    </tr>
+    <?php
+});
+
+$movies_theme_save_category_color = function (int $term_id): void {
+    if (!current_user_can('manage_categories')) {
+        return;
+    }
+
+    $raw_color = isset($_POST['movies_theme_color']) ? wp_unslash($_POST['movies_theme_color']) : '';
+    $color = sanitize_hex_color((string) $raw_color);
+
+    if (is_string($color) && $color !== '') {
+        update_term_meta($term_id, 'movies_theme_color', $color);
+    } else {
+        delete_term_meta($term_id, 'movies_theme_color');
+    }
+
+    update_term_meta(
+        $term_id,
+        'movies_theme_invert_chip_text',
+        isset($_POST['movies_theme_invert_chip_text']) ? '1' : '0'
+    );
+};
+
+add_action('created_category', $movies_theme_save_category_color);
+add_action('edited_category', $movies_theme_save_category_color);
+
 add_filter('menu_order', function (array $menu_order): array {
     $user = wp_get_current_user();
 
@@ -231,7 +614,9 @@ add_filter('menu_order', function (array $menu_order): array {
         $preferred_order = [
             'index.php',
             'edit.php?post_type=movies',
+            'edit.php?post_type=home_intro',
             'edit.php?post_type=collection',
+            'edit-tags.php?taxonomy=category',
             'users.php',
             'upload.php',
             'edit.php?post_type=page',
@@ -392,6 +777,72 @@ add_action('wp_head', function (): void {
     <link rel="shortcut icon" href="<?php echo esc_url($favicon_url); ?>" type="image/svg+xml">
     <?php
 }, 1);
+
+add_action('wp_head', function (): void {
+    if (!is_singular('movies')) {
+        return;
+    }
+
+    $post_id = get_queried_object_id();
+
+    if ($post_id <= 0) {
+        return;
+    }
+
+    $title = wp_get_document_title();
+    $description = movies_theme_get_the_pitch($post_id);
+
+    if ($description === '') {
+        $description = trim((string) get_the_excerpt($post_id));
+    }
+
+    if ($description === '') {
+        $description = trim(wp_strip_all_tags((string) get_post_field('post_content', $post_id)));
+    }
+
+    if ($description !== '') {
+        $description = wp_trim_words($description, 30, '...');
+    }
+
+    $permalink = get_permalink($post_id);
+    $poster_url = get_the_post_thumbnail_url($post_id, 'full');
+
+    if (!is_string($poster_url) || $poster_url === '') {
+        return;
+    }
+
+    $poster_id = get_post_thumbnail_id($post_id);
+    $poster_width = 0;
+    $poster_height = 0;
+
+    if ($poster_id > 0) {
+        $poster_meta = wp_get_attachment_metadata($poster_id);
+
+        if (is_array($poster_meta)) {
+            $poster_width = (int) ($poster_meta['width'] ?? 0);
+            $poster_height = (int) ($poster_meta['height'] ?? 0);
+        }
+    }
+    ?>
+    <meta property="og:type" content="article">
+    <meta property="og:title" content="<?php echo esc_attr($title); ?>">
+    <meta property="og:url" content="<?php echo esc_url($permalink); ?>">
+    <?php if ($description !== '') : ?>
+      <meta property="og:description" content="<?php echo esc_attr($description); ?>">
+      <meta name="twitter:description" content="<?php echo esc_attr($description); ?>">
+    <?php endif; ?>
+    <meta property="og:image" content="<?php echo esc_url($poster_url); ?>">
+    <meta name="twitter:title" content="<?php echo esc_attr($title); ?>">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:image" content="<?php echo esc_url($poster_url); ?>">
+    <?php if ($poster_width > 0) : ?>
+      <meta property="og:image:width" content="<?php echo esc_attr((string) $poster_width); ?>">
+    <?php endif; ?>
+    <?php if ($poster_height > 0) : ?>
+      <meta property="og:image:height" content="<?php echo esc_attr((string) $poster_height); ?>">
+    <?php endif; ?>
+    <?php
+}, 5);
 
 add_action('save_post_movies', function (int $post_id, WP_Post $post, bool $update): void {
     if (wp_is_post_revision($post_id) || wp_is_post_autosave($post_id)) {

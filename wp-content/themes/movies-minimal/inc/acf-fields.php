@@ -44,7 +44,57 @@ add_action('acf/init', function (): void {
         return;
     }
 
+    if (function_exists('acf_add_options_page')) {
+        acf_add_options_page([
+            'page_title' => 'Theme Settings',
+            'menu_title' => 'Theme Settings',
+            'menu_slug' => 'movies-theme-settings',
+            'capability' => 'edit_posts',
+            'redirect' => false,
+            'position' => 61,
+        ]);
+    }
+
     $scale_label_config = movies_theme_get_scale_label_config();
+
+    acf_add_local_field_group([
+        'key' => 'group_movies_theme_settings',
+        'title' => 'Theme Settings',
+        'fields' => [
+            [
+                'key' => 'field_movies_theme_settings_signup_twitter_url',
+                'label' => 'Signup Twitter URL',
+                'name' => 'signup_twitter_url',
+                'type' => 'url',
+                'instructions' => 'Optional Twitter/X URL used next to the Get In Touch label.',
+                'required' => 0,
+                'default_value' => '',
+                'placeholder' => 'https://x.com/yourhandle',
+            ],
+            [
+                'key' => 'field_movies_theme_settings_signup_bluesky_url',
+                'label' => 'Signup Bluesky URL',
+                'name' => 'signup_bluesky_url',
+                'type' => 'url',
+                'instructions' => 'Optional Bluesky URL used next to the Get In Touch label.',
+                'required' => 0,
+                'default_value' => '',
+                'placeholder' => 'https://bsky.app/profile/yourhandle',
+            ],
+        ],
+        'location' => [
+            [
+                [
+                    'param' => 'options_page',
+                    'operator' => '==',
+                    'value' => 'movies-theme-settings',
+                ],
+            ],
+        ],
+        'position' => 'normal',
+        'style' => 'default',
+        'active' => true,
+    ]);
 
     acf_add_local_field_group([
         'key' => 'group_movies_theme_post_intro',
@@ -494,20 +544,10 @@ add_action('acf/init', function (): void {
                 'label' => 'The Pitch',
                 'name' => 'the_pitch',
                 'type' => 'textarea',
-                'instructions' => 'Describe the film in a one or two sentence pitch. This will be shown on the collections view.',
+                'instructions' => 'Describe the film in a one or two sentence pitch.',
                 'required' => 0,
                 'rows' => 3,
                 'new_lines' => 'br',
-            ],
-            [
-                'key' => 'field_movies_theme_movie_collection_quotes_heading',
-                'label' => 'Collection Quotes Heading',
-                'name' => 'collection_quotes_heading',
-                'type' => 'text',
-                'instructions' => 'Optional heading shown above collection quotes for this movie. If empty, the default heading will be used.',
-                'required' => 0,
-                'default_value' => '',
-                'placeholder' => 'What other Contributers are saying:',
             ],
         ],
         'location' => [

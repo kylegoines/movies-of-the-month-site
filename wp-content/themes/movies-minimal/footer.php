@@ -11,9 +11,7 @@
   </select>
 </div>
 */ ?>
-<?php if (!is_page('browse-movies')) : ?>
-  <?php get_template_part('components/signup'); ?>
-<?php endif; ?>
+<?php get_template_part('components/signup'); ?>
 <?php wp_footer(); ?>
 </body>
 </html>

@@ -8,24 +8,41 @@ $heading_text = $args['heading_text'] ?? 'Drop a message right here.';
 $preset_topic = $args['preset_topic'] ?? '';
 $show_label_button = $args['show_label_button'] ?? true;
 $variant = $args['variant'] ?? 'default';
+$signup_twitter_url = movies_theme_get_signup_social_url('twitter');
+$signup_bluesky_url = movies_theme_get_signup_social_url('bluesky');
 $section_classes = 'home-signup';
 
 if ($variant !== '') {
     $section_classes .= ' home-signup--' . sanitize_html_class($variant);
 }
-
 ?>
 
-<section class="<?php echo esc_attr($section_classes); ?>" id="home-signup">
-    <!-- <div class="bg-red-50"> -->
-  
+<section class="<?php echo esc_attr($section_classes); ?>" id="home-signup">  
   <div class="home-signup__inner ">
     <div class="max-w-[1000px] space-y-6 mx-auto relative">
-        <?php if ($show_label_button) : ?>
-    <button class="home-signup__label" type="button" data-signup-jump>
-      <span class="home-signup__label-text text-[32px] leading-none font-bold"><?php echo esc_html($label_text); ?></span>
-    </button>
-  <?php endif; ?>
+      <?php if ($show_label_button) : ?>
+        <div class="home-signup__tabs">
+          <button class="home-signup__label" type="button" data-signup-jump>
+            <span class="home-signup__label-text text-[32px] leading-none font-bold"><?php echo esc_html($label_text); ?></span>
+            <?php if ($signup_twitter_url !== '' || $signup_bluesky_url !== '') : ?>
+              <span class="home-signup__social-icons">
+                <?php if ($signup_twitter_url !== '') : ?>
+                  <a class="home-signup__social-link" href="<?php echo esc_url($signup_twitter_url); ?>" target="_blank" rel="noreferrer" onclick="event.stopPropagation();">
+                    <?php echo movies_theme_get_inline_svg('images/twitter.svg', 'home-signup__social-icon'); ?>
+                    <span class="screen-reader-text">Twitter</span>
+                  </a>
+                <?php endif; ?>
+                <?php if ($signup_bluesky_url !== '') : ?>
+                  <a class="home-signup__social-link" href="<?php echo esc_url($signup_bluesky_url); ?>" target="_blank" rel="noreferrer" onclick="event.stopPropagation();">
+                    <?php echo movies_theme_get_inline_svg('images/bluesky.svg', 'home-signup__social-icon'); ?>
+                    <span class="screen-reader-text">Bluesky</span>
+                  </a>
+                <?php endif; ?>
+              </span>
+            <?php endif; ?>
+          </button>
+        </div>
+      <?php endif; ?>
       <div class="space-y-3">
         <h2 class="text-3xl leading-none font-bold md:text-4xl"><?php echo esc_html($heading_text); ?></h2>
       </div>

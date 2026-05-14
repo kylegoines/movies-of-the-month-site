@@ -8,6 +8,7 @@ $editorial_author_name = $args['editorial_author_name'] ?? $movie_author_name;
 $year = $args['year'] ?? '';
 $runtime = $args['runtime'] ?? '';
 $genre = $args['genre'] ?? '';
+$the_pitch = $args['the_pitch'] ?? '';
 $feature_title = $args['feature_title'] ?? '';
 $feature_byline_label = $args['feature_byline_label'] ?? 'Thoughts by';
 $featured_content = $args['featured_content'] ?? '';
@@ -126,6 +127,13 @@ $content_pullquotes = array_values(array_filter($pullquotes, static function (ar
 
       <?php if ($genre !== '') : ?>
         <p><span class="theme-strong font-bold">Genres:</span> <?php echo esc_html($genre); ?></p>
+      <?php endif; ?>
+
+      <?php if ($the_pitch !== '') : ?>
+        <p class="mt-4">
+          <span class="theme-strong font-bold">The Pitch:</span>
+          <?php echo wp_kses_post(nl2br(esc_html($the_pitch))); ?>
+        </p>
       <?php endif; ?>
 
       <?php if ($has_ratings) : ?>

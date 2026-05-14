@@ -101,6 +101,44 @@ function movies_theme_get_collection_quotes_heading(int $post_id): string
     return trim((string) get_field('collection_quotes_heading', $post_id));
 }
 
+function movies_theme_get_signup_social_url(string $network): string
+{
+    $allowed_networks = [
+        'twitter',
+        'bluesky',
+    ];
+
+    if (!in_array($network, $allowed_networks, true)) {
+        return '';
+    }
+
+    $field_name = 'signup_' . $network . '_url';
+
+    if (function_exists('get_field')) {
+        $option_value = get_field($field_name, 'option');
+
+        if (is_string($option_value) && trim($option_value) !== '') {
+            return trim($option_value);
+        }
+
+        $options_value = get_field($field_name, 'options');
+
+        if (is_string($options_value) && trim($options_value) !== '') {
+            return trim($options_value);
+        }
+    }
+
+    $raw_option_value = get_option('options_' . $field_name);
+
+    if (is_string($raw_option_value) && trim($raw_option_value) !== '') {
+        return trim($raw_option_value);
+    }
+
+    $plain_option_value = get_option($field_name);
+
+    return is_string($plain_option_value) ? trim($plain_option_value) : '';
+}
+
 function movies_theme_get_featured_content(int $post_id): string
 {
     if (!function_exists('get_field')) {
@@ -343,6 +381,34 @@ function movies_theme_get_collection_description(int $post_id): string
     return trim((string) get_field('collection_description', $post_id));
 }
 
+function movies_theme_get_category_color(int $term_id): string
+{
+    $color = sanitize_hex_color((string) get_term_meta($term_id, 'movies_theme_color', true));
+
+    return is_string($color) ? $color : '';
+}
+
+function movies_theme_should_invert_category_chip_text(int $term_id): bool
+{
+    return get_term_meta($term_id, 'movies_theme_invert_chip_text', true) === '1';
+}
+
+function movies_theme_get_contrasting_text_color(string $hex_color): string
+{
+    $normalized = ltrim(trim($hex_color), '#');
+
+    if (!preg_match('/^[0-9a-fA-F]{6}$/', $normalized)) {
+        return '#111111';
+    }
+
+    $red = hexdec(substr($normalized, 0, 2));
+    $green = hexdec(substr($normalized, 2, 2));
+    $blue = hexdec(substr($normalized, 4, 2));
+    $luminance = (($red * 299) + ($green * 587) + ($blue * 114)) / 1000;
+
+    return $luminance >= 160 ? '#111111' : '#ffffff';
+}
+
 function movies_theme_get_collection_genres(int $post_id): array
 {
     $movie_ids = movies_theme_get_collection_movies($post_id);
@@ -364,8 +430,18 @@ function movies_theme_get_collection_genres(int $post_id): array
             $term_id = (int) $term->term_id;
 
             if (!isset($genres[$term_id])) {
+                $background_color = movies_theme_get_category_color($term_id);
+                $text_color = $background_color !== '' ? movies_theme_get_contrasting_text_color($background_color) : '';
+
+                if ($text_color !== '' && movies_theme_should_invert_category_chip_text($term_id)) {
+                    $text_color = $text_color === '#111111' ? '#ffffff' : '#111111';
+                }
+
                 $genres[$term_id] = [
+                    'term_id' => $term_id,
                     'name' => $term->name,
+                    'background_color' => $background_color,
+                    'text_color' => $text_color,
                     'count' => 0,
                 ];
             }
@@ -382,10 +458,7 @@ function movies_theme_get_collection_genres(int $post_id): array
         return $right['count'] <=> $left['count'];
     });
 
-    return array_values(array_map(
-        static fn(array $genre): string => $genre['name'],
-        array_slice($genres, 0, 6)
-    ));
+    return array_values(array_slice($genres, 0, 6));
 }
 
 function movies_theme_get_hidden_gem_label_markup(string $class_name = ''): string
