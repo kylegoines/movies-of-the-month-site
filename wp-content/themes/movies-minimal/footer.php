@@ -12,6 +12,7 @@
 </div>
 */ ?>
 <?php get_template_part('components/signup'); ?>
+<?php get_template_part('components/mailing', 'modal'); ?>
 <?php wp_footer(); ?>
 </body>
 </html>

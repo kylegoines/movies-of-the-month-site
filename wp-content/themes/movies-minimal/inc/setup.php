@@ -247,6 +247,34 @@ add_action('admin_head-index.php', function (): void {
     <?php
 });
 
+add_action('admin_menu', function (): void {
+    add_submenu_page(
+        'edit.php?post_type=mailing_signup',
+        'Export Mailing List',
+        'Export Emails',
+        'edit_posts',
+        'movies-theme-mailing-export',
+        'movies_theme_render_mailing_export_page'
+    );
+});
+
+add_action('admin_notices', function (): void {
+    $screen = get_current_screen();
+
+    if (!($screen instanceof WP_Screen) || $screen->base !== 'edit' || $screen->post_type !== 'mailing_signup') {
+        return;
+    }
+
+    $export_url = admin_url('edit.php?post_type=mailing_signup&page=movies-theme-mailing-export');
+    ?>
+    <div class="notice notice-info">
+      <p>
+        <a class="button button-primary" href="<?php echo esc_url($export_url); ?>">Get Comma-Separated Email List</a>
+      </p>
+    </div>
+    <?php
+});
+
 function movies_theme_render_contributor_guide_panel(): void
 {
     ?>
@@ -512,6 +540,197 @@ function movies_theme_render_recent_movie_activity_widget(): void
     <?php
 }
 
+function movies_theme_get_mailing_signup_emails(): array
+{
+    $signup_ids = get_posts([
+        'post_type' => 'mailing_signup',
+        'post_status' => 'publish',
+        'posts_per_page' => -1,
+        'fields' => 'ids',
+        'orderby' => 'date',
+        'order' => 'DESC',
+    ]);
+
+    $emails = [];
+
+    foreach ($signup_ids as $signup_id) {
+        $email = get_post_meta((int) $signup_id, '_movies_theme_mailing_signup_email', true);
+
+        if (!is_string($email) || $email === '') {
+            continue;
+        }
+
+        $emails[] = $email;
+    }
+
+    return $emails;
+}
+
+function movies_theme_render_mailing_export_page(): void
+{
+    if (!current_user_can('edit_posts')) {
+        wp_die('You do not have permission to view this page.');
+    }
+
+    $emails = movies_theme_get_mailing_signup_emails();
+    $email_string = implode(', ', $emails);
+    ?>
+    <div class="wrap">
+      <h1>Export Mailing List</h1>
+      <p>Copy the full mailing list as one comma-separated string.</p>
+
+      <p>
+        <a class="button" href="<?php echo esc_url(admin_url('edit.php?post_type=mailing_signup')); ?>">Back to Mailing List</a>
+      </p>
+
+      <textarea
+        id="movies-theme-mailing-export"
+        class="large-text code"
+        rows="12"
+        readonly
+      ><?php echo esc_textarea($email_string); ?></textarea>
+
+      <p>
+        <button type="button" class="button button-primary" id="movies-theme-copy-mailing-export">Copy Emails</button>
+      </p>
+
+      <p><strong><?php echo esc_html((string) count($emails)); ?></strong> email<?php echo count($emails) === 1 ? '' : 's'; ?> in list.</p>
+    </div>
+
+    <script>
+      document.addEventListener('DOMContentLoaded', function () {
+        var button = document.getElementById('movies-theme-copy-mailing-export');
+        var field = document.getElementById('movies-theme-mailing-export');
+
+        if (!button || !field) {
+          return;
+        }
+
+        button.addEventListener('click', function () {
+          if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(field.value).then(function () {
+              button.textContent = 'Copied';
+            }).catch(function () {
+              field.focus();
+              field.select();
+              button.textContent = 'Press Cmd/Ctrl+C';
+            });
+
+            return;
+          }
+
+          field.focus();
+          field.select();
+          button.textContent = 'Press Cmd/Ctrl+C';
+        });
+      });
+    </script>
+    <?php
+}
+
+function movies_theme_get_mailing_post_subject(int $post_id): string
+{
+    $subject = get_post_meta($post_id, 'mailing_post_subject', true);
+
+    if (is_string($subject) && trim($subject) !== '') {
+        return trim($subject);
+    }
+
+    return get_the_title($post_id);
+}
+
+function movies_theme_get_mailing_post_body(int $post_id): string
+{
+    $post = get_post($post_id);
+
+    if (!($post instanceof WP_Post)) {
+        return '';
+    }
+
+    $body = trim((string) $post->post_content);
+
+    if ($body === '') {
+        return '';
+    }
+
+    return wpautop(wp_kses_post($body));
+}
+
+add_action('add_meta_boxes', function (): void {
+    add_meta_box(
+        'movies_theme_mailing_post_send',
+        'Send Email Campaign',
+        'movies_theme_render_mailing_post_send_meta_box',
+        'mailing_post',
+        'side',
+        'high'
+    );
+});
+
+function movies_theme_render_mailing_post_send_meta_box(WP_Post $post): void
+{
+    $recipient_count = count(movies_theme_get_mailing_signup_emails());
+    $sent_at = (int) get_post_meta((int) $post->ID, '_movies_theme_mailing_post_sent_at', true);
+    $sent_count = (int) get_post_meta((int) $post->ID, '_movies_theme_mailing_post_sent_count', true);
+    $send_url = wp_nonce_url(
+        admin_url('admin-post.php?action=movies_theme_send_mailing_post&post_id=' . (int) $post->ID),
+        'movies_theme_send_mailing_post_' . (int) $post->ID
+    );
+    ?>
+    <p>This sends the saved version of this email to everyone currently on the mailing list.</p>
+    <p><strong>Current recipients:</strong> <?php echo esc_html((string) $recipient_count); ?></p>
+    <p><strong>Email subject:</strong> <?php echo esc_html(movies_theme_get_mailing_post_subject((int) $post->ID)); ?></p>
+    <?php if ($sent_at > 0) : ?>
+      <p><strong>Last sent:</strong> <?php echo esc_html(wp_date('F j, Y g:i a', $sent_at)); ?></p>
+      <p><strong>Last recipient count:</strong> <?php echo esc_html((string) $sent_count); ?></p>
+    <?php endif; ?>
+    <p>
+      <a class="button button-primary" href="<?php echo esc_url($send_url); ?>">
+        <?php echo $sent_at > 0 ? 'Send Again' : 'Send Email'; ?>
+      </a>
+    </p>
+    <p><em>Save updates before sending.</em></p>
+    <?php
+}
+
+add_action('admin_notices', function (): void {
+    $screen = get_current_screen();
+
+    if (!($screen instanceof WP_Screen)) {
+        return;
+    }
+
+    if ($screen->post_type !== 'mailing_post') {
+        return;
+    }
+
+    $status = isset($_GET['mailing_post_status'])
+        ? sanitize_key(wp_unslash($_GET['mailing_post_status']))
+        : '';
+
+    if ($status === '') {
+        return;
+    }
+
+    $messages = [
+        'sent' => ['success', 'Email sent to the mailing list.'],
+        'empty' => ['error', 'Add an email subject and body before sending.'],
+        'no_recipients' => ['warning', 'No mailing list recipients were found.'],
+        'permission' => ['error', 'You do not have permission to send this email.'],
+    ];
+
+    if (!isset($messages[$status])) {
+        return;
+    }
+
+    [$type, $message] = $messages[$status];
+    ?>
+    <div class="notice notice-<?php echo esc_attr($type); ?> is-dismissible">
+      <p><?php echo esc_html($message); ?></p>
+    </div>
+    <?php
+});
+
 add_filter('custom_menu_order', '__return_true');
 
 add_filter('editable_roles', function (array $roles): array {
@@ -616,6 +835,8 @@ add_filter('menu_order', function (array $menu_order): array {
             'edit.php?post_type=movies',
             'edit.php?post_type=home_intro',
             'edit.php?post_type=collection',
+            'edit.php?post_type=mailing_signup',
+            'edit.php?post_type=mailing_post',
             'edit-tags.php?taxonomy=category',
             'users.php',
             'upload.php',
@@ -946,6 +1167,9 @@ add_filter('option_aettaec_options', function ($options) {
 
 add_action('admin_post_nopriv_movies_theme_contribution_form', 'movies_theme_handle_contribution_form');
 add_action('admin_post_movies_theme_contribution_form', 'movies_theme_handle_contribution_form');
+add_action('admin_post_nopriv_movies_theme_mailing_signup', 'movies_theme_handle_mailing_signup');
+add_action('admin_post_movies_theme_mailing_signup', 'movies_theme_handle_mailing_signup');
+add_action('admin_post_movies_theme_send_mailing_post', 'movies_theme_handle_send_mailing_post');
 
 function movies_theme_handle_contribution_form(): void
 {
@@ -1001,5 +1225,154 @@ function movies_theme_handle_contribution_form(): void
     ]);
 
     wp_safe_redirect(add_query_arg('signup_status', $sent ? 'success' : 'error', $redirect_to));
+    exit;
+}
+
+function movies_theme_send_mailing_signup_confirmation(string $email): bool
+{
+    $enabled_setting = movies_theme_get_theme_setting('mailing_confirmation_enabled');
+    $is_enabled = !in_array($enabled_setting, [0, '0', false, 'false'], true);
+
+    if (!$is_enabled || !is_email($email)) {
+        return false;
+    }
+
+    $subject = movies_theme_get_theme_setting('mailing_confirmation_subject');
+    $body = movies_theme_get_theme_setting('mailing_confirmation_body');
+
+    $subject = is_string($subject) && trim($subject) !== ''
+        ? trim($subject)
+        : 'Thank you for subscribing to Movies of the Month!';
+    $body = is_string($body) && trim($body) !== ''
+        ? trim($body)
+        : "Thank you for subscribing to Movies of the Month!\n\nWe'll keep you posted with fun updates as we grow.\n\nWe promise not to spam you, and we'll never sell your data.";
+
+    $body = str_replace('{email}', $email, $body);
+
+    return wp_mail($email, $subject, $body, [
+        'Content-Type: text/plain; charset=UTF-8',
+    ]);
+}
+
+function movies_theme_handle_send_mailing_post(): void
+{
+    $post_id = isset($_GET['post_id']) ? (int) wp_unslash($_GET['post_id']) : 0;
+    $redirect_to = $post_id > 0
+        ? admin_url('post.php?post=' . $post_id . '&action=edit')
+        : admin_url('edit.php?post_type=mailing_post');
+
+    if (
+        $post_id <= 0
+        || !current_user_can('edit_post', $post_id)
+        || !wp_verify_nonce(
+            isset($_GET['_wpnonce']) ? sanitize_text_field(wp_unslash($_GET['_wpnonce'])) : '',
+            'movies_theme_send_mailing_post_' . $post_id
+        )
+    ) {
+        wp_safe_redirect(add_query_arg('mailing_post_status', 'permission', $redirect_to));
+        exit;
+    }
+
+    $subject = movies_theme_get_mailing_post_subject($post_id);
+    $body = movies_theme_get_mailing_post_body($post_id);
+
+    if ($subject === '' || $body === '') {
+        wp_safe_redirect(add_query_arg('mailing_post_status', 'empty', $redirect_to));
+        exit;
+    }
+
+    $emails = movies_theme_get_mailing_signup_emails();
+
+    if ($emails === []) {
+        wp_safe_redirect(add_query_arg('mailing_post_status', 'no_recipients', $redirect_to));
+        exit;
+    }
+
+    $sent_count = 0;
+
+    foreach ($emails as $email) {
+        if (!is_string($email) || !is_email($email)) {
+            continue;
+        }
+
+        $sent = wp_mail($email, $subject, $body, [
+            'Content-Type: text/html; charset=UTF-8',
+        ]);
+
+        if ($sent) {
+            $sent_count++;
+        }
+    }
+
+    update_post_meta($post_id, '_movies_theme_mailing_post_sent_at', time());
+    update_post_meta($post_id, '_movies_theme_mailing_post_sent_count', $sent_count);
+
+    wp_safe_redirect(add_query_arg('mailing_post_status', 'sent', $redirect_to));
+    exit;
+}
+
+function movies_theme_handle_mailing_signup(): void
+{
+    $redirect_to = isset($_POST['redirect_to'])
+        ? esc_url_raw(wp_unslash($_POST['redirect_to']))
+        : home_url('/');
+
+    if (!wp_verify_nonce(
+        isset($_POST['movies_theme_mailing_signup_nonce']) ? sanitize_text_field(wp_unslash($_POST['movies_theme_mailing_signup_nonce'])) : '',
+        'movies_theme_mailing_signup'
+    )) {
+        wp_safe_redirect(add_query_arg('mailing_signup_status', 'error', $redirect_to));
+        exit;
+    }
+
+    $honeypot = isset($_POST['company']) ? trim((string) wp_unslash($_POST['company'])) : '';
+
+    if ($honeypot !== '') {
+        wp_safe_redirect(add_query_arg('mailing_signup_status', 'success', $redirect_to));
+        exit;
+    }
+
+    $email = isset($_POST['email'])
+        ? sanitize_email(wp_unslash($_POST['email']))
+        : '';
+
+    if ($email === '' || !is_email($email)) {
+        wp_safe_redirect(add_query_arg('mailing_signup_status', 'invalid', $redirect_to));
+        exit;
+    }
+
+    $existing_signups = get_posts([
+        'post_type' => 'mailing_signup',
+        'post_status' => 'publish',
+        'posts_per_page' => 1,
+        'fields' => 'ids',
+        'meta_query' => [
+            [
+                'key' => '_movies_theme_mailing_signup_email',
+                'value' => $email,
+            ],
+        ],
+    ]);
+
+    if ($existing_signups !== []) {
+        wp_safe_redirect(add_query_arg('mailing_signup_status', 'exists', $redirect_to));
+        exit;
+    }
+
+    $signup_id = wp_insert_post([
+        'post_type' => 'mailing_signup',
+        'post_status' => 'publish',
+        'post_title' => $email,
+    ], true);
+
+    if ($signup_id instanceof WP_Error || $signup_id <= 0) {
+        wp_safe_redirect(add_query_arg('mailing_signup_status', 'error', $redirect_to));
+        exit;
+    }
+
+    update_post_meta($signup_id, '_movies_theme_mailing_signup_email', $email);
+    movies_theme_send_mailing_signup_confirmation($email);
+
+    wp_safe_redirect(add_query_arg('mailing_signup_status', 'success', $redirect_to));
     exit;
 }

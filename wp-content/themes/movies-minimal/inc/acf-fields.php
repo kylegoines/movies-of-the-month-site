@@ -81,6 +81,37 @@ add_action('acf/init', function (): void {
                 'default_value' => '',
                 'placeholder' => 'https://bsky.app/profile/yourhandle',
             ],
+            [
+                'key' => 'field_movies_theme_settings_mailing_confirmation_enabled',
+                'label' => 'Send Mailing List Confirmation Email',
+                'name' => 'mailing_confirmation_enabled',
+                'type' => 'true_false',
+                'instructions' => 'Send a confirmation email after someone joins the mailing list.',
+                'required' => 0,
+                'ui' => 1,
+                'default_value' => 1,
+            ],
+            [
+                'key' => 'field_movies_theme_settings_mailing_confirmation_subject',
+                'label' => 'Mailing List Confirmation Subject',
+                'name' => 'mailing_confirmation_subject',
+                'type' => 'text',
+                'instructions' => 'Subject line for the subscriber confirmation email.',
+                'required' => 0,
+                'default_value' => 'Thank you for subscribing to Movies of the Month!',
+                'placeholder' => 'Thank you for subscribing to Movies of the Month!',
+            ],
+            [
+                'key' => 'field_movies_theme_settings_mailing_confirmation_body',
+                'label' => 'Mailing List Confirmation Body',
+                'name' => 'mailing_confirmation_body',
+                'type' => 'textarea',
+                'instructions' => 'Plain text email body. You can use {email} to include the subscriber address.',
+                'required' => 0,
+                'default_value' => "Thank you for subscribing to Movies of the Month!\n\nWe'll keep you posted with fun updates as we grow.\n\nWe promise not to spam you, and we'll never sell your data.",
+                'rows' => 8,
+                'new_lines' => 'br',
+            ],
         ],
         'location' => [
             [
@@ -119,6 +150,35 @@ add_action('acf/init', function (): void {
                     'param' => 'post_type',
                     'operator' => '==',
                     'value' => 'post',
+                ],
+            ],
+        ],
+        'position' => 'normal',
+        'style' => 'default',
+        'active' => true,
+    ]);
+
+    acf_add_local_field_group([
+        'key' => 'group_movies_theme_mailing_post',
+        'title' => 'Mailing List Email',
+        'fields' => [
+            [
+                'key' => 'field_movies_theme_mailing_post_subject',
+                'label' => 'Email Subject',
+                'name' => 'mailing_post_subject',
+                'type' => 'text',
+                'instructions' => 'Subject line sent to everyone on the mailing list.',
+                'required' => 1,
+                'default_value' => '',
+                'placeholder' => 'Movies of the Month Update',
+            ],
+        ],
+        'location' => [
+            [
+                [
+                    'param' => 'post_type',
+                    'operator' => '==',
+                    'value' => 'mailing_post',
                 ],
             ],
         ],

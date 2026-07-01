@@ -139,6 +139,31 @@ function movies_theme_get_signup_social_url(string $network): string
     return is_string($plain_option_value) ? trim($plain_option_value) : '';
 }
 
+function movies_theme_get_theme_setting(string $field_name)
+{
+    if (function_exists('get_field')) {
+        $option_value = get_field($field_name, 'option');
+
+        if ($option_value !== null) {
+            return $option_value;
+        }
+
+        $options_value = get_field($field_name, 'options');
+
+        if ($options_value !== null) {
+            return $options_value;
+        }
+    }
+
+    $raw_option_value = get_option('options_' . $field_name, null);
+
+    if ($raw_option_value !== null) {
+        return $raw_option_value;
+    }
+
+    return get_option($field_name, null);
+}
+
 function movies_theme_get_featured_content(int $post_id): string
 {
     if (!function_exists('get_field')) {

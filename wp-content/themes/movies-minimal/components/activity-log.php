@@ -19,7 +19,7 @@ $top_contributor_badge = is_string($top_contributor_badge)
 
 <section class="<?php echo esc_attr($section_classes); ?>">
   <div class="mb-4 flex items-end gap-4">
-    <h2 class="theme-strong text-xl tracking-[-0.04em] md:text-2xl">This Months Activity</h2>
+    <h2 class="theme-strong text-xl tracking-[-0.04em] md:text-2xl">Recent Activity</h2>
   </div>
 
   <ul class="space-y-3">

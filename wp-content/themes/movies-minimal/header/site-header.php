@@ -117,6 +117,17 @@ if ($marquee_is_paused) {
           Contributors
         </a>
       </li>
+      <li>
+        <button
+          class="theme-strong cursor-pointer border-0 bg-transparent p-0 text-xl font-bold transition-opacity hover:opacity-70"
+          type="button"
+          data-spotlight-mailing-modal-open
+          aria-expanded="false"
+          aria-controls="spotlight-mailing-modal"
+        >
+          Subscribe
+        </button>
+      </li>
     </ul>
     <div class="accent-rule h-[3px] w-full"></div>
   </div>
@@ -160,6 +171,16 @@ if ($marquee_is_paused) {
       >
         Contributors
       </a>
+      <button
+        class="site-mobile-nav__link text-left"
+        type="button"
+        data-spotlight-mailing-modal-open
+        data-site-mobile-nav-close
+        aria-expanded="false"
+        aria-controls="spotlight-mailing-modal"
+      >
+        Subscribe
+      </button>
     </nav>
   </div>
 </header>

@@ -180,7 +180,7 @@ get_header();
                     <?php if ($collection_quotes !== []) : ?>
                       <div class="md:hidden lg:block">
                         <p class="theme-strong mt-8 font-bold tracking-[0.02em] pb-5">
-                          <?php echo esc_html($collection_quotes_heading !== '' ? $collection_quotes_heading : 'What other Contributers are saying:'); ?>
+                          <?php echo esc_html($collection_quotes_heading !== '' ? $collection_quotes_heading : 'What other Contributors are saying:'); ?>
                         </p>
                         <div class="flex flex-col gap-2">
                           <?php foreach ($collection_quotes as $quote_item) : ?>
@@ -210,7 +210,7 @@ get_header();
                 <?php if ($collection_quotes !== []) : ?>
                   <div class="hidden md:col-span-2 md:block lg:hidden">
                     <p class="theme-strong mt-8 font-bold tracking-[0.02em] pb-5">
-                      <?php echo esc_html($collection_quotes_heading !== '' ? $collection_quotes_heading : 'What other Contributers are saying:'); ?>
+                      <?php echo esc_html($collection_quotes_heading !== '' ? $collection_quotes_heading : 'What other Contributors are saying:'); ?>
                     </p>
                     <div class="flex flex-col gap-2">
                       <?php foreach ($collection_quotes as $quote_item) : ?>

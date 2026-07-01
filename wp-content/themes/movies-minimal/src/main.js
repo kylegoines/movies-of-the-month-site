@@ -9,6 +9,7 @@ import { SiteMobileNav } from './js/site-mobile-nav';
 import { SiteTitleMarquee } from './js/site-title-marquee';
 import { SignupJumpButton } from './js/signup-jump-button';
 import { SpotlightGallery } from './js/spotlight-gallery';
+import { SpotlightMailingModal } from './js/spotlight-mailing-modal';
 import { ThemeSwitcher } from './js/theme-switcher';
 
 class App {
@@ -68,6 +69,12 @@ class App {
     this.spotlightGallery = new SpotlightGallery(
       document.querySelectorAll('[data-spotlight-gallery]')
     );
+    this.spotlightMailingModal = new SpotlightMailingModal(
+      document.querySelectorAll('[data-spotlight-mailing-modal-open]'),
+      document.querySelector('[data-spotlight-mailing-modal]'),
+      document.querySelector('[data-spotlight-mailing-modal-overlay]'),
+      document.querySelector('[data-spotlight-mailing-modal-close]')
+    );
   }
 
   init() {
@@ -84,6 +91,7 @@ class App {
     this.collectionActivityPanel.init();
     this.featuredPullquote.init();
     this.spotlightGallery.init();
+    this.spotlightMailingModal.init();
   }
 }
 

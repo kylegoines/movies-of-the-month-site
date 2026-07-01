@@ -51,8 +51,8 @@ export class SiteMobileNav {
 
     this.setOpen(false);
     this.toggleButton.addEventListener('click', this.toggle);
-    this.panel.querySelectorAll('a').forEach((link) => {
-      link.addEventListener('click', this.close);
+    this.panel.querySelectorAll('a, [data-site-mobile-nav-close]').forEach((trigger) => {
+      trigger.addEventListener('click', this.close);
     });
     document.addEventListener('keydown', this.handleKeydown);
   }
