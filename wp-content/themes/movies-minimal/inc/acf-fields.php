@@ -7,6 +7,67 @@ function movies_theme_user_is_contributor_only(): bool
     return $user instanceof WP_User && $user->roles === ['contributor'];
 }
 
+function movies_theme_get_edited_movie_fields(): array
+{
+    static $edited_fields_by_post = [];
+
+    $post_id = isset($_GET['post']) ? (int) $_GET['post'] : 0;
+
+    if ($post_id < 1 || get_post_type($post_id) !== 'movies') {
+        return [];
+    }
+
+    if (!array_key_exists($post_id, $edited_fields_by_post)) {
+        $edited_fields = get_post_meta($post_id, '_movies_theme_edited_fields', true);
+        $edited_fields_by_post[$post_id] = is_array($edited_fields) ? $edited_fields : [];
+    }
+
+    return $edited_fields_by_post[$post_id];
+}
+
+function movies_theme_get_previous_movie_content(): array
+{
+    $post_id = isset($_GET['post']) ? (int) $_GET['post'] : 0;
+
+    if ($post_id < 1 || get_post_type($post_id) !== 'movies') {
+        return [];
+    }
+
+    $previous_content = get_post_meta($post_id, '_movies_theme_previous_content', true);
+
+    if (!is_array($previous_content)) {
+        return [];
+    }
+
+    $scale_label_config = movies_theme_get_scale_label_config();
+
+    foreach ($previous_content as $field_name => $previous_value) {
+        if (
+            isset($scale_label_config[$field_name])
+            && array_key_exists((string) $previous_value, $scale_label_config[$field_name])
+        ) {
+            $previous_content[$field_name] = $scale_label_config[$field_name][(string) $previous_value];
+        }
+    }
+
+    return $previous_content;
+}
+
+add_filter('acf/prepare_field', function ($field) {
+    if (
+        !is_array($field)
+        || empty($field['name'])
+        || !current_user_can('edit_others_movies')
+        || !in_array($field['name'], movies_theme_get_edited_movie_fields(), true)
+    ) {
+        return $field;
+    }
+
+    $field['label'] = rtrim((string) $field['label']) . ' (edited)';
+
+    return $field;
+});
+
 add_filter('acf/prepare_field/key=field_movies_theme_movie_featured', function ($field) {
     if (movies_theme_user_is_contributor_only()) {
         return false;
@@ -919,6 +980,44 @@ add_action('acf/input/admin_head', function (): void {
         opacity: 0.35;
         pointer-events: none;
       }
+
+      .movies-theme-native-field-edited::after {
+        color: #b32d2e;
+        content: '(edited)';
+        font-size: 11px;
+        font-style: italic;
+        font-weight: 600;
+        margin-left: 6px;
+        text-transform: uppercase;
+      }
+
+      .movies-theme-edited-label {
+        color: #b32d2e;
+        font-size: 11px;
+        font-style: italic;
+        font-weight: 600;
+        margin-left: 6px;
+        text-transform: uppercase;
+      }
+
+      .movies-theme-previous-content {
+        background: #f6f7f7;
+        border: 1px solid #dcdcde;
+        color: #646970;
+        margin-top: 10px;
+      }
+
+      .movies-theme-previous-content summary {
+        cursor: pointer;
+        font-weight: 600;
+        padding: 8px 10px;
+      }
+
+      .movies-theme-previous-content__value {
+        border-top: 1px solid #dcdcde;
+        padding: 10px;
+        white-space: pre-wrap;
+      }
     </style>
     <?php
 });
@@ -933,6 +1032,79 @@ add_action('acf/input/admin_footer', function (): void {
     <script>
       document.addEventListener('DOMContentLoaded', function () {
         <?php if ($screen->post_type === 'movies') : ?>
+        var editedMovieFields = <?php echo wp_json_encode(
+            current_user_can('edit_others_movies') ? movies_theme_get_edited_movie_fields() : []
+        ); ?>;
+        var previousMovieContent = <?php echo wp_json_encode(
+            current_user_can('edit_others_movies') ? movies_theme_get_previous_movie_content() : []
+        ); ?>;
+        var nativeEditedFieldSelectors = {
+          _post_title: '#titlewrap',
+          _thumbnail_id: '#postimagediv .postbox-header h2',
+          _category: '#categorydiv .postbox-header h2'
+        };
+
+        var markEditedAcfFields = function () {
+          editedMovieFields.filter(function (fieldName) {
+            return fieldName.charAt(0) !== '_';
+          }).forEach(function (fieldName) {
+            document.querySelectorAll('.acf-field[data-name="' + fieldName + '"] > .acf-label label').forEach(function (fieldLabel) {
+              if (
+                fieldLabel.querySelector('.movies-theme-edited-label')
+                || fieldLabel.textContent.toLowerCase().includes('(edited)')
+              ) {
+                return;
+              }
+
+              var editedLabel = document.createElement('span');
+              editedLabel.className = 'movies-theme-edited-label';
+              editedLabel.textContent = '(edited)';
+              fieldLabel.appendChild(editedLabel);
+            });
+
+            document.querySelectorAll('.acf-field[data-name="' + fieldName + '"] > .acf-input').forEach(function (fieldInput) {
+              if (
+                !Object.prototype.hasOwnProperty.call(previousMovieContent, fieldName)
+                || fieldInput.querySelector('.movies-theme-previous-content')
+              ) {
+                return;
+              }
+
+              var previousContent = document.createElement('details');
+              previousContent.className = 'movies-theme-previous-content';
+
+              var previousContentLabel = document.createElement('summary');
+              previousContentLabel.textContent = 'Previous content';
+
+              var previousContentValue = document.createElement('div');
+              previousContentValue.className = 'movies-theme-previous-content__value';
+              previousContentValue.textContent = String(previousMovieContent[fieldName]);
+
+              previousContent.appendChild(previousContentLabel);
+              previousContent.appendChild(previousContentValue);
+              fieldInput.appendChild(previousContent);
+            });
+          });
+        };
+
+        markEditedAcfFields();
+
+        if (window.acf && typeof window.acf.addAction === 'function') {
+          window.acf.addAction('append', markEditedAcfFields);
+        }
+
+        Object.keys(nativeEditedFieldSelectors).forEach(function (fieldName) {
+          if (!editedMovieFields.includes(fieldName)) {
+            return;
+          }
+
+          var fieldLabel = document.querySelector(nativeEditedFieldSelectors[fieldName]);
+
+          if (fieldLabel) {
+            fieldLabel.classList.add('movies-theme-native-field-edited');
+          }
+        });
+
         var pullquoteGroup = document.getElementById('acf-group_movies_theme_movie_pullquotes');
         var relatedGroup = document.getElementById('acf-group_movies_theme_movie_related');
 

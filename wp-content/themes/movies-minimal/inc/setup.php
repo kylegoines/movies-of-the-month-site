@@ -49,13 +49,13 @@ add_action('init', function (): void {
     $contributor_movie_caps = [
         'upload_files',
         'edit_movies',
+        'edit_published_movies',
         'delete_movies',
         'create_movies',
     ];
 
     $restricted_movie_and_collection_caps = [
         'publish_movies',
-        'edit_published_movies',
         'delete_published_movies',
         'edit_others_movies',
         'delete_others_movies',
@@ -156,10 +156,229 @@ add_action('init', function (): void {
     }
 }, 20);
 
+add_filter('wp_insert_post_data', function (array $data, array $postarr): array {
+    if (($data['post_type'] ?? '') !== 'movies') {
+        return $data;
+    }
+
+    $post_id = isset($postarr['ID']) ? (int) $postarr['ID'] : 0;
+
+    if ($post_id < 1 || get_post_status($post_id) !== 'publish') {
+        return $data;
+    }
+
+    $user = wp_get_current_user();
+
+    if (
+        !($user instanceof WP_User)
+        || !in_array('contributor', $user->roles, true)
+        || current_user_can('publish_movies')
+    ) {
+        return $data;
+    }
+
+    $GLOBALS['movies_theme_movie_edit_snapshot'] = [
+        'post_id' => $post_id,
+        'title' => get_the_title($post_id),
+        'thumbnail_id' => get_post_thumbnail_id($post_id),
+        'categories' => wp_get_object_terms($post_id, 'category', ['fields' => 'ids']),
+        'fields' => function_exists('get_fields') ? (get_fields($post_id) ?: []) : [],
+    ];
+
+    if (in_array($data['post_status'] ?? '', ['publish', 'future'], true)) {
+        $data['post_status'] = 'pending';
+    }
+
+    return $data;
+}, 10, 2);
+
+function movies_theme_format_previous_field_value(int $post_id, string $field_name, $value): ?string
+{
+    $field = function_exists('get_field_object')
+        ? get_field_object($field_name, $post_id, false, false)
+        : null;
+    $field_type = is_array($field) ? (string) ($field['type'] ?? '') : '';
+
+    if (in_array($field_type, ['image', 'file', 'gallery'], true)) {
+        return null;
+    }
+
+    if ($field_type === 'true_false') {
+        return $value ? 'Checked' : 'Unchecked';
+    }
+
+    $scale_label_config = movies_theme_get_scale_label_config();
+
+    if (
+        isset($scale_label_config[$field_name])
+        && array_key_exists((string) $value, $scale_label_config[$field_name])
+    ) {
+        return (string) $scale_label_config[$field_name][(string) $value];
+    }
+
+    if (
+        in_array($field_type, ['select', 'radio', 'checkbox', 'button_group'], true)
+        && is_array($field)
+        && !empty($field['choices'])
+        && is_array($field['choices'])
+    ) {
+        $selected_values = is_array($value) ? $value : [$value];
+        $selected_labels = [];
+
+        foreach ($selected_values as $selected_value) {
+            $choice_key = (string) $selected_value;
+            $selected_labels[] = array_key_exists($choice_key, $field['choices'])
+                ? (string) $field['choices'][$choice_key]
+                : $choice_key;
+        }
+
+        $selected_labels = array_values(array_filter(
+            $selected_labels,
+            static fn(string $label): bool => $label !== ''
+        ));
+
+        return $selected_labels === [] ? '(empty)' : implode("\n", $selected_labels);
+    }
+
+    $normalize_value = static function ($item) use (&$normalize_value): array {
+        if ($item instanceof WP_Post) {
+            return [get_the_title($item)];
+        }
+
+        if ($item instanceof WP_Term) {
+            return [$item->name];
+        }
+
+        if (is_array($item)) {
+            $normalized = [];
+
+            foreach ($item as $child) {
+                $normalized = array_merge($normalized, $normalize_value($child));
+            }
+
+            return $normalized;
+        }
+
+        if (is_bool($item)) {
+            return [$item ? 'Checked' : 'Unchecked'];
+        }
+
+        if ($item === null || $item === '') {
+            return [];
+        }
+
+        return [trim(wp_strip_all_tags((string) $item))];
+    };
+
+    $normalized_values = array_values(array_filter(
+        $normalize_value($value),
+        static fn(string $item): bool => $item !== ''
+    ));
+
+    return $normalized_values === [] ? '(empty)' : implode("\n", $normalized_values);
+}
+
+add_action('acf/save_post', function ($post_id): void {
+    $post_id = (int) $post_id;
+    $snapshot = $GLOBALS['movies_theme_movie_edit_snapshot'] ?? null;
+
+    if (!is_array($snapshot) || ($snapshot['post_id'] ?? 0) !== $post_id) {
+        return;
+    }
+
+    unset($GLOBALS['movies_theme_movie_edit_snapshot']);
+
+    $edited_fields = get_post_meta($post_id, '_movies_theme_edited_fields', true);
+    $edited_fields = is_array($edited_fields) ? $edited_fields : [];
+    $previous_content = get_post_meta($post_id, '_movies_theme_previous_content', true);
+    $previous_content = is_array($previous_content) ? $previous_content : [];
+    $current_fields = function_exists('get_fields') ? (get_fields($post_id) ?: []) : [];
+
+    foreach (array_unique(array_merge(array_keys($snapshot['fields']), array_keys($current_fields))) as $field_name) {
+        $previous_value = $snapshot['fields'][$field_name] ?? null;
+        $current_value = $current_fields[$field_name] ?? null;
+
+        if (maybe_serialize($previous_value) !== maybe_serialize($current_value)) {
+            $edited_fields[] = (string) $field_name;
+
+            if (!array_key_exists($field_name, $previous_content)) {
+                $formatted_previous_value = movies_theme_format_previous_field_value(
+                    $post_id,
+                    (string) $field_name,
+                    $previous_value
+                );
+
+                if ($formatted_previous_value !== null) {
+                    $previous_content[$field_name] = $formatted_previous_value;
+                }
+            }
+        }
+    }
+
+    if ((string) $snapshot['title'] !== get_the_title($post_id)) {
+        $edited_fields[] = '_post_title';
+    }
+
+    if ((int) $snapshot['thumbnail_id'] !== get_post_thumbnail_id($post_id)) {
+        $edited_fields[] = '_thumbnail_id';
+    }
+
+    $previous_categories = array_map('intval', is_array($snapshot['categories']) ? $snapshot['categories'] : []);
+    $current_category_ids = wp_get_object_terms($post_id, 'category', ['fields' => 'ids']);
+    $current_categories = array_map('intval', is_array($current_category_ids) ? $current_category_ids : []);
+    sort($previous_categories);
+    sort($current_categories);
+
+    if ($previous_categories !== $current_categories) {
+        $edited_fields[] = '_category';
+    }
+
+    $edited_fields = array_values(array_unique($edited_fields));
+
+    if ($edited_fields === []) {
+        delete_post_meta($post_id, '_movies_theme_edited_fields');
+        delete_post_meta($post_id, '_movies_theme_previous_content');
+
+        return;
+    }
+
+    update_post_meta($post_id, '_movies_theme_edited_fields', $edited_fields);
+    update_post_meta($post_id, '_movies_theme_previous_content', $previous_content);
+}, 20);
+
+add_action('transition_post_status', function (string $new_status, string $old_status, WP_Post $post): void {
+    if (
+        $post->post_type === 'movies'
+        && $new_status === 'publish'
+        && $old_status !== 'publish'
+        && current_user_can('publish_movies')
+    ) {
+        delete_post_meta((int) $post->ID, '_movies_theme_edited_fields');
+        delete_post_meta((int) $post->ID, '_movies_theme_previous_content');
+    }
+}, 10, 3);
+
 add_action('init', function (): void {
     global $wp_rewrite;
     $wp_rewrite->author_base = 'contributors';
 });
+
+add_action('pre_get_posts', function (WP_Query $query): void {
+    if (!is_admin() || !$query->is_main_query() || $query->get('post_type') !== 'movies') {
+        return;
+    }
+
+    $user = wp_get_current_user();
+
+    if (!($user instanceof WP_User) || $user->roles !== ['contributor']) {
+        return;
+    }
+
+    // WordPress limits this list to the current author when edit_others_movies
+    // is unavailable. Contributors may browse the shared list without gaining
+    // permission to edit or delete another contributor's movies.
+    $query->set('author', '');
+}, 100);
 
 add_action('admin_menu', function (): void {
     $user = wp_get_current_user();
