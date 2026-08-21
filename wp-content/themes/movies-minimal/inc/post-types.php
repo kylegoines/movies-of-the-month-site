@@ -105,6 +105,37 @@ add_action('init', function (): void {
         'show_in_rest' => true,
     ]);
 
+    register_post_type('showdown', [
+        'labels' => [
+            'name' => 'Showdowns',
+            'singular_name' => 'Showdown',
+            'add_new' => 'Add Showdown',
+            'add_new_item' => 'Add New Showdown',
+            'edit_item' => 'Edit Showdown',
+            'new_item' => 'New Showdown',
+            'view_item' => 'View Showdown',
+            'view_items' => 'View Showdowns',
+            'search_items' => 'Search Showdowns',
+            'not_found' => 'No showdowns found',
+            'not_found_in_trash' => 'No showdowns found in Trash',
+            'all_items' => 'All Showdowns',
+            'archives' => 'Showdown Archives',
+            'attributes' => 'Showdown Attributes',
+            'menu_name' => 'Showdowns',
+        ],
+        'public' => true,
+        'has_archive' => true,
+        'menu_icon' => 'dashicons-awards',
+        'rewrite' => [
+            'slug' => 'showdowns',
+        ],
+        'supports' => [
+            'title',
+            'revisions',
+        ],
+        'show_in_rest' => true,
+    ]);
+
     register_post_type('mailing_signup', [
         'labels' => [
             'name' => 'Mailing List',

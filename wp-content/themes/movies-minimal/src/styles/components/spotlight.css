@@ -217,6 +217,49 @@
   .spotlight-mailing-modal__submit {
     margin: 0;
   }
+
+  .showdown-module__social-link {
+    align-items: center;
+    color: inherit;
+    display: inline-flex;
+    gap: 0.45rem;
+    outline: 0;
+    padding: 0.2rem 0.35rem;
+    text-decoration-line: underline;
+    text-decoration-thickness: 2px;
+    text-underline-offset: 4px;
+  }
+
+  .showdown-module__social-link:hover,
+  .showdown-module__social-link:focus-visible {
+    outline: 2px solid currentColor;
+    outline-offset: 4px;
+  }
+
+  .showdown-module:has(.showdown-module__social-link--twitter:hover),
+  .showdown-module:has(.showdown-module__social-link--twitter:focus-visible),
+  .showdown-module:has(.showdown-module__social-link--bluesky:hover),
+  .showdown-module:has(.showdown-module__social-link--bluesky:focus-visible) {
+    background: #0085ff;
+    border-color: #ffffff;
+    color: #ffffff;
+  }
+
+  .showdown-module:has(.showdown-module__social-link:hover) h2,
+  .showdown-module:has(.showdown-module__social-link:focus-visible) h2,
+  .showdown-module:has(.showdown-module__social-link:hover) .theme-strong,
+  .showdown-module:has(.showdown-module__social-link:focus-visible) .theme-strong,
+  .showdown-module:has(.showdown-module__social-link:hover) .showdown-module__social-link,
+  .showdown-module:has(.showdown-module__social-link:focus-visible) .showdown-module__social-link,
+  .showdown-module:has(.showdown-module__social-link:hover) .spotlight-marquee__track,
+  .showdown-module:has(.showdown-module__social-link:focus-visible) .spotlight-marquee__track {
+    color: #ffffff;
+  }
+
+  .showdown-module:has(.showdown-module__social-link:hover) .spotlight-marquee__dot,
+  .showdown-module:has(.showdown-module__social-link:focus-visible) .spotlight-marquee__dot {
+    background: #ffffff;
+  }
 }
 
 @keyframes spotlight-marquee {

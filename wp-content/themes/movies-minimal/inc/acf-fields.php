@@ -249,6 +249,55 @@ add_action('acf/init', function (): void {
     ]);
 
     acf_add_local_field_group([
+        'key' => 'group_movies_theme_showdown_details',
+        'title' => 'Showdown Details',
+        'fields' => [
+            [
+                'key' => 'field_movies_theme_showdown_progress_title',
+                'label' => 'Progress Title',
+                'name' => 'progress_title',
+                'type' => 'text',
+                'instructions' => 'Short progress/status line shown in the Showdown module.',
+                'required' => 0,
+                'default_value' => '',
+                'placeholder' => 'Voting now open',
+            ],
+            [
+                'key' => 'field_movies_theme_showdown_twitter_url',
+                'label' => 'Twitter/X URL',
+                'name' => 'twitter_url',
+                'type' => 'url',
+                'instructions' => 'Optional Twitter/X link for this Showdown.',
+                'required' => 0,
+                'default_value' => '',
+                'placeholder' => 'https://x.com/yourhandle/status/...',
+            ],
+            [
+                'key' => 'field_movies_theme_showdown_bluesky_url',
+                'label' => 'Bluesky URL',
+                'name' => 'bluesky_url',
+                'type' => 'url',
+                'instructions' => 'Optional Bluesky link for this Showdown.',
+                'required' => 0,
+                'default_value' => '',
+                'placeholder' => 'https://bsky.app/profile/yourhandle/post/...',
+            ],
+        ],
+        'location' => [
+            [
+                [
+                    'param' => 'post_type',
+                    'operator' => '==',
+                    'value' => 'showdown',
+                ],
+            ],
+        ],
+        'position' => 'normal',
+        'style' => 'default',
+        'active' => true,
+    ]);
+
+    acf_add_local_field_group([
         'key' => 'group_movies_theme_movie_details',
         'title' => 'Movie Details',
         'fields' => [

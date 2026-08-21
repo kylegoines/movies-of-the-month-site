@@ -8,18 +8,21 @@ get_header();
   $current_view = isset($_GET['view']) ? sanitize_key(wp_unslash($_GET['view'])) : '';
   $show_home_intro = $current_view !== 'past-months';
   $home_intro_post = $show_home_intro ? movies_theme_get_home_intro() : null;
+  $showdown_post = $show_home_intro ? movies_theme_get_current_showdown() : null;
   $featured_movie = $show_home_intro ? movies_theme_get_featured_movie() : null;
   $recent_activity = $show_home_intro ? movies_theme_get_recent_movie_activity() : [];
   $show_home_top_section = $show_home_intro && (
       $home_intro_post instanceof WP_Post
+      || $showdown_post instanceof WP_Post
       || $featured_movie instanceof WP_Post
   );
   ?>
 
   <?php if ($show_home_top_section) : ?>
     <section class="md:grid gap-10 lg:grid-cols-[minmax(0,1fr)_280px] lg:items-start">
-      <?php if ($featured_movie instanceof WP_Post) : ?>
+      <?php if ($showdown_post instanceof WP_Post || $featured_movie instanceof WP_Post) : ?>
         <div class="hidden lg:order-2 lg:block lg:sticky lg:top-[40px]">
+          <?php if ($featured_movie instanceof WP_Post) : ?>
           <aside class="theme-accent overflow-hidden border-3 border pt-0 px-0 pb-5 lg:min-h-[120px]">
             <div class="spotlight-marquee px-0">
               <div class="spotlight-marquee__track">
@@ -119,6 +122,13 @@ get_header();
               </div>
             <?php endif; ?>
           </aside>
+          <?php endif; ?>
+
+          <?php if ($showdown_post instanceof WP_Post) : ?>
+            <div class="<?php echo $featured_movie instanceof WP_Post ? 'mt-4' : ''; ?>">
+              <?php get_template_part('components/showdown', 'module', ['showdown' => $showdown_post]); ?>
+            </div>
+          <?php endif; ?>
 
           <div class="pt-4">
             <button
@@ -141,8 +151,9 @@ get_header();
           </div>
         <?php endif; ?>
 
-        <?php if ($featured_movie instanceof WP_Post) : ?>
+        <?php if ($showdown_post instanceof WP_Post || $featured_movie instanceof WP_Post) : ?>
           <div class="mt-6 mb-10 lg:hidden">
+          <?php if ($featured_movie instanceof WP_Post) : ?>
           <aside class="theme-accent overflow-hidden border-3 border pt-0 px-0 pb-5">
             <div class="spotlight-marquee px-0">
               <div class="spotlight-marquee__track">
@@ -221,6 +232,14 @@ get_header();
               </div>
             <?php endif; ?>
           </aside>
+          <?php endif; ?>
+
+          <?php if ($showdown_post instanceof WP_Post) : ?>
+            <div class="<?php echo $featured_movie instanceof WP_Post ? 'mt-4' : ''; ?>">
+              <?php get_template_part('components/showdown', 'module', ['showdown' => $showdown_post]); ?>
+            </div>
+          <?php endif; ?>
+
             <div class="pt-4">
               <button
                 class="spotlight-mailing-button"

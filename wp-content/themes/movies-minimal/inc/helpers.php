@@ -567,6 +567,51 @@ function movies_theme_get_featured_movie(): ?WP_Post
     return $movies[0];
 }
 
+function movies_theme_get_current_showdown(): ?WP_Post
+{
+    $showdowns = get_posts([
+        'post_type' => 'showdown',
+        'posts_per_page' => 1,
+        'post_status' => 'publish',
+        'orderby' => 'date',
+        'order' => 'DESC',
+        'no_found_rows' => true,
+    ]);
+
+    if ($showdowns === []) {
+        return null;
+    }
+
+    return $showdowns[0];
+}
+
+function movies_theme_get_showdown_progress_title(int $post_id): string
+{
+    if (!function_exists('get_field')) {
+        return '';
+    }
+
+    return trim((string) get_field('progress_title', $post_id));
+}
+
+function movies_theme_get_showdown_twitter_url(int $post_id): string
+{
+    if (!function_exists('get_field')) {
+        return '';
+    }
+
+    return trim((string) get_field('twitter_url', $post_id));
+}
+
+function movies_theme_get_showdown_bluesky_url(int $post_id): string
+{
+    if (!function_exists('get_field')) {
+        return '';
+    }
+
+    return trim((string) get_field('bluesky_url', $post_id));
+}
+
 function movies_theme_get_recent_movie_activity(int $cluster_limit = 6, int $post_limit = 36): array
 {
     $movies = get_posts([

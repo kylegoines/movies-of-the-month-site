@@ -163,7 +163,9 @@ add_filter('wp_insert_post_data', function (array $data, array $postarr): array 
 
     $post_id = isset($postarr['ID']) ? (int) $postarr['ID'] : 0;
 
-    if ($post_id < 1 || get_post_status($post_id) !== 'publish') {
+    $current_status = $post_id > 0 ? get_post_status($post_id) : false;
+
+    if ($post_id < 1 || !in_array($current_status, ['publish', 'pending'], true)) {
         return $data;
     }
 
