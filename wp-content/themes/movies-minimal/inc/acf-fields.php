@@ -116,6 +116,24 @@ add_action('acf/init', function (): void {
         ]);
     }
 
+    if (function_exists('acf_add_options_sub_page')) {
+        acf_add_options_sub_page([
+            'page_title' => 'Showdown Settings',
+            'menu_title' => 'Showdown Settings',
+            'menu_slug' => 'movies-showdown-settings',
+            'parent_slug' => 'movies-theme-settings',
+            'capability' => 'edit_posts',
+        ]);
+
+        acf_add_options_sub_page([
+            'page_title' => 'Email Settings',
+            'menu_title' => 'Email Settings',
+            'menu_slug' => 'movies-email-settings',
+            'parent_slug' => 'movies-theme-settings',
+            'capability' => 'edit_posts',
+        ]);
+    }
+
     $scale_label_config = movies_theme_get_scale_label_config();
 
     acf_add_local_field_group([
@@ -142,6 +160,25 @@ add_action('acf/init', function (): void {
                 'default_value' => '',
                 'placeholder' => 'https://bsky.app/profile/yourhandle',
             ],
+        ],
+        'location' => [
+            [
+                [
+                    'param' => 'options_page',
+                    'operator' => '==',
+                    'value' => 'movies-theme-settings',
+                ],
+            ],
+        ],
+        'position' => 'normal',
+        'style' => 'default',
+        'active' => true,
+    ]);
+
+    acf_add_local_field_group([
+        'key' => 'group_movies_theme_email_settings',
+        'title' => 'Email Settings',
+        'fields' => [
             [
                 'key' => 'field_movies_theme_settings_mailing_confirmation_enabled',
                 'label' => 'Send Mailing List Confirmation Email',
@@ -179,7 +216,54 @@ add_action('acf/init', function (): void {
                 [
                     'param' => 'options_page',
                     'operator' => '==',
-                    'value' => 'movies-theme-settings',
+                    'value' => 'movies-email-settings',
+                ],
+            ],
+        ],
+        'position' => 'normal',
+        'style' => 'default',
+        'active' => true,
+    ]);
+
+    acf_add_local_field_group([
+        'key' => 'group_movies_theme_showdown_settings',
+        'title' => 'Showdown Settings',
+        'fields' => [
+            [
+                'key' => 'field_movies_theme_settings_show_showdown_module',
+                'label' => 'Show Showdown Module',
+                'name' => 'show_showdown_module',
+                'type' => 'true_false',
+                'instructions' => 'Turn this off to hide the entire Showdown module from the homepage.',
+                'required' => 0,
+                'ui' => 1,
+                'default_value' => 1,
+            ],
+            [
+                'key' => 'field_movies_theme_settings_active_showdown',
+                'label' => 'Active Showdown',
+                'name' => 'active_showdown',
+                'type' => 'post_object',
+                'instructions' => 'Choose the Showdown displayed on the homepage. Leave blank to use the newest published Showdown.',
+                'required' => 0,
+                'post_type' => [
+                    'showdown',
+                ],
+                'post_status' => [
+                    'publish',
+                ],
+                'return_format' => 'id',
+                'allow_null' => 1,
+                'multiple' => 0,
+                'ui' => 1,
+            ],
+        ],
+        'location' => [
+            [
+                [
+                    'param' => 'options_page',
+                    'operator' => '==',
+                    'value' => 'movies-showdown-settings',
                 ],
             ],
         ],
@@ -253,6 +337,23 @@ add_action('acf/init', function (): void {
         'title' => 'Showdown Details',
         'fields' => [
             [
+                'key' => 'field_movies_theme_showdown_mode',
+                'label' => 'Display Mode',
+                'name' => 'showdown_mode',
+                'type' => 'select',
+                'instructions' => 'Choose whether this Showdown is accepting votes or announcing a winner.',
+                'required' => 1,
+                'choices' => [
+                    'voting' => 'Voting',
+                    'finals' => 'Finals',
+                    'winner' => 'Winner',
+                ],
+                'default_value' => 'voting',
+                'return_format' => 'value',
+                'allow_null' => 0,
+                'ui' => 0,
+            ],
+            [
                 'key' => 'field_movies_theme_showdown_progress_title',
                 'label' => 'Progress Title',
                 'name' => 'progress_title',
@@ -261,26 +362,221 @@ add_action('acf/init', function (): void {
                 'required' => 0,
                 'default_value' => '',
                 'placeholder' => 'Voting now open',
+                'conditional_logic' => [
+                    [
+                        [
+                            'field' => 'field_movies_theme_showdown_mode',
+                            'operator' => '==',
+                            'value' => 'voting',
+                        ],
+                    ],
+                ],
             ],
             [
                 'key' => 'field_movies_theme_showdown_twitter_url',
                 'label' => 'Twitter/X URL',
                 'name' => 'twitter_url',
                 'type' => 'url',
-                'instructions' => 'Optional Twitter/X link for this Showdown.',
+                'instructions' => 'Optional Twitter/X poll or results link for this Showdown.',
                 'required' => 0,
                 'default_value' => '',
                 'placeholder' => 'https://x.com/yourhandle/status/...',
+                'conditional_logic' => [
+                    [
+                        [
+                            'field' => 'field_movies_theme_showdown_mode',
+                            'operator' => '==',
+                            'value' => 'voting',
+                        ],
+                    ],
+                    [
+                        [
+                            'field' => 'field_movies_theme_showdown_mode',
+                            'operator' => '==',
+                            'value' => 'finals',
+                        ],
+                    ],
+                    [
+                        [
+                            'field' => 'field_movies_theme_showdown_mode',
+                            'operator' => '==',
+                            'value' => 'winner',
+                        ],
+                    ],
+                ],
             ],
             [
                 'key' => 'field_movies_theme_showdown_bluesky_url',
                 'label' => 'Bluesky URL',
                 'name' => 'bluesky_url',
                 'type' => 'url',
-                'instructions' => 'Optional Bluesky link for this Showdown.',
+                'instructions' => 'Optional Bluesky poll or results link for this Showdown.',
                 'required' => 0,
                 'default_value' => '',
                 'placeholder' => 'https://bsky.app/profile/yourhandle/post/...',
+                'conditional_logic' => [
+                    [
+                        [
+                            'field' => 'field_movies_theme_showdown_mode',
+                            'operator' => '==',
+                            'value' => 'voting',
+                        ],
+                    ],
+                    [
+                        [
+                            'field' => 'field_movies_theme_showdown_mode',
+                            'operator' => '==',
+                            'value' => 'finals',
+                        ],
+                    ],
+                    [
+                        [
+                            'field' => 'field_movies_theme_showdown_mode',
+                            'operator' => '==',
+                            'value' => 'winner',
+                        ],
+                    ],
+                ],
+            ],
+            [
+                'key' => 'field_movies_theme_showdown_winner_label',
+                'label' => 'Winner Label',
+                'name' => 'winner_label',
+                'type' => 'text',
+                'instructions' => 'Short text displayed above the winning poster.',
+                'required' => 0,
+                'default_value' => 'Winner',
+                'placeholder' => 'Winner',
+                'conditional_logic' => [
+                    [
+                        [
+                            'field' => 'field_movies_theme_showdown_mode',
+                            'operator' => '==',
+                            'value' => 'winner',
+                        ],
+                    ],
+                ],
+            ],
+            [
+                'key' => 'field_movies_theme_showdown_finals_label',
+                'label' => 'Finals Label',
+                'name' => 'finals_label',
+                'type' => 'text',
+                'instructions' => 'Short text displayed above the finalist poster row.',
+                'required' => 0,
+                'default_value' => 'Finalists',
+                'placeholder' => 'Finalists',
+                'conditional_logic' => [
+                    [
+                        [
+                            'field' => 'field_movies_theme_showdown_mode',
+                            'operator' => '==',
+                            'value' => 'finals',
+                        ],
+                    ],
+                ],
+            ],
+            [
+                'key' => 'field_movies_theme_showdown_finals_posters',
+                'label' => 'Finalist Posters',
+                'name' => 'finals_posters',
+                'type' => 'gallery',
+                'instructions' => 'Upload or select any number of posters to display in a randomly ordered row.',
+                'required' => 0,
+                'return_format' => 'id',
+                'preview_size' => 'medium',
+                'insert' => 'append',
+                'library' => 'all',
+                'conditional_logic' => [
+                    [
+                        [
+                            'field' => 'field_movies_theme_showdown_mode',
+                            'operator' => '==',
+                            'value' => 'finals',
+                        ],
+                    ],
+                ],
+            ],
+            [
+                'key' => 'field_movies_theme_showdown_winner_movie',
+                'label' => 'Winner Movie',
+                'name' => 'winner_movie',
+                'type' => 'post_object',
+                'instructions' => 'Optionally select an existing Movie to use its title, poster, and link.',
+                'required' => 0,
+                'post_type' => [
+                    'movies',
+                ],
+                'return_format' => 'id',
+                'allow_null' => 1,
+                'multiple' => 0,
+                'ui' => 1,
+                'conditional_logic' => [
+                    [
+                        [
+                            'field' => 'field_movies_theme_showdown_mode',
+                            'operator' => '==',
+                            'value' => 'winner',
+                        ],
+                    ],
+                ],
+            ],
+            [
+                'key' => 'field_movies_theme_showdown_winner_title',
+                'label' => 'Winner Title',
+                'name' => 'winner_title',
+                'type' => 'text',
+                'instructions' => 'Optional title override. Leave blank to use the selected Movie title.',
+                'required' => 0,
+                'default_value' => '',
+                'conditional_logic' => [
+                    [
+                        [
+                            'field' => 'field_movies_theme_showdown_mode',
+                            'operator' => '==',
+                            'value' => 'winner',
+                        ],
+                    ],
+                ],
+            ],
+            [
+                'key' => 'field_movies_theme_showdown_winner_poster',
+                'label' => 'Winner Poster',
+                'name' => 'winner_poster',
+                'type' => 'image',
+                'instructions' => 'Optional poster override. Leave blank to use the selected Movie poster.',
+                'required' => 0,
+                'return_format' => 'id',
+                'preview_size' => 'medium',
+                'library' => 'all',
+                'conditional_logic' => [
+                    [
+                        [
+                            'field' => 'field_movies_theme_showdown_mode',
+                            'operator' => '==',
+                            'value' => 'winner',
+                        ],
+                    ],
+                ],
+            ],
+            [
+                'key' => 'field_movies_theme_showdown_winner_url',
+                'label' => 'Winner Link',
+                'name' => 'winner_url',
+                'type' => 'url',
+                'instructions' => 'Optional link override. Leave blank to link to the selected Movie, or leave both blank for no link.',
+                'required' => 0,
+                'default_value' => '',
+                'placeholder' => 'https://example.com/movie',
+                'conditional_logic' => [
+                    [
+                        [
+                            'field' => 'field_movies_theme_showdown_mode',
+                            'operator' => '==',
+                            'value' => 'winner',
+                        ],
+                    ],
+                ],
             ],
         ],
         'location' => [

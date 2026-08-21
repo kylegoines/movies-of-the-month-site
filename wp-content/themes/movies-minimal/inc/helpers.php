@@ -569,6 +569,25 @@ function movies_theme_get_featured_movie(): ?WP_Post
 
 function movies_theme_get_current_showdown(): ?WP_Post
 {
+    if (function_exists('get_field')) {
+        $active_showdown = get_field('active_showdown', 'option');
+        $active_showdown_id = $active_showdown instanceof WP_Post
+            ? $active_showdown->ID
+            : absint($active_showdown);
+
+        if ($active_showdown_id > 0) {
+            $active_showdown_post = get_post($active_showdown_id);
+
+            if (
+                $active_showdown_post instanceof WP_Post
+                && $active_showdown_post->post_type === 'showdown'
+                && $active_showdown_post->post_status === 'publish'
+            ) {
+                return $active_showdown_post;
+            }
+        }
+    }
+
     $showdowns = get_posts([
         'post_type' => 'showdown',
         'posts_per_page' => 1,
@@ -585,6 +604,22 @@ function movies_theme_get_current_showdown(): ?WP_Post
     return $showdowns[0];
 }
 
+function movies_theme_should_show_showdown_module(): bool
+{
+    if (!function_exists('get_field')) {
+        return true;
+    }
+
+    $missing_value = '__movies_theme_showdown_setting_missing__';
+    $stored_value = get_option('options_show_showdown_module', $missing_value);
+
+    if ($stored_value === $missing_value) {
+        return true;
+    }
+
+    return (bool) get_field('show_showdown_module', 'option');
+}
+
 function movies_theme_get_showdown_progress_title(int $post_id): string
 {
     if (!function_exists('get_field')) {
@@ -592,6 +627,19 @@ function movies_theme_get_showdown_progress_title(int $post_id): string
     }
 
     return trim((string) get_field('progress_title', $post_id));
+}
+
+function movies_theme_get_showdown_mode(int $post_id): string
+{
+    if (!function_exists('get_field')) {
+        return 'voting';
+    }
+
+    $showdown_mode = (string) get_field('showdown_mode', $post_id);
+
+    return in_array($showdown_mode, ['voting', 'finals', 'winner'], true)
+        ? $showdown_mode
+        : 'voting';
 }
 
 function movies_theme_get_showdown_twitter_url(int $post_id): string
@@ -610,6 +658,110 @@ function movies_theme_get_showdown_bluesky_url(int $post_id): string
     }
 
     return trim((string) get_field('bluesky_url', $post_id));
+}
+
+function movies_theme_get_showdown_finals_label(int $post_id): string
+{
+    if (!function_exists('get_field')) {
+        return 'Finalists';
+    }
+
+    $finals_label = trim((string) get_field('finals_label', $post_id));
+
+    return $finals_label !== '' ? $finals_label : 'Finalists';
+}
+
+function movies_theme_get_showdown_finals_poster_ids(int $post_id): array
+{
+    static $poster_ids_by_showdown = [];
+
+    if (array_key_exists($post_id, $poster_ids_by_showdown)) {
+        return $poster_ids_by_showdown[$post_id];
+    }
+
+    if (!function_exists('get_field')) {
+        return [];
+    }
+
+    $finals_posters = get_field('finals_posters', $post_id);
+
+    if (!is_array($finals_posters)) {
+        return [];
+    }
+
+    $poster_ids = array_values(array_filter(array_map(static function ($poster): int {
+        if ($poster instanceof WP_Post) {
+            return (int) $poster->ID;
+        }
+
+        if (is_array($poster) && isset($poster['ID'])) {
+            return (int) $poster['ID'];
+        }
+
+        return (int) $poster;
+    }, $finals_posters)));
+
+    if (count($poster_ids) > 1) {
+        shuffle($poster_ids);
+    }
+
+    $poster_ids_by_showdown[$post_id] = $poster_ids;
+
+    return $poster_ids;
+}
+
+function movies_theme_get_showdown_winner_data(int $post_id): array
+{
+    $winner_data = [
+        'label' => 'Winner',
+        'movie_id' => 0,
+        'title' => '',
+        'poster_id' => 0,
+        'url' => '',
+    ];
+
+    if (!function_exists('get_field')) {
+        return $winner_data;
+    }
+
+    $winner_movie = get_field('winner_movie', $post_id);
+
+    if ($winner_movie instanceof WP_Post) {
+        $winner_data['movie_id'] = (int) $winner_movie->ID;
+    } elseif (is_array($winner_movie) && isset($winner_movie['ID'])) {
+        $winner_data['movie_id'] = (int) $winner_movie['ID'];
+    } else {
+        $winner_data['movie_id'] = (int) $winner_movie;
+    }
+
+    $winner_label = trim((string) get_field('winner_label', $post_id));
+    $winner_title = trim((string) get_field('winner_title', $post_id));
+    $winner_poster_id = (int) get_field('winner_poster', $post_id);
+    $winner_url = trim((string) get_field('winner_url', $post_id));
+
+    if ($winner_label !== '') {
+        $winner_data['label'] = $winner_label;
+    }
+
+    if ($winner_title !== '') {
+        $winner_data['title'] = $winner_title;
+    } elseif ($winner_data['movie_id'] > 0) {
+        $winner_data['title'] = get_the_title($winner_data['movie_id']);
+    }
+
+    if ($winner_poster_id > 0) {
+        $winner_data['poster_id'] = $winner_poster_id;
+    } elseif ($winner_data['movie_id'] > 0) {
+        $winner_data['poster_id'] = (int) get_post_thumbnail_id($winner_data['movie_id']);
+    }
+
+    if ($winner_url !== '') {
+        $winner_data['url'] = $winner_url;
+    } elseif ($winner_data['movie_id'] > 0) {
+        $winner_data['url'] = (string) get_permalink($winner_data['movie_id']);
+    }
+
+    return $winner_data;
 }
 
 function movies_theme_get_recent_movie_activity(int $cluster_limit = 6, int $post_limit = 36): array

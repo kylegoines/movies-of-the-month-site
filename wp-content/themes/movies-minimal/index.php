@@ -8,7 +8,9 @@ get_header();
   $current_view = isset($_GET['view']) ? sanitize_key(wp_unslash($_GET['view'])) : '';
   $show_home_intro = $current_view !== 'past-months';
   $home_intro_post = $show_home_intro ? movies_theme_get_home_intro() : null;
-  $showdown_post = $show_home_intro ? movies_theme_get_current_showdown() : null;
+  $showdown_post = $show_home_intro && movies_theme_should_show_showdown_module()
+      ? movies_theme_get_current_showdown()
+      : null;
   $featured_movie = $show_home_intro ? movies_theme_get_featured_movie() : null;
   $recent_activity = $show_home_intro ? movies_theme_get_recent_movie_activity() : [];
   $show_home_top_section = $show_home_intro && (
