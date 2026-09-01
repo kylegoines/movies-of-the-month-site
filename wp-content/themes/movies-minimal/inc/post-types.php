@@ -1,5 +1,26 @@
 <?php
 
+function movies_theme_render_movie_badges_meta_box(WP_Post $post, array $box): void
+{
+    $taxonomy_name = isset($box['args']['taxonomy'])
+        ? (string) $box['args']['taxonomy']
+        : 'movie_badge';
+
+    wp_nonce_field('taxonomy_' . $taxonomy_name, 'taxonomy_noncename', false);
+    ?>
+    <div class="tabs-panel">
+      <input type="hidden" name="tax_input[<?php echo esc_attr($taxonomy_name); ?>][]" value="0">
+      <ul class="categorychecklist form-no-clear">
+        <?php wp_terms_checklist($post->ID, [
+            'taxonomy' => $taxonomy_name,
+            'checked_ontop' => false,
+        ]); ?>
+      </ul>
+    </div>
+    <p class="howto">Create and edit badge artwork under Movies &rarr; Badges.</p>
+    <?php
+}
+
 add_action('init', function (): void {
     register_post_type('movies', [
         'labels' => [
@@ -41,6 +62,41 @@ add_action('init', function (): void {
             'revisions',
         ],
         'show_in_rest' => true,
+    ]);
+
+    register_taxonomy('movie_badge', ['movies'], [
+        'labels' => [
+            'name' => 'Badges',
+            'singular_name' => 'Badge',
+            'search_items' => 'Search Badges',
+            'all_items' => 'All Badges',
+            'edit_item' => 'Edit Badge',
+            'view_item' => 'View Badge',
+            'update_item' => 'Update Badge',
+            'add_new_item' => 'Add New Badge',
+            'new_item_name' => 'New Badge Name',
+            'not_found' => 'No badges found',
+            'no_terms' => 'No badges',
+            'items_list_navigation' => 'Badges list navigation',
+            'items_list' => 'Badges list',
+            'back_to_items' => 'Back to Badges',
+            'menu_name' => 'Badges',
+        ],
+        'public' => false,
+        'show_ui' => true,
+        'show_admin_column' => true,
+        'show_in_nav_menus' => false,
+        'show_in_rest' => true,
+        'hierarchical' => true,
+        'meta_box_cb' => 'movies_theme_render_movie_badges_meta_box',
+        'rewrite' => false,
+        'query_var' => false,
+        'capabilities' => [
+            'manage_terms' => 'manage_movie_badges',
+            'edit_terms' => 'edit_movie_badges',
+            'delete_terms' => 'delete_movie_badges',
+            'assign_terms' => 'assign_movie_badges',
+        ],
     ]);
 
     register_post_type('collection', [

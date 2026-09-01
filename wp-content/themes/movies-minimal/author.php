@@ -11,6 +11,7 @@ $author_bio = $author_custom_bio !== ''
     : trim((string) get_the_author_meta('description', $author_id));
 $author_categories = movies_theme_get_author_movie_categories($author_id);
 $author_category_stats = movies_theme_get_author_movie_category_stats($author_id);
+$author_badges = movies_theme_get_contributor_badges($author_id);
 $author_user = get_userdata($author_id);
 $author_roles = $author_user instanceof WP_User ? array_values($author_user->roles) : [];
 $author_role_badges = [];
@@ -129,6 +130,17 @@ $author_heading = $active_category_term instanceof WP_Term
         </div>
         <?php endif; ?>
       </aside>
+    <?php endif; ?>
+
+    <?php if ($author_badges !== []) : ?>
+      <section class="theme-border rhythm-md border-t pt-4" aria-labelledby="author-collections-title">
+        <h2 id="author-collections-title" class="theme-muted text-xs font-bold uppercase tracking-[0.18em] rhythm-sm lg:rhythm-md">
+          Collections
+        </h2>
+        <?php get_template_part('components/contributor', 'accolades', [
+            'badges' => $author_badges,
+        ]); ?>
+      </section>
     <?php endif; ?>
   </header>
 

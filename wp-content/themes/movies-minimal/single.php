@@ -17,6 +17,7 @@ get_header();
       $year = movies_theme_get_year($movie_id);
       $runtime = movies_theme_get_runtime($movie_id);
       $genre = movies_theme_get_movie_category_list($movie_id);
+      $movie_badges = movies_theme_get_movie_badges($movie_id);
       $the_pitch = movies_theme_get_the_pitch($movie_id);
       $feature_title = movies_theme_get_feature_title($movie_id);
       $feature_byline_label = movies_theme_get_feature_byline_label($movie_id);
@@ -76,6 +77,7 @@ get_header();
                 'year' => $year,
                 'runtime' => $runtime,
                 'genre' => $genre,
+                'movie_badges' => $movie_badges,
                 'the_pitch' => $the_pitch,
                 'feature_title' => $feature_title,
                 'feature_byline_label' => $feature_byline_label,

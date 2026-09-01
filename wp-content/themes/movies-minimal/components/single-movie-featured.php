@@ -8,6 +8,7 @@ $editorial_author_name = $args['editorial_author_name'] ?? $movie_author_name;
 $year = $args['year'] ?? '';
 $runtime = $args['runtime'] ?? '';
 $genre = $args['genre'] ?? '';
+$movie_badges = $args['movie_badges'] ?? [];
 $the_pitch = $args['the_pitch'] ?? '';
 $feature_title = $args['feature_title'] ?? '';
 $feature_byline_label = $args['feature_byline_label'] ?? 'Thoughts by';
@@ -104,9 +105,14 @@ $content_pullquotes = array_values(array_filter($pullquotes, static function (ar
     </div>
 
     <div class="movie-card theme-body grid max-w-[720px] gap-1.5 text-sm md:text-base mt-[40px] border-4 p-4">
-        <h2 class="page-header__title theme-strong rhythm-md">
-            <?php the_title(); ?>
-        </h2>
+      <h2 class="page-header__title theme-strong rhythm-md">
+        <?php the_title(); ?>
+      </h2>
+
+      <?php get_template_part('components/movie', 'badges', [
+          'badges' => $movie_badges,
+      ]); ?>
+
       <p>
         <span class="theme-strong font-bold">Recommended by:</span>
         <a
@@ -154,20 +160,21 @@ $content_pullquotes = array_values(array_filter($pullquotes, static function (ar
         </div>
       <?php endif; ?>
 
-
-          <div class="collection-heart mt-7">
-      <button
-        class="collection-heart__button"
-        type="button"
-        data-heart-button
-        data-post-id="<?php echo esc_attr((string) $movie_id); ?>"
-        aria-pressed="<?php echo $is_liked ? 'true' : 'false'; ?>"
-      >
-        <span class="collection-heart__icon" aria-hidden="true"><?php echo $is_liked ? '♥' : '♡'; ?></span>
-        <span class="collection-heart__label">Recommend</span>
-        <span class="collection-heart__count" data-heart-count><?php echo esc_html((string) $heart_count); ?></span>
-      </button>
-    </div>
+      <div class="mt-7">
+        <div class="collection-heart">
+          <button
+            class="collection-heart__button"
+            type="button"
+            data-heart-button
+            data-post-id="<?php echo esc_attr((string) $movie_id); ?>"
+            aria-pressed="<?php echo $is_liked ? 'true' : 'false'; ?>"
+          >
+            <span class="collection-heart__icon" aria-hidden="true"><?php echo $is_liked ? '♥' : '♡'; ?></span>
+            <span class="collection-heart__label">Recommend</span>
+            <span class="collection-heart__count" data-heart-count><?php echo esc_html((string) $heart_count); ?></span>
+          </button>
+        </div>
+      </div>
     </div>
 
 

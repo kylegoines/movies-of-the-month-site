@@ -513,6 +513,119 @@ function movies_theme_get_movie_category_list(int $post_id): string
     return implode(', ', $names);
 }
 
+function movies_theme_should_show_badges(): bool
+{
+    if (!function_exists('get_field')) {
+        return true;
+    }
+
+    $missing_value = '__movies_theme_badges_setting_missing__';
+    $stored_value = get_option('options_show_badges', $missing_value);
+
+    if ($stored_value === $missing_value) {
+        return true;
+    }
+
+    return (bool) get_field('show_badges', 'option');
+}
+
+function movies_theme_get_movie_badges(int $post_id): array
+{
+    if (!movies_theme_should_show_badges()) {
+        return [];
+    }
+
+    $terms = wp_get_post_terms($post_id, 'movie_badge', [
+        'orderby' => 'name',
+        'order' => 'ASC',
+    ]);
+
+    if (is_wp_error($terms) || $terms === []) {
+        return [];
+    }
+
+    return array_values(array_map(static function (WP_Term $term): array {
+        $term_reference = 'movie_badge_' . $term->term_id;
+        $svg_value = function_exists('get_field')
+            ? get_field('badge_svg', $term_reference)
+            : get_term_meta($term->term_id, 'badge_svg', true);
+        $svg_id = is_array($svg_value)
+            ? (int) ($svg_value['ID'] ?? $svg_value['id'] ?? 0)
+            : (int) $svg_value;
+        $svg_url = '';
+
+        if ($svg_id > 0 && get_post_mime_type($svg_id) === 'image/svg+xml') {
+            $attachment_url = wp_get_attachment_url($svg_id);
+            $svg_url = is_string($attachment_url) ? $attachment_url : '';
+        }
+
+        $color_value = function_exists('get_field')
+            ? get_field('badge_color', $term_reference)
+            : get_term_meta($term->term_id, 'badge_color', true);
+        $color = sanitize_hex_color(is_string($color_value) ? $color_value : '');
+        $size_value = function_exists('get_field')
+            ? get_field('badge_size', $term_reference)
+            : get_term_meta($term->term_id, 'badge_size', true);
+        $size = absint($size_value);
+        $size = $size > 0 ? max(10, min(100, $size)) : 25;
+
+        return [
+            'term_id' => (int) $term->term_id,
+            'name' => $term->name,
+            'description' => trim(wp_strip_all_tags($term->description, true)),
+            'svg_url' => $svg_url,
+            'color' => is_string($color) && $color !== '' ? $color : '#111111',
+            'size' => $size,
+        ];
+    }, $terms));
+}
+
+function movies_theme_get_contributor_badges(int $author_id): array
+{
+    if ($author_id <= 0 || !movies_theme_should_show_badges()) {
+        return [];
+    }
+
+    $movie_ids = get_posts([
+        'post_type' => 'movies',
+        'post_status' => 'publish',
+        'author' => $author_id,
+        'posts_per_page' => -1,
+        'orderby' => 'date',
+        'order' => 'DESC',
+        'fields' => 'ids',
+        'no_found_rows' => true,
+    ]);
+
+    if ($movie_ids === []) {
+        return [];
+    }
+
+    $badges_by_term = [];
+
+    foreach ($movie_ids as $movie_id) {
+        foreach (movies_theme_get_movie_badges((int) $movie_id) as $badge) {
+            $term_id = (int) ($badge['term_id'] ?? 0);
+
+            if ($term_id <= 0 || isset($badges_by_term[$term_id])) {
+                continue;
+            }
+
+            $movie_url = get_permalink((int) $movie_id);
+            $badge['movie_id'] = (int) $movie_id;
+            $badge['movie_title'] = get_the_title((int) $movie_id);
+            $badge['movie_url'] = is_string($movie_url) ? $movie_url : '';
+            $badges_by_term[$term_id] = $badge;
+        }
+    }
+
+    uasort($badges_by_term, static function (array $left, array $right): int {
+        return strcasecmp((string) ($left['name'] ?? ''), (string) ($right['name'] ?? ''));
+    });
+
+    return array_values($badges_by_term);
+}
+
 function movies_theme_get_movie_scale_value_label(int $post_id, string $field_name): string
 {
     if (!function_exists('get_field')) {

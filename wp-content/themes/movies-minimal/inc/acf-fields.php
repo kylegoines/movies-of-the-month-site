@@ -141,6 +141,16 @@ add_action('acf/init', function (): void {
         'title' => 'Theme Settings',
         'fields' => [
             [
+                'key' => 'field_movies_theme_settings_show_badges',
+                'label' => 'Show Badges',
+                'name' => 'show_badges',
+                'type' => 'true_false',
+                'instructions' => 'Turn this off to hide badges from all movie pages. Badge assignments and settings will be preserved.',
+                'required' => 0,
+                'ui' => 1,
+                'default_value' => 1,
+            ],
+            [
                 'key' => 'field_movies_theme_settings_signup_twitter_url',
                 'label' => 'Signup Twitter URL',
                 'name' => 'signup_twitter_url',
@@ -590,6 +600,69 @@ add_action('acf/init', function (): void {
         ],
         'position' => 'normal',
         'style' => 'default',
+        'active' => true,
+    ]);
+
+    acf_add_local_field_group([
+        'key' => 'group_movies_theme_movie_badge_details',
+        'title' => 'Badge Details',
+        'fields' => [
+            [
+                'key' => 'field_movies_theme_movie_badge_note',
+                'label' => 'Badge Content',
+                'name' => '',
+                'type' => 'message',
+                'message' => 'Use the badge Name above as its label and keep the Description short. The SVG is displayed using the selected color.',
+                'new_lines' => 'wpautop',
+                'esc_html' => 1,
+            ],
+            [
+                'key' => 'field_movies_theme_movie_badge_svg',
+                'label' => 'Badge SVG',
+                'name' => 'badge_svg',
+                'type' => 'file',
+                'instructions' => 'Upload a simple SVG icon for this badge.',
+                'required' => 1,
+                'return_format' => 'id',
+                'library' => 'all',
+                'mime_types' => 'svg',
+            ],
+            [
+                'key' => 'field_movies_theme_movie_badge_color',
+                'label' => 'Badge Color',
+                'name' => 'badge_color',
+                'type' => 'color_picker',
+                'instructions' => 'Choose the color used to display the SVG.',
+                'required' => 1,
+                'default_value' => '#111111',
+                'enable_opacity' => 0,
+            ],
+            [
+                'key' => 'field_movies_theme_movie_badge_size',
+                'label' => 'Icon Size',
+                'name' => 'badge_size',
+                'type' => 'number',
+                'instructions' => 'Set the square display size for this badge. The default is 25 × 25 pixels.',
+                'required' => 0,
+                'default_value' => 25,
+                'min' => 10,
+                'max' => 100,
+                'step' => 1,
+                'append' => 'px',
+            ],
+        ],
+        'location' => [
+            [
+                [
+                    'param' => 'taxonomy',
+                    'operator' => '==',
+                    'value' => 'movie_badge',
+                ],
+            ],
+        ],
+        'position' => 'normal',
+        'style' => 'default',
+        'show_in_rest' => 1,
         'active' => true,
     ]);
 

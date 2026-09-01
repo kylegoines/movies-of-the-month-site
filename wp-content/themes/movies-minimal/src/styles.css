@@ -4,6 +4,7 @@
 @import './styles/utilities/rhythm.css';
 @import './styles/components/collection-activity-panel.css';
 @import './styles/components/filter.css';
+@import './styles/components/movie-badges.css';
 @import './styles/components/poster.css';
 @import './styles/components/site-marquee.css';
 @import './styles/components/signup.css';

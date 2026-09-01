@@ -44,6 +44,10 @@ add_action('init', function (): void {
         'edit_private_collections',
         'edit_published_collections',
         'create_collections',
+        'manage_movie_badges',
+        'edit_movie_badges',
+        'delete_movie_badges',
+        'assign_movie_badges',
     ];
 
     $contributor_movie_caps = [
@@ -73,6 +77,10 @@ add_action('init', function (): void {
         'read_private_collections',
         'edit_private_collections',
         'delete_private_collections',
+        'manage_movie_badges',
+        'edit_movie_badges',
+        'delete_movie_badges',
+        'assign_movie_badges',
     ];
 
     $core_contributor_movie_caps = array_merge($contributor_movie_caps, [
@@ -151,10 +159,226 @@ add_action('init', function (): void {
         'read_private_collections',
         'edit_private_collections',
         'delete_private_collections',
+        'manage_movie_badges',
+        'edit_movie_badges',
+        'delete_movie_badges',
+        'assign_movie_badges',
     ] as $capability) {
         $core_contributor->remove_cap($capability);
     }
 }, 20);
+
+function movies_theme_sanitize_badge_svg(string $svg): string
+{
+    if (
+        $svg === ''
+        || !class_exists('DOMDocument')
+        || stripos($svg, '<!DOCTYPE') !== false
+        || stripos($svg, '<!ENTITY') !== false
+    ) {
+        return '';
+    }
+
+    $previous_error_state = libxml_use_internal_errors(true);
+    $document = new DOMDocument();
+    $loaded = $document->loadXML(
+        $svg,
+        LIBXML_NONET | LIBXML_NOERROR | LIBXML_NOWARNING | LIBXML_COMPACT
+    );
+    libxml_clear_errors();
+    libxml_use_internal_errors($previous_error_state);
+
+    $root = $document->documentElement;
+
+    if (!$loaded || !($root instanceof DOMElement) || strtolower($root->localName) !== 'svg') {
+        return '';
+    }
+
+    $allowed_elements = [
+        'svg',
+        'g',
+        'path',
+        'circle',
+        'rect',
+        'ellipse',
+        'line',
+        'polyline',
+        'polygon',
+        'title',
+        'desc',
+    ];
+    $allowed_attributes = [
+        'xmlns',
+        'viewbox',
+        'width',
+        'height',
+        'x',
+        'y',
+        'x1',
+        'x2',
+        'y1',
+        'y2',
+        'cx',
+        'cy',
+        'r',
+        'rx',
+        'ry',
+        'd',
+        'points',
+        'fill',
+        'fill-rule',
+        'clip-rule',
+        'stroke',
+        'stroke-width',
+        'stroke-linecap',
+        'stroke-linejoin',
+        'stroke-miterlimit',
+        'opacity',
+        'fill-opacity',
+        'stroke-opacity',
+        'transform',
+        'preserveaspectratio',
+        'vector-effect',
+    ];
+    $paint_attributes = [
+        'fill',
+        'stroke',
+    ];
+
+    $sanitize_element = static function (DOMElement $element) use (
+        &$sanitize_element,
+        $allowed_elements,
+        $allowed_attributes,
+        $paint_attributes
+    ): void {
+        $child_nodes = [];
+
+        foreach ($element->childNodes as $child_node) {
+            $child_nodes[] = $child_node;
+        }
+
+        foreach ($child_nodes as $child_node) {
+            if (!($child_node instanceof DOMElement)) {
+                continue;
+            }
+
+            if (
+                !in_array(strtolower($child_node->localName), $allowed_elements, true)
+                || (
+                    $child_node->namespaceURI !== null
+                    && $child_node->namespaceURI !== ''
+                    && $child_node->namespaceURI !== 'http://www.w3.org/2000/svg'
+                )
+            ) {
+                $element->removeChild($child_node);
+                continue;
+            }
+
+            $sanitize_element($child_node);
+        }
+
+        $attributes = [];
+
+        foreach ($element->attributes as $attribute) {
+            $attributes[] = $attribute;
+        }
+
+        foreach ($attributes as $attribute) {
+            $attribute_name = strtolower($attribute->name);
+
+            if (
+                str_starts_with($attribute_name, 'on')
+                || !in_array($attribute_name, $allowed_attributes, true)
+            ) {
+                $element->removeAttributeNode($attribute);
+                continue;
+            }
+
+            if (
+                in_array($attribute_name, $paint_attributes, true)
+                && preg_match(
+                    '/^(?:none|currentcolor|transparent|#[0-9a-f]{3,8}|[a-z]+|rgba?\([0-9.,%\s]+\)|hsla?\([0-9.,%\s]+\))$/i',
+                    trim($attribute->value)
+                ) !== 1
+            ) {
+                $element->removeAttributeNode($attribute);
+            }
+        }
+    };
+
+    $sanitize_element($root);
+    $sanitized_svg = $document->saveXML($root);
+
+    return is_string($sanitized_svg) ? trim($sanitized_svg) : '';
+}
+
+add_filter('upload_mimes', function (array $mime_types): array {
+    if (current_user_can('manage_movie_badges')) {
+        $mime_types['svg'] = 'image/svg+xml';
+    }
+
+    return $mime_types;
+});
+
+add_filter('wp_check_filetype_and_ext', function (
+    array $filetype,
+    string $file,
+    string $filename,
+    ?array $mime_types,
+    $real_mime = false
+): array {
+    unset($file, $mime_types, $real_mime);
+
+    if (
+        current_user_can('manage_movie_badges')
+        && strtolower((string) pathinfo($filename, PATHINFO_EXTENSION)) === 'svg'
+    ) {
+        $filetype['ext'] = 'svg';
+        $filetype['type'] = 'image/svg+xml';
+        $filetype['proper_filename'] = false;
+    }
+
+    return $filetype;
+}, 10, 5);
+
+add_filter('wp_handle_upload_prefilter', function (array $file): array {
+    $filename = isset($file['name']) ? (string) $file['name'] : '';
+
+    if (strtolower((string) pathinfo($filename, PATHINFO_EXTENSION)) !== 'svg') {
+        return $file;
+    }
+
+    if (!current_user_can('manage_movie_badges')) {
+        $file['error'] = 'Only editors and administrators may upload badge SVG files.';
+        return $file;
+    }
+
+    $file_size = isset($file['size']) ? (int) $file['size'] : 0;
+
+    if ($file_size < 1 || $file_size > 512 * 1024) {
+        $file['error'] = 'Badge SVG files must be smaller than 512 KB.';
+        return $file;
+    }
+
+    $temporary_path = isset($file['tmp_name']) ? (string) $file['tmp_name'] : '';
+    $svg = $temporary_path !== '' ? file_get_contents($temporary_path) : false;
+    $sanitized_svg = is_string($svg) ? movies_theme_sanitize_badge_svg($svg) : '';
+
+    if ($sanitized_svg === '') {
+        $file['error'] = 'The badge SVG is invalid or contains unsupported markup.';
+        return $file;
+    }
+
+    if (file_put_contents($temporary_path, $sanitized_svg) === false) {
+        $file['error'] = 'The badge SVG could not be prepared for upload.';
+        return $file;
+    }
+
+    $file['size'] = strlen($sanitized_svg);
+    $file['type'] = 'image/svg+xml';
+
+    return $file;
+});
 
 add_filter('wp_insert_post_data', function (array $data, array $postarr): array {
     if (($data['post_type'] ?? '') !== 'movies') {
